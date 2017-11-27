@@ -52,11 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fonte.cs" />
-    <Compile Include="InfoFonte.cs" />
-    <Compile Include="InfoSO115.cs" />
-    <Compile Include="Localizzazione.cs" />
-    <Compile Include="MessaggioPosizione.cs" />
+    <Compile Include="Classi\Fonte.cs" />
+    <Compile Include="Classi\InfoFonte.cs" />
+    <Compile Include="Classi\InfoSO115.cs" />
+    <Compile Include="Classi\Localizzazione.cs" />
+    <Compile Include="Classi\MessaggioPosizione.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

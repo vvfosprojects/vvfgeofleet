@@ -1,4 +1,4 @@
-﻿using Modello;
+﻿using Modello.Classi;
 using MongoDB.Driver;
 using Persistence.MongoDB;
 using System;
