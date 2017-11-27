@@ -24,7 +24,7 @@ namespace VVFGeoFleet.Controllers
             var localizzazione = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == id)
                 .SortByDescending(m => m.IstanteAcquisizione)
                 .Limit(1)
-                .SingleOrDefault();
+                .Single();
 
             return localizzazione;
         }
