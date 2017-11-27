@@ -14,8 +14,11 @@ namespace Persistence.MongoDB
 
         public DbContext()
         {
-            var client = new MongoClient();
-            database = client.GetDatabase("VVFGeoFleet");
+            if (database == null)
+            {
+                var client = new MongoClient();
+                database = client.GetDatabase("VVFGeoFleet");
+            }
         }
 
         public IMongoCollection<MessaggioPosizione> MessaggiPosizione
