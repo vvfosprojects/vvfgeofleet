@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.MongoDB
 {
-    public class DbContext
+    internal class DbContext
     {
         private static IMongoDatabase database;
 

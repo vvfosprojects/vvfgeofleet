@@ -12,6 +12,13 @@ namespace VVFGeoFleet.Controllers
 {
     public class MessaggiPosizioneController : ApiController
     {
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
+
+        public MessaggiPosizioneController(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
+        {
+            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
+        }
+
         /// <summary>
         /// Restituisce un messaggio posizione per id
         /// </summary>
@@ -19,10 +26,7 @@ namespace VVFGeoFleet.Controllers
         /// <returns>Il messaggio</returns>
         public MessaggioPosizione Get(string id)
         {
-            var dbContext = new DbContext();
-            var collezione = dbContext.MessaggiPosizione;
-
-            return collezione.Find(m => m.Id == id)
+            return this.messaggiPosizioneCollection.Find(m => m.Id == id)
                 .Single();
         }
 
@@ -33,11 +37,8 @@ namespace VVFGeoFleet.Controllers
         /// <returns>L'oggetto inserito con la sua location</returns>
         public IHttpActionResult Post([FromBody]MessaggioPosizione messaggio)
         {
-            var dbContext = new DbContext();
-            var collezione = dbContext.MessaggiPosizione;
-
             messaggio.IstanteArchiviazione = DateTime.Now;
-            collezione.InsertOne(messaggio);
+            this.messaggiPosizioneCollection.InsertOne(messaggio);
 
             return CreatedAtRoute("DefaultApi", new { id = messaggio.Id }, messaggio);
         }
