@@ -11,7 +11,6 @@ namespace VVFGeoFleet.Controllers
 {
     public class StoreController : ApiController
     {
-        // POST: api/Store
         public void Post([FromBody]MessaggioPosizione messaggio)
         {
             var dbContext = new DbContext();
