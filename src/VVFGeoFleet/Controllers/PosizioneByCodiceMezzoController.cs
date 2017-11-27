@@ -10,23 +10,17 @@ using System.Web.Http;
 
 namespace VVFGeoFleet.Controllers
 {
-    public class ReadController : ApiController
+    public class PosizioneByCodiceMezzoController : ApiController
     {
-        public object Get(string id)
+        public MessaggioPosizione Get(string id)
         {
             var dbContext = new DbContext();
-            var codiceMezzo = "M.12345";
-            var localizzazione = dbContext.MessaggiPosizione.Find(m => m.CodiceMezzo == codiceMezzo)
-                .Project(m => m.Localizzazione)
+            var localizzazione = dbContext.MessaggiPosizione.Find(m => m.CodiceMezzo == id)
                 .SortByDescending(m => m.IstanteAcquisizione)
                 .Limit(1)
                 .SingleOrDefault();
 
-            return new
-            {
-                codiceMezzo = id,
-                localizzazione = localizzazione
-            };
+            return localizzazione;
         }
     }
 }
