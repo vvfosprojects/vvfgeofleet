@@ -8,18 +8,18 @@ Esempio di payload.
 
 ```json
 {
-    codiceMezzo: "APS.12345",
-    classiMezzo: ["APS", "benzina", ],
-    localizzazione: {
-        lat: 14.2345,
-        lon: 43.4321
+    "codiceMezzo": "APS.12345",
+    "classiMezzo": ["APS", "benzina", ],
+    "localizzazione": {
+        "lat": 14.2345,
+        "lon": 43.4321
     },
-    istanteAcquisizione: "2017-11-27T10:12:00.1234Z",
-    fonte: {
-        codiceFonte: "AH222",
-        classeFonte: "gpsTracker"
+    "istanteAcquisizione": "2017-11-27T10:12:00.1234Z",
+    "fonte": {
+        "codiceFonte": "AH222",
+        "classeFonte": "gpsTracker"
     },
-    infoFonte: {
+    "infoFonte": {
       
     }
 }
