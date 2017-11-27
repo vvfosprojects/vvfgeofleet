@@ -12,10 +12,16 @@ namespace VVFGeoFleet.Controllers
 {
     public class PosizioneByCodiceMezzoController : ApiController
     {
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
+
+        public PosizioneByCodiceMezzoController(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
+        {
+            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
+        }
+
         public MessaggioPosizione Get(string id)
         {
-            var dbContext = new DbContext();
-            var localizzazione = dbContext.MessaggiPosizione.Find(m => m.CodiceMezzo == id)
+            var localizzazione = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == id)
                 .SortByDescending(m => m.IstanteAcquisizione)
                 .Limit(1)
                 .SingleOrDefault();
