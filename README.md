@@ -9,7 +9,7 @@ Esempio di payload.
 ```json
 {
     "codiceMezzo": "APS.12345",
-    "classiMezzo": ["APS", "benzina", ],
+    "classiMezzo": [ "APS", "benzina" ],
     "localizzazione": {
         "lat": 14.2345,
         "lon": 43.4321
@@ -27,7 +27,7 @@ Esempio di payload.
 Restituisce la location del messaggio inserito, ed il messaggio stesso.
 
 ## GET /api/MessaggiPosizione/{id}
-Restituisce il messaggio di `id` specificato.
+Restituisce il messaggio avente `id` specificato.
 
 ## GET /api/PosizioneByCodiceMezzo/{codiceMezzo}
-Restituisce la posizione più aggiornata disponibile per il mezzo avente `codiceMezzo` specificato.
+Restituisce la migliore stima disponibile della posizione per il mezzo avente `codiceMezzo` specificato. La stima è basata sui dati ricevuti fino a quel momento.
