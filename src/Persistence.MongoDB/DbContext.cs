@@ -21,7 +21,7 @@ namespace Persistence.MongoDB
             }
         }
 
-        public IMongoCollection<MessaggioPosizione> MessaggiPosizione
+        public IMongoCollection<MessaggioPosizione> MessaggiPosizioneCollection
         {
             get
             {
