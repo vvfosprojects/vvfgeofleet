@@ -1,32 +1,22 @@
 ﻿using Modello.Classi;
-using MongoDB.Driver;
-using Persistence.MongoDB;
-using System;
-using System.Collections.Generic;
+using Modello.Servizi.Persistence;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace VVFGeoFleet.Controllers
 {
     public class PosizioneByCodiceMezzoController : ApiController
     {
-        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
+        private readonly IGetPosizioneByCodiceMezzo getPosizioneByCodiceMezzo;
 
-        public PosizioneByCodiceMezzoController(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
+        public PosizioneByCodiceMezzoController(IGetPosizioneByCodiceMezzo getPosizioneByCodiceMezzo)
         {
-            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
+            this.getPosizioneByCodiceMezzo = getPosizioneByCodiceMezzo;
         }
 
         public MessaggioPosizione Get(string id)
         {
-            var localizzazione = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == id)
-                .SortByDescending(m => m.IstanteAcquisizione)
-                .Limit(1)
-                .Single();
-
-            return localizzazione;
+            return this.getPosizioneByCodiceMezzo.Get(id);
         }
     }
 }
