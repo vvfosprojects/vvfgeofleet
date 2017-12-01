@@ -30,8 +30,8 @@ namespace Persistence.MongoDB
         private void CreateIndexes()
         {
             var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
-                .Descending(_ => _.IstanteAcquisizione)
-                .Ascending(_ => _.CodiceMezzo);
+                .Ascending(_ => _.CodiceMezzo)
+                .Descending(_ => _.IstanteAcquisizione);
             this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
         }
 
