@@ -1,7 +1,9 @@
 ﻿using Modello.Classi;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
+using Persistence.MongoDB.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,12 @@ namespace Persistence.MongoDB
         {
             if (database == null)
             {
+                AutomapperConfiguration.Configure();
+
+                var pack = new ConventionPack();
+                pack.Add(new CamelCaseElementNameConvention());
+                ConventionRegistry.Register("camel case", pack, t => true);
+
                 this.MapClasses();
 
                 var client = new MongoClient();
@@ -29,15 +37,25 @@ namespace Persistence.MongoDB
 
         private void CreateIndexes()
         {
-            var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
-                .Ascending(_ => _.CodiceMezzo)
-                .Descending(_ => _.IstanteAcquisizione);
-            this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
+            {
+                var indexDefinition = Builders<MessaggioPosizione_DTO>.IndexKeys
+                    .Ascending(_ => _.CodiceMezzo)
+                    .Descending(_ => _.IstanteAcquisizione);
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
+            }
+
+            {
+                var indexDefinition = Builders<MessaggioPosizione_DTO>.IndexKeys
+                    .Geo2DSphere(_ => _.Localizzazione)
+                    .Descending(_ => _.IstanteAcquisizione)
+                    .Ascending(_ => _.ClassiMezzo);
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
+            }
         }
 
         private void MapClasses()
         {
-            BsonClassMap.RegisterClassMap<MessaggioPosizione>(cm =>
+            BsonClassMap.RegisterClassMap<MessaggioPosizione_DTO>(cm =>
             {
                 cm.AutoMap();
                 cm.MapIdMember(c => c.Id)
@@ -45,11 +63,11 @@ namespace Persistence.MongoDB
             });
         }
 
-        public IMongoCollection<MessaggioPosizione> MessaggiPosizioneCollection
+        public IMongoCollection<MessaggioPosizione_DTO> MessaggiPosizioneCollection
         {
             get
             {
-                return database.GetCollection<MessaggioPosizione>("messaggiPosizione");
+                return database.GetCollection<MessaggioPosizione_DTO>("messaggiPosizione");
             }
         }
     }
