@@ -17,16 +17,20 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using log4net;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
 using Persistence.MongoDB.DTOs;
 
 namespace Persistence.MongoDB
 {
     internal class DbContext
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static IMongoDatabase database;
 
         public DbContext()
@@ -41,7 +45,18 @@ namespace Persistence.MongoDB
 
                 this.MapClasses();
 
-                var client = new MongoClient();
+                var settings = new MongoClientSettings
+                {
+                    ClusterConfigurator = cb =>
+                    {
+                        cb.Subscribe<CommandStartedEvent>(e =>
+                        {
+                            log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
+                        });
+                    }
+                };
+
+                var client = new MongoClient(settings);
                 database = client.GetDatabase("VVFGeoFleet");
 
                 this.CreateIndexes();
