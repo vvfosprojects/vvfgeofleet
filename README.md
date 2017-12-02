@@ -36,9 +36,11 @@ Restituisce la posizione per il mezzo avente `codiceMezzo` specificato.
 
 ## GET /api/posizioneFlotta
 Restituisce la posizione dell'intera flotta.
+Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
 ## GET /api/posizioneFlotta/perClassi?classiMezzo=classe1&classiMezzo=classe2&classiMezzo=classe3
 Restituisce la posizione dell'intera flotta, limitatamente ai mezzi delle classi specificate come parametro d'ingresso.
+Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
 # Descrizione dell'architettura
 L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.

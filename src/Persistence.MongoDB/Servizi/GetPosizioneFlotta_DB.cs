@@ -26,9 +26,17 @@ namespace Persistence.MongoDB.Servizi
             return this.Get(null);
         }
 
+        /// <summary>
+        ///   Restituisce la posizione dei mezzi per i quali c'è un messaggio di posizione giunto
+        ///   nelle ultime 24 ore.
+        /// </summary>
+        /// <param name="classiMezzo"></param>
+        /// <returns></returns>
         public IEnumerable<MessaggioPosizione> Get(string[] classiMezzo)
         {
-            var query = this.messaggiPosizione.Aggregate<MessaggioPosizione_DTO>();
+            IAggregateFluent<MessaggioPosizione_DTO> query = this.messaggiPosizione.Aggregate<MessaggioPosizione_DTO>()
+                .SortBy(m => m.CodiceMezzo)
+                .ThenByDescending(m => m.IstanteAcquisizione);
 
             if (classiMezzo != null && classiMezzo.Length > 0)
             {
@@ -41,8 +49,7 @@ namespace Persistence.MongoDB.Servizi
             }
 
             var query2 = query
-                .SortBy(m => m.CodiceMezzo)
-                .ThenByDescending(m => m.IstanteAcquisizione)
+                .Match(m => m.IstanteAcquisizione > DateTime.Now.AddHours(-24))
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
                 .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"));
 
