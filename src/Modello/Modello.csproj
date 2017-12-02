@@ -53,6 +53,9 @@
     <Compile Include="Servizi\Persistence\IMessaggioPosizioneRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\VVFGeoFleet.licenseheader">
+      <Link>VVFGeoFleet.licenseheader</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

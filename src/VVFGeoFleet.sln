@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modello", "Modello\Modello.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence.MongoDB", "Persistence.MongoDB\Persistence.MongoDB.csproj", "{A5EB7AC8-7715-4A42-AB29-43F6D82DBB03}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFiles", "SolutionFiles", "{5AF6F687-6B1C-43EC-8DDB-B5AD0181120A}"
+	ProjectSection(SolutionItems) = preProject
+		VVFGeoFleet.licenseheader = VVFGeoFleet.licenseheader
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
