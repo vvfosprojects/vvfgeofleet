@@ -28,11 +28,19 @@ namespace Persistence.MongoDB
         {
             container.Register<DbContext>(Lifestyle.Singleton);
 
+            container.Register<global::MongoDB.Driver.IMongoCollection<DTOs.MessaggioPosizione_DTO>>(() =>
+            {
+                return container.GetInstance<DbContext>().MessaggiPosizioneCollection;
+            }, Lifestyle.Scoped);
+
             container.Register<Modello.Servizi.Persistence.IMessaggioPosizioneRepository,
                 Servizi.MessaggioPosizioneRepository_DB>(Lifestyle.Scoped);
 
             container.Register<Modello.Servizi.Persistence.IGetPosizioneByCodiceMezzo,
                 Servizi.GetPosizioneByCodiceMezzo_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Persistence.IGetPosizioneFlotta,
+                Servizi.GetPosizioneFlotta_DB>(Lifestyle.Scoped);
         }
     }
 }

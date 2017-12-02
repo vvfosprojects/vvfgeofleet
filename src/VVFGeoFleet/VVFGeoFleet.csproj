@@ -109,6 +109,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\PosizioneByCodiceMezzoController.cs" />
     <Compile Include="Controllers\MessaggiPosizioneController.cs" />
+    <Compile Include="Controllers\PosizioneFlottaController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -50,6 +50,7 @@
     <Compile Include="Classi\MessaggioPosizione.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneByCodiceMezzo.cs" />
+    <Compile Include="Servizi\Persistence\IGetPosizioneFlotta.cs" />
     <Compile Include="Servizi\Persistence\IMessaggioPosizioneRepository.cs" />
   </ItemGroup>
   <ItemGroup>

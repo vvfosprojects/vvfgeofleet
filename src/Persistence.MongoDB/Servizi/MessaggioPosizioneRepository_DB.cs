@@ -31,9 +31,9 @@ namespace Persistence.MongoDB.Servizi
     {
         private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
 
-        public MessaggioPosizioneRepository_DB(DbContext dbContext)
+        public MessaggioPosizioneRepository_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection)
         {
-            this.messaggiPosizioneCollection = dbContext.MessaggiPosizioneCollection;
+            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
 
         public MessaggioPosizione GetById(string id)
