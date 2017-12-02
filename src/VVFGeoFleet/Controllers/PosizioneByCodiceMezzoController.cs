@@ -1,6 +1,5 @@
 ﻿using Modello.Classi;
 using Modello.Servizi.Persistence;
-using System.Linq;
 using System.Web.Http;
 
 namespace VVFGeoFleet.Controllers
