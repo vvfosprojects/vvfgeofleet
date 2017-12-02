@@ -16,11 +16,6 @@ namespace Persistence.MongoDB
         {
             container.Register<DbContext>(Lifestyle.Singleton);
 
-            container.Register<IMongoCollection<MessaggioPosizione>>(() =>
-            {
-                return container.GetInstance<DbContext>().MessaggiPosizioneCollection;
-            }, Lifestyle.Singleton);
-
             container.Register<Modello.Servizi.Persistence.IMessaggioPosizioneRepository,
                 Servizi.MessaggioPosizioneRepository_DB>(Lifestyle.Scoped);
 

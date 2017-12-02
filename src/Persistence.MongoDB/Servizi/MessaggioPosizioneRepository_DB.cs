@@ -6,23 +6,27 @@ using System.Text;
 using System.Threading.Tasks;
 using Modello.Classi;
 using MongoDB.Driver;
+using Persistence.MongoDB.DTOs;
+using AutoMapper;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class MessaggioPosizioneRepository_DB : IMessaggioPosizioneRepository
     {
-        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
+        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
 
-        public MessaggioPosizioneRepository_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
+        public MessaggioPosizioneRepository_DB(DbContext dbContext)
         {
-            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
+            this.messaggiPosizioneCollection = dbContext.MessaggiPosizioneCollection;
         }
 
         public MessaggioPosizione GetById(string id)
         {
-            return this.messaggiPosizioneCollection
+            var dto = this.messaggiPosizioneCollection
                 .Find(m => m.Id == id)
                 .Single();
+
+            return dto.ConvertToDomain();
         }
 
         public void Store(MessaggioPosizione messaggioPosizione)
@@ -31,7 +35,9 @@ namespace Persistence.MongoDB.Servizi
                 throw new ArgumentException("Non può essere null", nameof(MessaggioPosizione.Id));
 
             messaggioPosizione.IstanteArchiviazione = DateTime.Now;
-            this.messaggiPosizioneCollection.InsertOne(messaggioPosizione);
+            var dto = Mapper.Map<MessaggioPosizione_DTO>(messaggioPosizione);
+            this.messaggiPosizioneCollection.InsertOne(dto);
+            messaggioPosizione.Id = dto.Id;
         }
     }
 }

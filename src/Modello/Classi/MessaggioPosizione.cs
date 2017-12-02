@@ -4,7 +4,7 @@ namespace Modello.Classi
 {
     public class MessaggioPosizione
     {
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
         public string CodiceMezzo { get; set; }
         public string[] ClassiMezzo { get; set; }
