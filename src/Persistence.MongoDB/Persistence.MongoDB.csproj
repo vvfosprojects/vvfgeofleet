@@ -75,6 +75,9 @@
     <Compile Include="Servizi\MessaggioPosizioneRepository_DB.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\VVFGeoFleet.licenseheader">
+      <Link>VVFGeoFleet.licenseheader</Link>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
