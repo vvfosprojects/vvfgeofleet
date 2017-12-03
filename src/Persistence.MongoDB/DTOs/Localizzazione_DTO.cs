@@ -25,7 +25,7 @@ namespace Persistence.MongoDB.DTOs
     {
         public Localizzazione_DTO(Localizzazione localizzazione)
         {
-            this.Coordinates = new[] { localizzazione.Lat, localizzazione.Lon };
+            this.Coordinates = new[] { localizzazione.Lon, localizzazione.Lat };
         }
 
         public string Type { get { return "Point"; } protected set { } }
