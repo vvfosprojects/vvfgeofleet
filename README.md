@@ -38,11 +38,11 @@ Restituisce la posizione per il mezzo avente `codiceMezzo` specificato.
 Restituisce la posizione dell'intera flotta.
 Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
-## GET /api/posizioneFlotta/perClassi?classiMezzo=classe1&classiMezzo=classe2&classiMezzo=classe3
+## GET /api/posizioneFlotta/perClassi?classiMezzo={classe1}&classiMezzo={classe2}&classiMezzo={classe3}
 Restituisce la posizione dell'intera flotta, limitatamente ai mezzi delle classi specificate come parametro d'ingresso.
 Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
-## GET /api/prossimita?lat=41.76&lon=12.46&distanzaMaxMt=5000&classiMezzo=classe1&classiMezzo=classe2
+## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={classe1}&classiMezzo={classe2}
 Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
 
 # Descrizione dell'architettura
