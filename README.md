@@ -42,6 +42,9 @@ Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 Restituisce la posizione dell'intera flotta, limitatamente ai mezzi delle classi specificate come parametro d'ingresso.
 Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
+## GET /api/prossimita?lat=41.76&lon=12.46&distanzaMaxMt=5000&classiMezzo=classe1&classiMezzo=classe2
+Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
+
 # Descrizione dell'architettura
 L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
 

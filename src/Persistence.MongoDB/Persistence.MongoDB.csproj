@@ -74,6 +74,7 @@
     <Compile Include="DTOs\Localizzazione_DTO.cs" />
     <Compile Include="DTOs\MessaggioPosizione_DTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servizi\GetMezziInProssimita_DB.cs" />
     <Compile Include="Servizi\GetPosizioneByCodiceMezzo_DB.cs" />
     <Compile Include="Servizi\GetPosizioneFlotta_DB.cs" />
     <Compile Include="Servizi\MessaggioPosizioneRepository_DB.cs" />
