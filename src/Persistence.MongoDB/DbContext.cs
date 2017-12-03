@@ -33,7 +33,7 @@ namespace Persistence.MongoDB
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static IMongoDatabase database;
 
-        public DbContext()
+        public DbContext(string connectionString)
         {
             if (database == null)
             {
@@ -45,6 +45,7 @@ namespace Persistence.MongoDB
 
                 this.MapClasses();
 
+                var url = MongoUrl.Create(connectionString);
                 var settings = new MongoClientSettings
                 {
                     ClusterConfigurator = cb =>
@@ -53,11 +54,12 @@ namespace Persistence.MongoDB
                         {
                             log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
                         });
-                    }
+                    },
+                    Server = url.Server
                 };
 
                 var client = new MongoClient(settings);
-                database = client.GetDatabase("VVFGeoFleet");
+                database = client.GetDatabase(url.DatabaseName);
 
                 this.CreateIndexes();
             }

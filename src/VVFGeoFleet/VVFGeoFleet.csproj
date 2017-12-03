@@ -110,6 +110,8 @@
   <ItemGroup>
     <Compile Include="App_Start\SimpleInjectorWebApiInitializer.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Bindings.cs" />
+    <Compile Include="Configurazione\AppConfig_FromWebConfig.cs" />
     <Compile Include="Controllers\PosizioneByCodiceMezzoController.cs" />
     <Compile Include="Controllers\MessaggiPosizioneController.cs" />
     <Compile Include="Controllers\PosizioneFlottaController.cs" />
