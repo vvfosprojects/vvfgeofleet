@@ -36,8 +36,8 @@ namespace Persistence.MongoDB
                     .ForMember(dto => dto.Localizzazione, opt => opt.MapFrom(
                         src => new Localizzazione()
                         {
-                            Lat = src.Localizzazione.Coordinates[0],
-                            Lon = src.Localizzazione.Coordinates[1]
+                            Lon = src.Localizzazione.Coordinates[0],
+                            Lat = src.Localizzazione.Coordinates[1]
                         }));
             });
 

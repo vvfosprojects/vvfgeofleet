@@ -23,6 +23,7 @@ using Modello.Servizi.Persistence;
 using MongoDB.Driver;
 using Persistence.MongoDB.DTOs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Persistence.MongoDB.Servizi
@@ -48,7 +49,7 @@ namespace Persistence.MongoDB.Servizi
         public void Store(MessaggioPosizione messaggioPosizione)
         {
             if (!string.IsNullOrWhiteSpace(messaggioPosizione.Id))
-                throw new ArgumentException("Non può essere null", nameof(MessaggioPosizione.Id));
+                throw new ArgumentException("Deve essere null", nameof(MessaggioPosizione.Id));
 
             messaggioPosizione.IstanteArchiviazione = DateTime.Now;
             var dto = Mapper.Map<MessaggioPosizione_DTO>(messaggioPosizione);
