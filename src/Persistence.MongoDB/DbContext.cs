@@ -75,8 +75,8 @@ namespace Persistence.MongoDB
             {
                 var indexDefinition = Builders<MessaggioPosizione_DTO>.IndexKeys
                     .Geo2DSphere(_ => _.Localizzazione)
-                    .Descending(_ => _.IstanteAcquisizione)
-                    .Ascending(_ => _.ClassiMezzo);
+                    .Ascending(_ => _.CodiceMezzo)
+                    .Descending(_ => _.IstanteAcquisizione);
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
             }
         }
@@ -88,6 +88,7 @@ namespace Persistence.MongoDB
                 cm.AutoMap();
                 cm.MapIdMember(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance);
+                cm.SetIgnoreExtraElements(true);
             });
         }
 

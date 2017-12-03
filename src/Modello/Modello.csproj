@@ -49,6 +49,9 @@
     <Compile Include="Classi\Localizzazione.cs" />
     <Compile Include="Classi\MessaggioPosizione.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\IGetMezziInProssimita.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\ProssimitaMezzo.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\QueryProssimitaResult.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneByCodiceMezzo.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneFlotta.cs" />
     <Compile Include="Servizi\Persistence\IMessaggioPosizioneRepository.cs" />
