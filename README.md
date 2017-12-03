@@ -50,7 +50,10 @@ L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017. L'architet
 
 # Librerie utilizzate
 
-- *MongoDB.Driver*: il driver C# per l'integrazione con MongoDB;
-- *SimpleInjector*: la libreria per la Dependency Injection (DI);
-- *AutoMapper*: la libreria per il mapping convention based tra le classi di dominio e i DTO;
-- *log4net*: libreria per il logging applicativo.
+- *MongoDB.Driver*: driver C# per l'integrazione con MongoDB;
+- *SimpleInjector*: libreria per la Dependency Injection (DI);
+- *AutoMapper*: libreria per il mapping convention based tra le classi di dominio e i DTO;
+- *log4net*: libreria per il logging applicativo;
+- *NUnit v3*: libreria per la stesura degli unit tests;
+- *Moq*: libreria per la generazione di classi mock;
+- *Bogus*: libreria per la generazione di istanze fake di classi.
