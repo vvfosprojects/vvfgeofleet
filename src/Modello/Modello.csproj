@@ -48,6 +48,7 @@
     <Compile Include="Classi\InfoSO115.cs" />
     <Compile Include="Classi\Localizzazione.cs" />
     <Compile Include="Classi\MessaggioPosizione.cs" />
+    <Compile Include="Configurazione\IAppConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\IGetMezziInProssimita.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\ProssimitaMezzo.cs" />
