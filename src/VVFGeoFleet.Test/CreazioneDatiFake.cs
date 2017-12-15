@@ -14,10 +14,7 @@ namespace VVFGeoFleet.Test
     public class CreazioneDatiFake
     {
         [Test]
-<<<<<<< HEAD
         [Ignore("Serve a riempire il database con dati fake")]
-=======
->>>>>>> 5dd16291d7b50ea87e038ff3a523e317b91d0d19
         public void Popola_database_con_dati_fake()
         {
             var dbContext = new DbContext("mongodb://localhost:27017/vvfgeofleet");
@@ -42,11 +39,7 @@ namespace VVFGeoFleet.Test
                 .RuleFor(m => m.InfoSO115, f => fakerInfoSo115.Generate())
                 .RuleFor(m => m.IstanteArchiviazione, f => f.Date.Past());
 
-<<<<<<< HEAD
             var messaggiPosizione = faker.Generate(10000);
-=======
-            var messaggiPosizione = faker.Generate(100000);
->>>>>>> 5dd16291d7b50ea87e038ff3a523e317b91d0d19
             dbContext.MessaggiPosizioneCollection.InsertMany(messaggiPosizione);
         }
     }
