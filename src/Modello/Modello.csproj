@@ -53,6 +53,7 @@
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\IGetMezziInProssimita.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\ProssimitaMezzo.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\QueryProssimitaResult.cs" />
+    <Compile Include="Servizi\Persistence\IGetMezziSilenti.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneByCodiceMezzo.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneFlotta.cs" />
     <Compile Include="Servizi\Persistence\IMessaggioPosizioneRepository.cs" />

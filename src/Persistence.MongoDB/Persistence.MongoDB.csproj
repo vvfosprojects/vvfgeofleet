@@ -76,6 +76,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servizi\GetMezziInProssimita_DB.cs" />
     <Compile Include="Servizi\GetPosizioneByCodiceMezzo_DB.cs" />
+    <Compile Include="Servizi\GetMezziSilenti_DB.cs" />
     <Compile Include="Servizi\GetPosizioneFlotta_DB.cs" />
     <Compile Include="Servizi\MessaggioPosizioneRepository_DB.cs" />
   </ItemGroup>

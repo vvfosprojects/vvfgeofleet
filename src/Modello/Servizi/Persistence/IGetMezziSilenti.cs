@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IAppConfig.cs" company="CNVVF">
+// <copyright file="IGetMezziSilenti.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -22,12 +22,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Modello.Classi;
 
-namespace Modello.Configurazione
+namespace Modello.Servizi.Persistence
 {
-    public interface IAppConfig
+    public interface IGetMezziSilenti
     {
-        string ConnectionString { get; }
-        int OrizzonteTemporale_sec { get; }
+        IEnumerable<MessaggioPosizione> Get(int daSecondi);
+
+        IEnumerable<MessaggioPosizione> Get(int daSecondi, string[] classiMezzo);
     }
 }
