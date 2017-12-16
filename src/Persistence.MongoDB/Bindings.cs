@@ -47,6 +47,9 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Persistence.GeoQuery.Prossimita.IGetMezziInProssimita,
                 Servizi.GetMezziInProssimita_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Persistence.IGetMezziSilenti,
+                Servizi.GetMezziSilenti_DB>(Lifestyle.Scoped);
         }
     }
 }

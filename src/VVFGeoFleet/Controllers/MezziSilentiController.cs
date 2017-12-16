@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IAppConfig.cs" company="CNVVF">
+// <copyright file="MezziSilentiController.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -20,14 +20,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Modello.Classi;
+using Modello.Servizi.Persistence;
 
-namespace Modello.Configurazione
+namespace VVFGeoFleet.Controllers
 {
-    public interface IAppConfig
+    public class MezziSilentiController : ApiController
     {
-        string ConnectionString { get; }
-        int OrizzonteTemporale_sec { get; }
+        private readonly IGetMezziSilenti getMezziSilenti;
+
+        public MezziSilentiController(IGetMezziSilenti getMezziSilenti)
+        {
+            this.getMezziSilenti = getMezziSilenti;
+        }
+
+        [Route("api/MezziSilenti/")]
+        public IEnumerable<MessaggioPosizione> Get([FromUri] int daSecondi)
+        {
+            return getMezziSilenti.Get(daSecondi);
+        }
+
+        [Route("api/MezziSilenti/PerClassi")]
+        public IEnumerable<MessaggioPosizione> Get([FromUri] int daSecondi, [FromUri] string[] perClassi)
+        {
+            return getMezziSilenti.Get(daSecondi, perClassi);
+        }
     }
 }
