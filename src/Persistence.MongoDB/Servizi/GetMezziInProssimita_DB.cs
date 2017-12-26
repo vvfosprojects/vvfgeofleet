@@ -75,7 +75,7 @@ namespace Persistence.MongoDB.Servizi
             var geoNearOptions = new BsonDocument {
                 { "near", new BsonDocument {
                     { "type", "Point" },
-                    { "coordinates", new BsonArray { punto.Lat, punto.Lon } },
+                    { "coordinates", new BsonArray { punto.Lon, punto.Lat } },
                 } },
                 { "distanceField", "distanza" },
                 { "maxDistance", distanzaMaxMt },
