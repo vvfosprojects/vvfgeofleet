@@ -50,6 +50,9 @@
     <Compile Include="Classi\MessaggioPosizione.cs" />
     <Compile Include="Configurazione\IAppConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\InRettangolo\IGetMezziInRettangolo.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\InRettangolo\QueryInRettangoloResult.cs" />
+    <Compile Include="Servizi\Persistence\GeoQuery\InRettangolo\Rettangolo.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\IGetMezziInProssimita.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\ProssimitaMezzo.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\QueryProssimitaResult.cs" />
