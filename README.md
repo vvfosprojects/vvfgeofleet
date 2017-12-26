@@ -44,6 +44,11 @@ Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
 ## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={classe1}&classiMezzo={classe2}
 Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
+Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
+
+## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={classe1}&classiMezzo={classe2}
+Restituisce i mezzi all'interno del box specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
+Vengono restituite solo le posizioni dei mezzi aggiornate nelle ultime 24h.
 
 ## GET /api/MezziSilenti?daSecondi={daSecondi}
 Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. Per es. se il parametro `daSecondi` vale 86400, viene restituita la posizione dei mezzi che non hanno aggiornamenti di posizione da almeno un giorno.

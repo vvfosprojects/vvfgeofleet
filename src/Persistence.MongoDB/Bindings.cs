@@ -50,6 +50,9 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Persistence.IGetMezziSilenti,
                 Servizi.GetMezziSilenti_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Persistence.GeoQuery.InRettangolo.IGetMezziInRettangolo,
+                Servizi.GetMezziInRettangolo_DB>(Lifestyle.Scoped);
         }
     }
 }
