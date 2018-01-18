@@ -70,11 +70,10 @@ namespace Persistence.MongoDB.Servizi
             var query2 = query
                 .Match(m => m.IstanteAcquisizione > DateTime.Now.AddHours(-24))
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
-                .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"));
+                .ReplaceRoot<MessaggioPosizione_DTO>("$messaggio");
 
             var resultSet = query2
                 .ToEnumerable()
-                .Select(d => BsonSerializer.Deserialize<MessaggioPosizione_DTO>(d["messaggio"].AsBsonDocument))
                 .Select(dto => dto.ConvertToDomain());
 
             return resultSet;
