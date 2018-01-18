@@ -86,8 +86,8 @@ namespace Persistence.MongoDB.Servizi
                 .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"));
 
             var resultSet = query2
+                .ReplaceRoot<MessaggioPosizione_DTO>("$messaggio")
                 .ToEnumerable()
-                .Select(d => BsonSerializer.Deserialize<MessaggioPosizione_DTO>(d["messaggio"].AsBsonDocument))
                 .Select(dto => dto.ConvertToDomain());
 
             return resultSet;
