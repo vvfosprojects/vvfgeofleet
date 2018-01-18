@@ -77,8 +77,8 @@ namespace Persistence.MongoDB.Servizi
             var messaggiPosizione = messaggiPosizioneAggregate
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
                 .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"))
+                .ReplaceRoot<MessaggioPosizione_DTO>("$messaggio")
                 .ToEnumerable()
-                .Select(d => BsonSerializer.Deserialize<MessaggioPosizione_DTO>(d["messaggio"].AsBsonDocument))
                 .Select(dto => dto.ConvertToDomain());
 
             var arrayMessaggiPosizione = messaggiPosizione.ToArray();
