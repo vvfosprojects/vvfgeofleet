@@ -57,7 +57,7 @@ Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alc
 Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. La ricerca è limitata alle classi specificate.
 
 # Descrizione dell'architettura
-L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
+L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017 Community Edition. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
 
 # Librerie utilizzate
 
@@ -68,3 +68,6 @@ L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017. L'architet
 - *NUnit v3*: libreria per la stesura degli unit tests;
 - *Moq*: libreria per la generazione di classi mock;
 - *Bogus*: libreria per la generazione di istanze fake di classi.
+
+# Licenza
+Il codice sorgente è rilasciato nei termini della licenza AGPL-3.0.
