@@ -18,46 +18,41 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Persistence.GeoQuery.InRettangolo;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Persistence.MongoDB.DTOs;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class GetMezziInRettangolo_DB : IGetMezziInRettangolo
     {
-        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
-        public GetMezziInRettangolo_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection)
+        public GetMezziInRettangolo_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
         {
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
 
         public QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo)
         {
-            var geoWithinFilter = Builders<MessaggioPosizione_DTO>.Filter
+            var geoWithinFilter = Builders<MessaggioPosizione>.Filter
                 .GeoWithinBox(m => m.Localizzazione,
                     lowerLeftX: rettangolo.TopLeft.Lon,
                     lowerLeftY: rettangolo.BottomRight.Lat,
                     upperRightX: rettangolo.BottomRight.Lon,
                     upperRightY: rettangolo.TopLeft.Lat);
 
-            var recentMessagesFilter = Builders<MessaggioPosizione_DTO>.Filter
+            var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
                 .Gt(m => m.IstanteAcquisizione, DateTime.Now.AddHours(-24));
 
-            FilterDefinition<MessaggioPosizione_DTO> classiMezzoFilter = null;
+            FilterDefinition<MessaggioPosizione> classiMezzoFilter = null;
 
             if ((classiMezzo != null) && (classiMezzo.Length > 0))
             {
-                classiMezzoFilter = Builders<MessaggioPosizione_DTO>.Filter
+                classiMezzoFilter = Builders<MessaggioPosizione>.Filter
                     .AnyIn(m => m.ClassiMezzo, classiMezzo);
             }
 
@@ -77,9 +72,8 @@ namespace Persistence.MongoDB.Servizi
             var messaggiPosizione = messaggiPosizioneAggregate
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
                 .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"))
-                .ReplaceRoot<MessaggioPosizione_DTO>("$messaggio")
-                .ToEnumerable()
-                .Select(dto => dto.ConvertToDomain());
+                .ReplaceRoot<MessaggioPosizione>("$messaggio")
+                .ToEnumerable();
 
             var arrayMessaggiPosizione = messaggiPosizione.ToArray();
             sw.Stop();

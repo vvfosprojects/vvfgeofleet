@@ -21,13 +21,13 @@
 
 namespace VVFGeoFleet.App_Start
 {
-    using SimpleInjector;
-    using SimpleInjector.Integration.WebApi;
-    using SimpleInjector.Lifestyles;
     using System.Linq;
     using System.Reflection;
     using System.Web.Compilation;
     using System.Web.Http;
+    using SimpleInjector;
+    using SimpleInjector.Integration.WebApi;
+    using SimpleInjector.Lifestyles;
 
     public static class SimpleInjectorWebApiInitializer
     {

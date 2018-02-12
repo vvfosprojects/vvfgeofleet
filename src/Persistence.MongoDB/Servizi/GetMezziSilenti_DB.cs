@@ -17,25 +17,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using Modello.Servizi.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Modello.Classi;
-using Persistence.MongoDB.DTOs;
-using MongoDB.Driver;
+using Modello.Servizi.Persistence;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class GetMezziSilenti_DB : IGetMezziSilenti
     {
-        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizione;
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizione;
 
-        public GetMezziSilenti_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizione)
+        public GetMezziSilenti_DB(IMongoCollection<MessaggioPosizione> messaggiPosizione)
         {
             this.messaggiPosizione = messaggiPosizione;
         }
@@ -58,13 +54,13 @@ namespace Persistence.MongoDB.Servizi
         /// <returns>Messaggi posizione meno recenti</returns>
         public IEnumerable<MessaggioPosizione> Get(int daSecondi, string[] classiMezzo)
         {
-            IAggregateFluent<MessaggioPosizione_DTO> query = this.messaggiPosizione.Aggregate<MessaggioPosizione_DTO>()
+            IAggregateFluent<MessaggioPosizione> query = this.messaggiPosizione.Aggregate<MessaggioPosizione>()
                 .SortBy(m => m.CodiceMezzo)
                 .ThenByDescending(m => m.IstanteAcquisizione);
 
             if (classiMezzo != null && classiMezzo.Length > 0)
             {
-                var filter = Builders<MessaggioPosizione_DTO>
+                var filter = Builders<MessaggioPosizione>
                     .Filter
                     .AnyIn(m => m.ClassiMezzo, classiMezzo);
 
@@ -86,9 +82,8 @@ namespace Persistence.MongoDB.Servizi
                 .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"));
 
             var resultSet = query2
-                .ReplaceRoot<MessaggioPosizione_DTO>("$messaggio")
-                .ToEnumerable()
-                .Select(dto => dto.ConvertToDomain());
+                .ReplaceRoot<MessaggioPosizione>("$messaggio")
+                .ToEnumerable();
 
             return resultSet;
         }

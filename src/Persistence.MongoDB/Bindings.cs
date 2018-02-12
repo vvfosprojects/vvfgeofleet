@@ -31,7 +31,7 @@ namespace Persistence.MongoDB
                 return new DbContext(container.GetInstance<Modello.Configurazione.IAppConfig>().ConnectionString);
             }, Lifestyle.Singleton);
 
-            container.Register<global::MongoDB.Driver.IMongoCollection<DTOs.MessaggioPosizione_DTO>>(() =>
+            container.Register<global::MongoDB.Driver.IMongoCollection<Modello.Classi.MessaggioPosizione>>(() =>
             {
                 return container.GetInstance<DbContext>().MessaggiPosizioneCollection;
             }, Lifestyle.Scoped);

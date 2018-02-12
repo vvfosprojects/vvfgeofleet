@@ -17,14 +17,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Web.Http;
 using Modello.Classi;
 using Modello.Servizi.Persistence.GeoQuery.Prossimita;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
 namespace VVFGeoFleet.Controllers
 {

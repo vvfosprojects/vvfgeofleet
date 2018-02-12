@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=6.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.6.2.1\lib\net45\AutoMapper.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -65,14 +62,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutomapperConfiguration.cs" />
     <Compile Include="Bindings.cs" />
     <Compile Include="DbContext.cs" />
-    <Compile Include="DTOs\Fonte_DTO.cs" />
-    <Compile Include="DTOs\InfoFonte_DTO.cs" />
-    <Compile Include="DTOs\InfoSO115_DTO.cs" />
-    <Compile Include="DTOs\Localizzazione_DTO.cs" />
-    <Compile Include="DTOs\MessaggioPosizione_DTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servizi\GetMezziInProssimita_DB.cs" />
     <Compile Include="Servizi\GetMezziInRettangolo_DB.cs" />

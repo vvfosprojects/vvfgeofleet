@@ -17,12 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using SimpleInjector.Packaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using SimpleInjector;
+using SimpleInjector.Packaging;
 
 namespace VVFGeoFleet
 {

@@ -17,19 +17,18 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Linq;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
 using MongoDB.Driver;
-using Persistence.MongoDB.DTOs;
-using System.Linq;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class GetPosizioneByCodiceMezzo_DB : IGetPosizioneByCodiceMezzo
     {
-        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
-        public GetPosizioneByCodiceMezzo_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection)
+        public GetPosizioneByCodiceMezzo_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
         {
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
@@ -41,7 +40,7 @@ namespace Persistence.MongoDB.Servizi
                 .Limit(1)
                 .Single();
 
-            return dto.ConvertToDomain();
+            return dto;
         }
     }
 }

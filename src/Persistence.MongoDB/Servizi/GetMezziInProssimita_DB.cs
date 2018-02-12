@@ -17,26 +17,22 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+using System.Diagnostics;
+using System.Linq;
 using Modello.Classi;
 using Modello.Servizi.Persistence.GeoQuery.Prossimita;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
-using Persistence.MongoDB.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class GetMezziInProssimita_DB : IGetMezziInProssimita
     {
-        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
-        public GetMezziInProssimita_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection)
+        public GetMezziInProssimita_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
         {
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
@@ -93,7 +89,7 @@ namespace Persistence.MongoDB.Servizi
                 .ToEnumerable()
                 .Select(d => new ProssimitaMezzo()
                 {
-                    MessaggioPosizione = BsonSerializer.Deserialize<MessaggioPosizione_DTO>(d).ConvertToDomain(),
+                    MessaggioPosizione = BsonSerializer.Deserialize<MessaggioPosizione>(d),
                     DistanzaMt = (float)d["distanza"].AsDouble
                 });
 
