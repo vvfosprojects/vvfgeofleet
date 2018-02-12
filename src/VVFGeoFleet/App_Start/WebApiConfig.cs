@@ -17,8 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using Newtonsoft.Json.Serialization;
 using System.Web.Http;
+using Newtonsoft.Json.Serialization;
 
 namespace VVFGeoFleet
 {

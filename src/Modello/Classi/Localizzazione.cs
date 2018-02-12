@@ -21,7 +21,19 @@ namespace Modello.Classi
 {
     public class Localizzazione
     {
-        public double Lat { get; set; }
-        public double Lon { get; set; }
+        public string type = "Point";
+        private double[] coordinates = new double[2];
+
+        public double Lat
+        {
+            get { return this.coordinates[1]; }
+            set { this.coordinates[1] = value; }
+        }
+
+        public double Lon
+        {
+            get { return this.coordinates[0]; }
+            set { coordinates[0] = value; }
+        }
     }
 }

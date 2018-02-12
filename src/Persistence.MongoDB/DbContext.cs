@@ -18,13 +18,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using log4net;
+using Modello.Classi;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Events;
-using Persistence.MongoDB.DTOs;
 
 namespace Persistence.MongoDB
 {
@@ -37,8 +37,6 @@ namespace Persistence.MongoDB
         {
             if (database == null)
             {
-                AutomapperConfiguration.Configure();
-
                 var pack = new ConventionPack();
                 pack.Add(new CamelCaseElementNameConvention());
                 ConventionRegistry.Register("camel case", pack, t => true);
@@ -68,14 +66,14 @@ namespace Persistence.MongoDB
         private void CreateIndexes()
         {
             {
-                var indexDefinition = Builders<MessaggioPosizione_DTO>.IndexKeys
+                var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
                     .Ascending(_ => _.CodiceMezzo)
                     .Descending(_ => _.IstanteAcquisizione);
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
             }
 
             {
-                var indexDefinition = Builders<MessaggioPosizione_DTO>.IndexKeys
+                var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
                     .Geo2DSphere(_ => _.Localizzazione)
                     .Ascending(_ => _.CodiceMezzo)
                     .Descending(_ => _.IstanteAcquisizione);
@@ -85,20 +83,28 @@ namespace Persistence.MongoDB
 
         private void MapClasses()
         {
-            BsonClassMap.RegisterClassMap<MessaggioPosizione_DTO>(cm =>
+            BsonClassMap.RegisterClassMap<MessaggioPosizione>(cm =>
             {
                 cm.AutoMap();
                 cm.MapIdMember(c => c.Id)
                     .SetIdGenerator(StringObjectIdGenerator.Instance);
                 cm.SetIgnoreExtraElements(true);
             });
+
+            BsonClassMap.RegisterClassMap<Localizzazione>(cm =>
+            {
+                cm.AutoMap();
+                cm.UnmapProperty(c => c.Lat);
+                cm.UnmapProperty(c => c.Lon);
+                cm.MapField("coordinates");
+            });
         }
 
-        public IMongoCollection<MessaggioPosizione_DTO> MessaggiPosizioneCollection
+        public IMongoCollection<MessaggioPosizione> MessaggiPosizioneCollection
         {
             get
             {
-                return database.GetCollection<MessaggioPosizione_DTO>("messaggiPosizione");
+                return database.GetCollection<MessaggioPosizione>("messaggiPosizione");
             }
         }
     }

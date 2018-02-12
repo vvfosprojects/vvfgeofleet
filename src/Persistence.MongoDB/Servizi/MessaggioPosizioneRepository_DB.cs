@@ -17,22 +17,19 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using AutoMapper;
+using System;
+using System.Linq;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
 using MongoDB.Driver;
-using Persistence.MongoDB.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Persistence.MongoDB.Servizi
 {
     internal class MessaggioPosizioneRepository_DB : IMessaggioPosizioneRepository
     {
-        private readonly IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection;
+        private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
-        public MessaggioPosizioneRepository_DB(IMongoCollection<MessaggioPosizione_DTO> messaggiPosizioneCollection)
+        public MessaggioPosizioneRepository_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
         {
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
@@ -43,7 +40,7 @@ namespace Persistence.MongoDB.Servizi
                 .Find(m => m.Id == id)
                 .Single();
 
-            return dto.ConvertToDomain();
+            return dto;
         }
 
         public void Store(MessaggioPosizione messaggioPosizione)
@@ -52,9 +49,7 @@ namespace Persistence.MongoDB.Servizi
                 throw new ArgumentException("Deve essere null", nameof(MessaggioPosizione.Id));
 
             messaggioPosizione.IstanteArchiviazione = DateTime.Now;
-            var dto = Mapper.Map<MessaggioPosizione_DTO>(messaggioPosizione);
-            this.messaggiPosizioneCollection.InsertOne(dto);
-            messaggioPosizione.Id = dto.Id;
+            this.messaggiPosizioneCollection.InsertOne(messaggioPosizione);
         }
     }
 }

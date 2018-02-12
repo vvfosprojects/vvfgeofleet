@@ -17,12 +17,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using Modello.Configurazione;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Web;
+using Modello.Configurazione;
 
 namespace VVFGeoFleet.Configurazione
 {

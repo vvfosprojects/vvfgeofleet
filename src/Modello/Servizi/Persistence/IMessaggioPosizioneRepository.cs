@@ -18,7 +18,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using Modello.Classi;
-using System.Collections.Generic;
 
 namespace Modello.Servizi.Persistence
 {
