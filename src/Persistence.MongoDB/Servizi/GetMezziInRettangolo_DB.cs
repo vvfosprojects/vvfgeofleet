@@ -46,7 +46,7 @@ namespace Persistence.MongoDB.Servizi
                     upperRightY: rettangolo.TopLeft.Lat);
 
             var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
-                .Gt(m => m.IstanteAcquisizione, DateTime.Now.AddHours(-24));
+                .Gt(m => m.IstanteAcquisizione, DateTime.UtcNow.AddHours(-24));
 
             FilterDefinition<MessaggioPosizione> classiMezzoFilter = null;
 
@@ -80,7 +80,7 @@ namespace Persistence.MongoDB.Servizi
 
             return new QueryInRettangoloResult()
             {
-                IstanteQuery = DateTime.Now.ToUniversalTime(),
+                IstanteQuery = DateTime.UtcNow,
                 DurataQuery_msec = sw.ElapsedMilliseconds,
                 ClassiMezzo = classiMezzo,
                 NumeroMezzi = arrayMessaggiPosizione.Length,

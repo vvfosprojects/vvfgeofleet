@@ -46,7 +46,7 @@ namespace Persistence.MongoDB.Servizi
                 { "query", new BsonDocument {
                     { "istanteAcquisizione", new BsonDocument {
                         {
-                            "$gt", DateTime.Now.AddHours(-24).ToUniversalTime()
+                            "$gt", DateTime.UtcNow.AddHours(-24)
                         }
                     } },
                     { "classiMezzo", new BsonDocument {
@@ -61,7 +61,7 @@ namespace Persistence.MongoDB.Servizi
                 { "query", new BsonDocument {
                     { "istanteAcquisizione", new BsonDocument {
                         {
-                            "$gt", DateTime.Now.AddHours(-24).ToUniversalTime()
+                            "$gt", DateTime.UtcNow.AddHours(-24)
                         }
                     } }
                 }
@@ -98,7 +98,7 @@ namespace Persistence.MongoDB.Servizi
 
             return new QueryProssimitaResult()
             {
-                IstanteQuery = DateTime.Now.ToUniversalTime(),
+                IstanteQuery = DateTime.UtcNow,
                 NumeroMezzi = arrayProssimitaMezzo.Length,
                 DistanzaMaxMt = distanzaMaxMt,
                 Punto = punto,

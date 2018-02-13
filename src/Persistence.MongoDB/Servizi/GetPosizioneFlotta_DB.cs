@@ -64,7 +64,7 @@ namespace Persistence.MongoDB.Servizi
             }
 
             var query2 = query
-                .Match(m => m.IstanteAcquisizione > DateTime.Now.AddHours(-24))
+                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddHours(-24))
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
                 .ReplaceRoot<MessaggioPosizione>("$messaggio");
 
