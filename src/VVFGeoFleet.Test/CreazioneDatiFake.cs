@@ -17,6 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Collections.Generic;
+using System.Linq;
 using Bogus;
 using Modello.Classi;
 using NUnit.Framework;
@@ -45,7 +47,21 @@ namespace VVFGeoFleet.Test
                 .StrictMode(true)
                 .Ignore(m => m.Id)
                 .RuleFor(m => m.CodiceMezzo, f => "M." + f.Random.Int(1000, 2000))
-                .RuleFor(m => m.ClassiMezzo, f => new[] { f.Random.WeightedRandom(new[] { "APS", "AV", "AS" }, new[] { .3f, .5f, .05f }) })
+                .RuleFor(m => m.ClassiMezzo, f =>
+                {
+                    //prima categoria classe: tipo mezzo
+                    var classiMezzo = new List<string> { f.Random.WeightedRandom(new[] { "APS", "AV", "AS" }, new[] { .3f, .5f, .05f }) };
+
+                    //seconda categoria classe: alimentazione
+                    classiMezzo.Add(f.Random.WeightedRandom(new[] { "benzina", "diesel", "GPL" }, new[] { .4f, .4f, .2f }));
+
+                    //terza categoria classe: colore mezzo
+                    classiMezzo.Add(f.Random.WeightedRandom(new[] { "giallo", "verde", "blu", "nero", "amaranto" }, new[] { .24f, .24f, .24f, .24f, .04f }));
+                    if (f.Random.Bool(.1f))
+                        classiMezzo.Add("metallizzato");
+
+                    return classiMezzo.Distinct().ToArray();
+                })
                 .RuleFor(m => m.Localizzazione, f => new Localizzazione() { Lat = f.Address.Latitude(), Lon = f.Address.Longitude() })
                 .RuleFor(m => m.IstanteAcquisizione, f => f.Date.Past())
                 .RuleFor(m => m.Fonte, f => fakerFonte.Generate())
@@ -53,7 +69,7 @@ namespace VVFGeoFleet.Test
                 .RuleFor(m => m.InfoSO115, f => fakerInfoSo115.Generate())
                 .RuleFor(m => m.IstanteArchiviazione, f => f.Date.Past());
 
-            var messaggiPosizione = faker.Generate(10000);
+            var messaggiPosizione = faker.Generate(100000);
             dbContext.MessaggiPosizioneCollection.InsertMany(messaggiPosizione);
         }
     }
