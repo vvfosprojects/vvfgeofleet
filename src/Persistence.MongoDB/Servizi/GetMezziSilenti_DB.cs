@@ -74,7 +74,7 @@ namespace Persistence.MongoDB.Servizi
                     {
                         "messaggio.istanteAcquisizione", new BsonDocument {
                         {
-                                "$lt", DateTime.Now.AddSeconds(-daSecondi)
+                                "$lt", DateTime.UtcNow.AddSeconds(-daSecondi)
                         }
                         }
                     }

@@ -48,7 +48,7 @@ namespace Persistence.MongoDB.Servizi
             if (!string.IsNullOrWhiteSpace(messaggioPosizione.Id))
                 throw new ArgumentException("Deve essere null", nameof(MessaggioPosizione.Id));
 
-            messaggioPosizione.IstanteArchiviazione = DateTime.Now;
+            messaggioPosizione.IstanteArchiviazione = DateTime.UtcNow;
             this.messaggiPosizioneCollection.InsertOne(messaggioPosizione);
         }
     }
