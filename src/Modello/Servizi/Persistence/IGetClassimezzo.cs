@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IAppConfig.cs" company="CNVVF">
+// <copyright file="IGetClassimezzo.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,11 +17,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace Modello.Configurazione
+using System.Collections.Generic;
+
+namespace Modello.Servizi.Persistence
 {
-    public interface IAppConfig
+    public interface IGetClassiMezzo
     {
-        string ConnectionString { get; }
-        int OrizzonteTemporale_sec { get; }
+        IDictionary<string, long> Get(int activeWithinSeconds);
     }
 }
