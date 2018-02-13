@@ -42,10 +42,9 @@ namespace Persistence.MongoDB.Servizi
                 .SortBy(m => m.CodiceMezzo)
                 .ThenByDescending(m => m.IstanteAcquisizione)
                 .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-activeWithinSeconds))
-                .Group(new BsonDocument { { "_id", "$codiceMezzo" }, { "messaggio", new BsonDocument { { "$first", "$$ROOT" } } } })
-                .Project(new BsonDocument { { "classiMezzo", "$messaggio.classiMezzo" } })
-                .Unwind("classiMezzo")
-                .SortByCount<string>("$classiMezzo")
+                .Group(new BsonDocument { { "_id", "$codiceMezzo" }, { "lastMsg", new BsonDocument { { "$first", "$$ROOT" } } } })
+                .Unwind("lastMsg.classiMezzo")
+                .SortByCount<string>("$lastMsg.classiMezzo")
                 .ToList();
 
             return classiMezzo.ToDictionary(k => k.Id, v => v.Count);
