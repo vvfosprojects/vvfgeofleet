@@ -65,6 +65,7 @@
     <Compile Include="Bindings.cs" />
     <Compile Include="DbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servizi\GetClassiMezzo_DB.cs" />
     <Compile Include="Servizi\GetMezziInProssimita_DB.cs" />
     <Compile Include="Servizi\GetMezziInRettangolo_DB.cs" />
     <Compile Include="Servizi\GetPosizioneByCodiceMezzo_DB.cs" />

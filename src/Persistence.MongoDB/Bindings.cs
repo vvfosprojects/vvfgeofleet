@@ -53,6 +53,9 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Persistence.GeoQuery.InRettangolo.IGetMezziInRettangolo,
                 Servizi.GetMezziInRettangolo_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Persistence.IGetClassiMezzo,
+                Servizi.GetClassiMezzo_DB>(Lifestyle.Scoped);
         }
     }
 }

@@ -56,6 +56,23 @@ Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alc
 ## GET /api/MezziSilenti?daSecondi={daSecondi}&classiMezzo={classe1}&classiMezzo={classe2}
 Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. La ricerca è limitata alle classi specificate.
 
+## GET /api/classiMezzo?attiviEntroSecondi={secondi}
+Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione giunti negli ultimi {secondi} specificati (default: 86400), con la relativa occorrenza, in ordine decrescente di occorrenza. I risultati sono restituiti nella seguente forma:
+
+<pre>
+[
+  {
+    "class": "AV",
+    "count": 517
+  },
+  {
+    "class": "APS",
+    "count": 322
+  }
+  ...
+]
+</pre>
+
 # Descrizione dell'architettura
 L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017 Community Edition. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
 
