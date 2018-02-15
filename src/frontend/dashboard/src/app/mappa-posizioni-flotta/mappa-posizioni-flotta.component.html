@@ -1,0 +1,21 @@
+<!--[iconUrl]="'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'" -->
+<h3>
+    Situazione Flotta  
+</h3>
+
+<div class="card">
+  <agm-map [latitude]="start_lat" [longitude]="start_lon">
+    <agm-marker
+      *ngFor="let m of elencoPosizioni; let i = index"
+      (markerClick)="clickedMarker(m.codiceMezzo, i)"
+      [latitude]="m.localizzazione.lat"
+      [longitude]="m.localizzazione.lon"
+      [openInfoWindow]="true"
+      [iconUrl]="markerIconUrl(m.infoSO115.stato)"
+      >
+      <agm-info-window [disableAutoPan]="true">
+           {{clicked_label}}
+      </agm-info-window>
+    </agm-marker>
+</agm-map>
+</div>

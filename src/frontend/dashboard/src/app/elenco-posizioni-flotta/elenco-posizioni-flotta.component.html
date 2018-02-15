@@ -1,0 +1,27 @@
+<h3>
+   
+</h3>
+<div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
+      <div class="card card-inverse row_text p-1">
+          <table class="table table-striped header-fixed h8">
+            <thead>
+              <th scope="col">Sede</th>
+              <th scope="col">Mezzo</th>
+              <th scope="col">Stato</th>
+              <th scope="col" class="fa fa-clock">.</th>
+            </thead> 
+            <tbody>
+                <tr app-posizione-mezzo *ngFor="let r of elencoPosizioniMezzoFiltrate" [posizioneMezzo]="r" [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"></tr>
+            </tbody>
+          </table>
+      </div>
+      <app-filtri [titolo]="statiMezzo" [vociFiltro]="vociFiltroStatiMezzo" (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+    </div>
+    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9">          
+        <app-mappa-posizioni-flotta [elencoPosizioni]="elencoPosizioniMezzoFiltrate"></app-mappa-posizioni-flotta>
+        <!--<app-mappa-posizioni-flotta [elencoPosizioni]="elencoPosizioniMezzo"></app-mappa-posizioni-flotta>-->
+    </div>
+</div>
+
+

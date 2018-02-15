@@ -1,0 +1,12 @@
+{
+    "/api": 
+    {
+        "target":"http://vvfgeofleetdev:23032/",
+        "secure":false,
+        "logLevel":"debug",
+        "pathRewrite": {
+            "^/api": ""
+          }
+    }        
+        
+ }  

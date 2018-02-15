@@ -1,0 +1,45 @@
+<td>
+    <span>{{posizioneMezzo.fonte.codiceFonte | slice:0:2}}</span>
+</td>
+<td>
+    <span>{{posizioneMezzo.codiceMezzo}}</span>
+</td>
+<td>
+    <!--<div class="{{alertStatoMezzoCorrente}}" role="alert">{{testoStatoMezzoCorrente}}</div>-->
+    <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
+</td>
+<td>
+    <span class="fa fa-fw">{{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "N"}}</span>
+</td>
+<!--
+<td>
+  <span>{{posizioneMezzo.istanteInvio}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.codiceMezzo}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.classiMezzo}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.localizzazione.lat}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.localizzazione.lon}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.fonte.codiceFonte}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.fonte.classeFonte}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.infoSO115.stato}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.infoSO115.codiceIntervento}}</span>
+</td>
+<td>
+  <span>{{posizioneMezzo.infoSO115.dataIntervento}}</span>
+</td>
+-->
