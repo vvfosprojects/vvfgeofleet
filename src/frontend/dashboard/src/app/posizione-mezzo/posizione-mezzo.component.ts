@@ -34,6 +34,15 @@ export class PosizioneMezzoComponent implements OnInit {
     this.mapAlert = new Map(this.defStatiMezzo);        
 
     this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
+    /*    
+    if (this.posizioneMezzo.infoSO115 != null) {
+      this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
+    } else 
+    {
+      this.defStatoMezzoCorrente = this.mapAlert.get('0');
+    }
+    */
+    
     this.badgeStatoMezzoCorrente = this.defStatoMezzoCorrente[1];
     this.testoStatoMezzoCorrente = this.defStatoMezzoCorrente[0];
     //console.log(this.badgeStatoMezzoCorrente);

@@ -3,8 +3,14 @@
       <h6>{{ titolo }}</h6>
       <div *ngFor="let v of vociFiltro">
         <label>
-          <input type="checkbox" (click)="selezione($event, v.codice)" checked /> {{ v.descrizione }}
-          <span class="badge badge-pill badge-info">{{ v.cardinalita }}</span>
+          <div *ngIf= "v.selezionato === true"> 
+            <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
+            <span class="badge badge-pill badge-info">{{ v.cardinalita }}</span>
+          </div>
+          <div *ngIf= "v.selezionato === false"> 
+            <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
+            <span class="badge badge-pill badge-info">{{ v.cardinalita }}</span>
+          </div>
         </label>
       </div>
     </div>

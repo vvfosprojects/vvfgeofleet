@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { ErrorHandler, Component, OnInit, Input } from '@angular/core';
 import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
 import { MouseEvent } from '@agm/core';
 import * as moment from 'moment';
@@ -44,8 +44,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   }
 
-  markerIconUrl(stato: number) {
-    this.iconaStatoMezzoCorrente = this.mapIcone.get(stato);
+  markerIconUrl(m: PosizioneMezzo) {
+    /*
+    if (m.infoSO115 != null) {
+      this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);
+      }
+    else
+      {this.iconaStatoMezzoCorrente = '0';}
+    */
+    this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);
     return this.iconaStatoMezzoCorrente;
   }
 
