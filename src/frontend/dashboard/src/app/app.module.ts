@@ -36,7 +36,7 @@ import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
     FormsModule,
     UiSwitchModule
   ],
-  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake}],
+  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaService}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
