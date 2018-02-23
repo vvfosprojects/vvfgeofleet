@@ -17,6 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using Modello.Classi;
 using MongoDB.Bson;
@@ -44,6 +46,12 @@ namespace Persistence.MongoDB
                 this.MapClasses();
 
                 var url = MongoUrl.Create(connectionString);
+                IEnumerable<MongoCredential> credentials;
+                if (!string.IsNullOrWhiteSpace(url.Username))
+                    credentials = new[] { MongoCredential.CreateCredential(url.DatabaseName, url.Username, url.Password) };
+                else
+                    credentials = Enumerable.Empty<MongoCredential>();
+
                 var settings = new MongoClientSettings
                 {
                     ClusterConfigurator = cb =>
@@ -53,7 +61,8 @@ namespace Persistence.MongoDB
                             log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
                         });
                     },
-                    Server = url.Server
+                    Server = url.Server,
+                    Credentials = credentials
                 };
 
                 var client = new MongoClient(settings);
