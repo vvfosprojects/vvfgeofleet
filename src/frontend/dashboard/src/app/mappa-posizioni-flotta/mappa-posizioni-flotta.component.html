@@ -1,21 +1,27 @@
 <!--[iconUrl]="'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'" -->
-<h3>
-    Situazione Flotta  
+<span><h3>
+    Situazione Flotta 
+<h6><span class="badge badge-secondary">
+  {{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}} 
+</span>
+</h6>
 </h3>
-
+</span>
 <div class="card">
   <agm-map [latitude]="start_lat" [longitude]="start_lon">
-    <agm-marker
-      *ngFor="let m of elencoPosizioni; let i = index"
-      (markerClick)="clickedMarker(m.codiceMezzo, i)"
-      [latitude]="m.localizzazione.lat"
-      [longitude]="m.localizzazione.lon"
-      [openInfoWindow]="true"
-      [iconUrl]="markerIconUrl(m)"
-      >
-      <agm-info-window [disableAutoPan]="true">
-           {{clicked_label}}
-      </agm-info-window>
-    </agm-marker>
-</agm-map>
+      <agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">
+        <agm-marker
+          *ngFor="let m of elencoPosizioni; let i = index; let aa = $implicit; "
+          (markerClick)="clickedMarker($event)"
+          [latitude]="m.localizzazione.lat"
+          [longitude]="m.localizzazione.lon"
+          [openInfoWindow]="true"
+          [iconUrl]="markerIconUrl(m)"
+          >
+          <agm-info-window [disableAutoPan]="true">
+              {{clicked_label}}
+          </agm-info-window>
+        </agm-marker>
+      </agm-get-map-objects>
+  </agm-map>
 </div>

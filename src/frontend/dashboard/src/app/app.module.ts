@@ -15,7 +15,12 @@ import { FiltriComponent } from './filtri/filtri.component';
 import { UiSwitchModule } from 'angular2-ui-switch/src';
 import { FormsModule } from '@angular/forms';
 
+
+
 import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
+import { LOCALE_ID } from '@angular/core';
+
+import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
 
 @NgModule({
   declarations: [
@@ -24,7 +29,8 @@ import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
     PosizioneMezzoComponent,
     MappaPosizioniFlottaComponent,
     FiltriComponent,
-    DistanzaTemporalePipe
+    DistanzaTemporalePipe,
+    AgmGetMapObjectsDirective
   ],
   imports: [
     AgmCoreModule.forRoot({
@@ -36,7 +42,8 @@ import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
     FormsModule,
     UiSwitchModule
   ],
-  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaService}],
+  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaService},
+    { provide: LOCALE_ID, useValue: "it" }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

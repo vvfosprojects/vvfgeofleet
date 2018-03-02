@@ -11,6 +11,7 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
   @Input() elencoPosizioni : PosizioneMezzo[];
+
   private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
  
   private istanteUltimoAggiornamento: Date;
@@ -49,7 +50,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   ngOnInit() {
     this.istanteUltimoAggiornamento = moment().toDate();      
-
     this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
 
     this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
