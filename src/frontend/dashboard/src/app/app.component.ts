@@ -17,9 +17,11 @@ export class AppComponent {
   title = 'VVFGeoFleet Dashboard';
 
   private elencoPosizioniMezzo : PosizioneMezzo[] = [];
-
+  private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
+  
   private timer;
   private timerSubcribe: PushSubscription;
+
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
         }
         
@@ -39,41 +41,16 @@ export class AppComponent {
       
         }   
         */
-        /*
+ 
         ngOnInit() { 
-       
-          var observable = Observable.create((observer) => {
-            var id = setInterval(() => {
-              observer.next(console.log('observer.next su setInterval()'));
-            }, 2000);
-    
-            setTimeout(() => {
-              //clearInterval(id);
-              //observer.complete();
-              observer.next(console.log('observer.next su setTimeout()'));     
-            }, 5000);        
-          }); 
-
-             
-          observable = this.posizioneFlottaService.getPosizioneFlotta()
-          .subscribe( posizioni => {
-            console.log("posizioneFlottaService: ", posizioni);
-            this.elencoPosizioniMezzo = posizioni.sort( 
-              function(a,b) 
-              { var bb : Date = new Date(b.istanteAcquisizione);
-                var aa : Date  = new Date(a.istanteAcquisizione);
-                return aa>bb ? -1 : aa<bb ? 1 : 0;
-              }
-            );
-          });
-        }   
-      */        
-       ngOnInit() { 
-          this.timer = Observable.timer(2000,5000).timeout(10000);
+          this.timer = Observable.timer(2000,10000).timeout(15000);
           this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(t));
         }   
 
         aggiorna(tt) {
+          this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
+          //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
+          
           this.posizioneFlottaService.getPosizioneFlotta()
           .subscribe( posizioni => {
             //console.log("posizioneFlottaService: ", posizioni);
