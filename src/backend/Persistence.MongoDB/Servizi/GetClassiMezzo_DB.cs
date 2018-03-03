@@ -36,12 +36,12 @@ namespace Persistence.MongoDB.Servizi
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
 
-        public IDictionary<string, long> Get(int activeWithinSeconds)
+        public IDictionary<string, long> Get(int attSec)
         {
             var classiMezzo = this.messaggiPosizioneCollection.Aggregate()
                 .SortBy(m => m.CodiceMezzo)
                 .ThenByDescending(m => m.IstanteAcquisizione)
-                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-activeWithinSeconds))
+                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-attSec))
                 .Group(new BsonDocument { { "_id", "$codiceMezzo" }, { "lastMsg", new BsonDocument { { "$first", "$$ROOT" } } } })
                 .Unwind("lastMsg.classiMezzo")
                 .SortByCount<string>("$lastMsg.classiMezzo")

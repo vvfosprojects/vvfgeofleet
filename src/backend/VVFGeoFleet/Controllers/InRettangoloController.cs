@@ -31,12 +31,26 @@ namespace VVFGeoFleet.Controllers
             this.getMezziInRettangolo = getMezziInRettangolo;
         }
 
+        /// <summary>
+        ///   Restituisce i mezzi attivi entro un rettangolo dato.
+        /// </summary>
+        /// <param name="lat1">Latitudine del vertice superiore sinistro</param>
+        /// <param name="lon1">Longitudine del vertice superiore sinistro</param>
+        /// <param name="lat2">Latitudine del vertice inferiore sinistro</param>
+        /// <param name="lon2">Longitudine del vertice inferiore sinistro</param>
+        /// <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns>I mezzi attivi nel rettangolo dato</returns>
         public QueryInRettangoloResult Get(
         double lat1,
         double lon1,
         double lat2,
         double lon2,
-        [FromUri] string[] classiMezzo)
+        [FromUri] string[] classiMezzo,
+        int attSec = 86400)
         {
             var rettangolo = new Rettangolo();
             rettangolo.TopLeft.Lat = lat1;
@@ -44,7 +58,7 @@ namespace VVFGeoFleet.Controllers
             rettangolo.BottomRight.Lat = lat2;
             rettangolo.BottomRight.Lon = lon2;
 
-            return this.getMezziInRettangolo.Get(rettangolo, classiMezzo);
+            return this.getMezziInRettangolo.Get(rettangolo, classiMezzo, attSec);
         }
     }
 }

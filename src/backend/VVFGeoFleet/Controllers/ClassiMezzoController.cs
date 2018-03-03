@@ -32,15 +32,17 @@ namespace VVFGeoFleet.Controllers
             this.getClassiMezzo = getClassiMezzo;
         }
 
-        public IEnumerable<object> Get()
+        /// <summary>
+        ///   Restituisce l'elenco delle classi mezzo attive, con la relativa occorrenza
+        /// </summary>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns></returns>
+        public IEnumerable<object> Get(int attSec = 86400)
         {
-            const int defaultMessageExpiration = 86400; //seconds in a day
-            return this.Get(defaultMessageExpiration);
-        }
-
-        public IEnumerable<object> Get(int attiviEntroSecondi)
-        {
-            var resultDict = this.getClassiMezzo.Get(attiviEntroSecondi);
+            var resultDict = this.getClassiMezzo.Get(attSec);
             foreach (var key in resultDict.Keys)
                 yield return new { classeMezzo = key, count = resultDict[key] };
         }

@@ -37,7 +37,7 @@ namespace Persistence.MongoDB.Servizi
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
 
-        public QueryProssimitaResult Get(Localizzazione punto, float distanzaMaxMt, string[] classiMezzo)
+        public QueryProssimitaResult Get(Localizzazione punto, float distanzaMaxMt, string[] classiMezzo, int attSec)
         {
             BsonDocument query;
 
@@ -46,7 +46,7 @@ namespace Persistence.MongoDB.Servizi
                 { "query", new BsonDocument {
                     { "istanteAcquisizione", new BsonDocument {
                         {
-                            "$gt", DateTime.UtcNow.AddHours(-24)
+                            "$gt", DateTime.UtcNow.AddSeconds(-attSec)
                         }
                     } },
                     { "classiMezzo", new BsonDocument {
