@@ -36,19 +36,19 @@ Restituisce la posizione per il mezzo avente `codiceMezzo` specificato.
 
 ## GET /api/posizioneFlotta?attSec={secondi}
 Restituisce la posizione dell'intera flotta.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default: 86400).
+Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
 
 ## GET /api/posizioneFlotta/perClassi?classiMezzo={classe1}&classiMezzo={classe2}&classiMezzo={classe3}&attSec={secondi}
 Restituisce la posizione dell'intera flotta, limitatamente ai mezzi delle classi specificate come parametro d'ingresso.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default: 86400).
+Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
 
 ## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={classe1}&classiMezzo={classe2}&attSec={secondi}
 Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default: 86400).
+Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
 
 ## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={classe1}&classiMezzo={classe2}&attSec={secondi}
 Restituisce i mezzi all'interno del box specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default: 86400).
+Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
 
 ## GET /api/MezziSilenti?daSecondi={daSecondi}
 Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. Per es. se il parametro `daSecondi` vale 86400, viene restituita la posizione dei mezzi che non hanno aggiornamenti di posizione da almeno un giorno.
@@ -57,7 +57,7 @@ Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alc
 Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. La ricerca è limitata alle classi specificate.
 
 ## GET /api/classiMezzo?attSec={secondi}
-Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione giunti negli ultimi `attSec` specificati (opzionale - default: 86400), con la relativa occorrenza, in ordine decrescente di occorrenza. I risultati sono restituiti nella seguente forma:
+Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione giunti negli ultimi `attSec` specificati (opzionale - default nel web.config), con la relativa occorrenza, in ordine decrescente di occorrenza. I risultati sono restituiti nella seguente forma:
 
 <pre>
 [
