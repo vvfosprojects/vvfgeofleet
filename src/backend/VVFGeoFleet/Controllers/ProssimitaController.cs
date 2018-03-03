@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------
 using System.Web.Http;
 using Modello.Classi;
+using Modello.Configurazione;
 using Modello.Servizi.Persistence.GeoQuery.Prossimita;
 
 namespace VVFGeoFleet.Controllers
@@ -26,20 +27,46 @@ namespace VVFGeoFleet.Controllers
     public class ProssimitaController : ApiController
     {
         private readonly IGetMezziInProssimita getmezziInProssimita;
+        private readonly IAppConfig appConfig;
 
-        public ProssimitaController(IGetMezziInProssimita getmezziInProssimita)
+        public ProssimitaController(IGetMezziInProssimita getmezziInProssimita, IAppConfig appConfig)
         {
             this.getmezziInProssimita = getmezziInProssimita;
+            this.appConfig = appConfig;
         }
 
-        /// <summary> Restituisce i mezzi attivi presenti in prossimità di un punto dato ed una
-        /// massima distanza.</summary> <param name="lat">La latitudine del punto/param> <param
-        /// name="lon">La longitudine del punto</param> <param name="distanzaMaxMt">Filtro sulla
-        /// massima distanza</param> <param name="classiMezzo">Filtro sulle classi mezzo</param>
-        /// <param name="attSec"> I secondi entro cui deve essere stato inviato l'ultimo messaggio di
-        /// posizione perché il mezzo sia considerato attivo </param> <returns>L'elenco dei mezzi in
-        /// prossimità, ordinato per distanza crescente dal punto.</returns>
-        public QueryProssimitaResult Get(float lat, float lon, float distanzaMaxMt, [FromUri] string[] classiMezzo, int attSec = 86400)
+        /// <summary>
+        ///   Restituisce i mezzi attivi presenti in prossimità di un punto dato ed una massima distanza.
+        /// </summary>
+        /// <param name="lat">La latitudine del punto</param>
+        /// <param name="lon">La longitudine del punto</param>
+        /// <param name="distanzaMaxMt">Filtro sulla massima distanza</param>
+        /// <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <returns>
+        ///   L'elenco dei mezzi in prossimità, ordinato per distanza crescente dal punto.
+        /// </returns>
+        public QueryProssimitaResult Get(float lat, float lon, float distanzaMaxMt, [FromUri] string[] classiMezzo)
+        {
+            var attSec = this.appConfig.OrizzonteTemporale_sec;
+
+            return this.Get(lat, lon, distanzaMaxMt, classiMezzo, attSec);
+        }
+
+        /// <summary>
+        ///   Restituisce i mezzi attivi presenti in prossimità di un punto dato ed una massima distanza.
+        /// </summary>
+        /// <param name="lat">La latitudine del punto</param>
+        /// <param name="lon">La longitudine del punto</param>
+        /// <param name="distanzaMaxMt">Filtro sulla massima distanza</param>
+        /// <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns>
+        ///   L'elenco dei mezzi in prossimità, ordinato per distanza crescente dal punto.
+        /// </returns>
+        public QueryProssimitaResult Get(float lat, float lon, float distanzaMaxMt, [FromUri] string[] classiMezzo, int attSec)
         {
             return this.getmezziInProssimita.Get(new Localizzazione { Lat = lat, Lon = lon }, distanzaMaxMt, classiMezzo, attSec);
         }

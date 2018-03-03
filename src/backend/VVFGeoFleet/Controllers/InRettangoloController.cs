@@ -18,6 +18,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Web.Http;
+using Modello.Configurazione;
 using Modello.Servizi.Persistence.GeoQuery.InRettangolo;
 
 namespace VVFGeoFleet.Controllers
@@ -25,10 +26,33 @@ namespace VVFGeoFleet.Controllers
     public class InRettangoloController : ApiController
     {
         public readonly IGetMezziInRettangolo getMezziInRettangolo;
+        private readonly IAppConfig appConfig;
 
-        public InRettangoloController(IGetMezziInRettangolo getMezziInRettangolo)
+        public InRettangoloController(IGetMezziInRettangolo getMezziInRettangolo, IAppConfig appConfig)
         {
             this.getMezziInRettangolo = getMezziInRettangolo;
+            this.appConfig = appConfig;
+        }
+
+        /// <summary>
+        ///   Restituisce i mezzi attivi entro un rettangolo dato.
+        /// </summary>
+        /// <param name="lat1">Latitudine del vertice superiore sinistro</param>
+        /// <param name="lon1">Longitudine del vertice superiore sinistro</param>
+        /// <param name="lat2">Latitudine del vertice inferiore sinistro</param>
+        /// <param name="lon2">Longitudine del vertice inferiore sinistro</param>
+        /// <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <returns>I mezzi attivi nel rettangolo dato</returns>
+        public QueryInRettangoloResult Get(
+        double lat1,
+        double lon1,
+        double lat2,
+        double lon2,
+        [FromUri] string[] classiMezzo)
+        {
+            var attSec = this.appConfig.OrizzonteTemporale_sec;
+
+            return this.Get(lat1, lon1, lat2, lon2, classiMezzo, attSec);
         }
 
         /// <summary>
@@ -50,7 +74,7 @@ namespace VVFGeoFleet.Controllers
         double lat2,
         double lon2,
         [FromUri] string[] classiMezzo,
-        int attSec = 86400)
+        int attSec)
         {
             var rettangolo = new Rettangolo();
             rettangolo.TopLeft.Lat = lat1;

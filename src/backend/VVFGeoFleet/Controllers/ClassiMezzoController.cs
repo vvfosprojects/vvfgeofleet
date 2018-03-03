@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Web.Http;
+using Modello.Configurazione;
 using Modello.Servizi.Persistence;
 
 namespace VVFGeoFleet.Controllers
@@ -26,10 +27,23 @@ namespace VVFGeoFleet.Controllers
     public class ClassiMezzoController : ApiController
     {
         private readonly IGetClassiMezzo getClassiMezzo;
+        private readonly IAppConfig appConfig;
 
-        public ClassiMezzoController(IGetClassiMezzo getClassiMezzo)
+        public ClassiMezzoController(IGetClassiMezzo getClassiMezzo, IAppConfig appConfig)
         {
             this.getClassiMezzo = getClassiMezzo;
+            this.appConfig = appConfig;
+        }
+
+        /// <summary>
+        ///   Restituisce l'elenco delle classi mezzo attive, con la relativa occorrenza
+        /// </summary>
+        /// <returns>Elenco delle classi mezzo attive</returns>
+        public IEnumerable<object> Get()
+        {
+            var attSec = this.appConfig.OrizzonteTemporale_sec;
+
+            return this.Get(attSec);
         }
 
         /// <summary>
@@ -39,8 +53,8 @@ namespace VVFGeoFleet.Controllers
         ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
         ///   mezzo sia considerato attivo
         /// </param>
-        /// <returns></returns>
-        public IEnumerable<object> Get(int attSec = 86400)
+        /// <returns>Elenco delle classi mezzo attive</returns>
+        public IEnumerable<object> Get(int attSec)
         {
             var resultDict = this.getClassiMezzo.Get(attSec);
             foreach (var key in resultDict.Keys)
