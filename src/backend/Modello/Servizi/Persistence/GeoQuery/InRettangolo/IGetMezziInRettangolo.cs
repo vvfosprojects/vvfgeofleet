@@ -21,6 +21,6 @@ namespace Modello.Servizi.Persistence.GeoQuery.InRettangolo
 {
     public interface IGetMezziInRettangolo
     {
-        QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo);
+        QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo, int attSec);
     }
 }

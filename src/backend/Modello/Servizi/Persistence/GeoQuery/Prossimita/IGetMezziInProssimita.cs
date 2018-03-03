@@ -23,6 +23,6 @@ namespace Modello.Servizi.Persistence.GeoQuery.Prossimita
 {
     public interface IGetMezziInProssimita
     {
-        QueryProssimitaResult Get(Localizzazione punto, float distanzaMaxMt, string[] classiMezzo);
+        QueryProssimitaResult Get(Localizzazione punto, float distanzaMaxMt, string[] classiMezzo, int attSec);
     }
 }

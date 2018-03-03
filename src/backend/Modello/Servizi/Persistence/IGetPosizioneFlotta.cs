@@ -24,8 +24,8 @@ namespace Modello.Servizi.Persistence
 {
     public interface IGetPosizioneFlotta
     {
-        IEnumerable<MessaggioPosizione> Get();
+        IEnumerable<MessaggioPosizione> Get(int attSec);
 
-        IEnumerable<MessaggioPosizione> Get(string[] classiMezzo);
+        IEnumerable<MessaggioPosizione> Get(string[] classiMezzo, int attSec);
     }
 }

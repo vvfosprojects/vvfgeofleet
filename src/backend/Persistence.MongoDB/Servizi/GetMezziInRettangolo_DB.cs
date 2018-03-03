@@ -36,7 +36,7 @@ namespace Persistence.MongoDB.Servizi
             this.messaggiPosizioneCollection = messaggiPosizioneCollection;
         }
 
-        public QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo)
+        public QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo, int attSec)
         {
             var geoWithinFilter = Builders<MessaggioPosizione>.Filter
                 .GeoWithinBox(m => m.Localizzazione,
@@ -46,7 +46,7 @@ namespace Persistence.MongoDB.Servizi
                     upperRightY: rettangolo.TopLeft.Lat);
 
             var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
-                .Gt(m => m.IstanteAcquisizione, DateTime.UtcNow.AddHours(-24));
+                .Gt(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-attSec));
 
             FilterDefinition<MessaggioPosizione> classiMezzoFilter = null;
 

@@ -32,9 +32,16 @@ namespace VVFGeoFleet.Controllers
             this.getmezziInProssimita = getmezziInProssimita;
         }
 
-        public QueryProssimitaResult Get(float lat, float lon, float distanzaMaxMt, [FromUri] string[] classiMezzo)
+        /// <summary> Restituisce i mezzi attivi presenti in prossimità di un punto dato ed una
+        /// massima distanza.</summary> <param name="lat">La latitudine del punto/param> <param
+        /// name="lon">La longitudine del punto</param> <param name="distanzaMaxMt">Filtro sulla
+        /// massima distanza</param> <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <param name="attSec"> I secondi entro cui deve essere stato inviato l'ultimo messaggio di
+        /// posizione perché il mezzo sia considerato attivo </param> <returns>L'elenco dei mezzi in
+        /// prossimità, ordinato per distanza crescente dal punto.</returns>
+        public QueryProssimitaResult Get(float lat, float lon, float distanzaMaxMt, [FromUri] string[] classiMezzo, int attSec = 86400)
         {
-            return this.getmezziInProssimita.Get(new Localizzazione { Lat = lat, Lon = lon }, distanzaMaxMt, classiMezzo);
+            return this.getmezziInProssimita.Get(new Localizzazione { Lat = lat, Lon = lon }, distanzaMaxMt, classiMezzo, attSec);
         }
     }
 }

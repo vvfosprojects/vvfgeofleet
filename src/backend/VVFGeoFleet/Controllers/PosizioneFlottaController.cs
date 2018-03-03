@@ -33,16 +33,33 @@ namespace VVFGeoFleet.Controllers
             this.getPosizioneFlotta = getPosizioneFlotta;
         }
 
+        /// <summary>
+        ///   Restituisce la posizione dell'intera flotta attiva
+        /// </summary>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns>La posizione della flotta</returns>
         [Route("api/PosizioneFlotta/")]
-        public IEnumerable<MessaggioPosizione> Get()
+        public IEnumerable<MessaggioPosizione> Get(int attSec = 86400)
         {
-            return this.getPosizioneFlotta.Get();
+            return this.getPosizioneFlotta.Get(attSec);
         }
 
+        /// <summary>
+        ///   Restituisce la posizione dell'intera flotta attiva
+        /// </summary>
+        /// <param name="classiMezzo">Filtro sulle classi mezzo</param>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns>La posizione della flotta</returns>
         [Route("api/PosizioneFlotta/PerClassi")]
-        public IEnumerable<MessaggioPosizione> Get([FromUri] string[] classiMezzo)
+        public IEnumerable<MessaggioPosizione> Get([FromUri] string[] classiMezzo, int attSec = 86400)
         {
-            return this.getPosizioneFlotta.Get(classiMezzo);
+            return this.getPosizioneFlotta.Get(classiMezzo, attSec);
         }
     }
 }

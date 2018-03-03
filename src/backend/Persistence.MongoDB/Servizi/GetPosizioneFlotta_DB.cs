@@ -36,18 +36,21 @@ namespace Persistence.MongoDB.Servizi
             this.messaggiPosizione = messaggiPosizione;
         }
 
-        public IEnumerable<MessaggioPosizione> Get()
+        public IEnumerable<MessaggioPosizione> Get(int attSec)
         {
-            return this.Get(null);
+            return this.Get(null, attSec);
         }
 
         /// <summary>
-        ///   Restituisce la posizione dei mezzi per i quali c'è un messaggio di posizione giunto
-        ///   nelle ultime 24 ore.
+        ///   Restituisce la posizione dei mezzi attivi
         /// </summary>
-        /// <param name="classiMezzo"></param>
-        /// <returns></returns>
-        public IEnumerable<MessaggioPosizione> Get(string[] classiMezzo)
+        /// <param name="classiMezzo">Filtro sulle classi dei mezzi</param>
+        /// <param name="attSec">
+        ///   I secondi entro cui deve essere stato inviato l'ultimo messaggio di posizione perché il
+        ///   mezzo sia considerato attivo
+        /// </param>
+        /// <returns>La posizione della flotta</returns>
+        public IEnumerable<MessaggioPosizione> Get(string[] classiMezzo, int attSec)
         {
             IAggregateFluent<MessaggioPosizione> query = this.messaggiPosizione.Aggregate<MessaggioPosizione>()
                 .SortBy(m => m.CodiceMezzo)
@@ -64,7 +67,7 @@ namespace Persistence.MongoDB.Servizi
             }
 
             var query2 = query
-                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddHours(-24))
+                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-attSec))
                 .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
                 .ReplaceRoot<MessaggioPosizione>("$messaggio");
 
