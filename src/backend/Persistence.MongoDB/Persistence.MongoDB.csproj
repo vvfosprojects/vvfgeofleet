@@ -77,7 +77,8 @@
     <Compile Include="Servizi\GetPosizioneByCodiceMezzo_DB.cs" />
     <Compile Include="Servizi\GetMezziSilenti_DB.cs" />
     <Compile Include="Servizi\GetPosizioneFlotta_DB.cs" />
-    <Compile Include="Servizi\MessaggioPosizioneRepository_DB.cs" />
+    <Compile Include="Servizi\GetMessaggioPosizioneById_DB.cs" />
+    <Compile Include="Servizi\StoreMessaggioPosizione_DB.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\VVFGeoFleet.licenseheader">

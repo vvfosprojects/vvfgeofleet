@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="MessaggioPosizioneRepository_DB.cs" company="CNVVF">
+// <copyright file="GetMessaggioPosizioneById_DB.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -18,38 +18,30 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
 using MongoDB.Driver;
 
 namespace Persistence.MongoDB.Servizi
 {
-    internal class MessaggioPosizioneRepository_DB : IMessaggioPosizioneRepository
+    internal class GetMessaggioPosizioneById_DB : IGetMessaggioPosizioneById
     {
         private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
-        public MessaggioPosizioneRepository_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
+        public GetMessaggioPosizioneById_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
         {
-            this.messaggiPosizioneCollection = messaggiPosizioneCollection;
+            this.messaggiPosizioneCollection = messaggiPosizioneCollection ?? throw new ArgumentNullException(nameof(messaggiPosizioneCollection));
         }
 
-        public MessaggioPosizione GetById(string id)
+        public MessaggioPosizione Get(string id)
         {
-            var dto = this.messaggiPosizioneCollection
+            return this.messaggiPosizioneCollection
                 .Find(m => m.Id == id)
                 .Single();
-
-            return dto;
-        }
-
-        public void Store(MessaggioPosizione messaggioPosizione)
-        {
-            if (!string.IsNullOrWhiteSpace(messaggioPosizione.Id))
-                throw new ArgumentException("Deve essere null", nameof(MessaggioPosizione.Id));
-
-            messaggioPosizione.IstanteArchiviazione = DateTime.UtcNow;
-            this.messaggiPosizioneCollection.InsertOne(messaggioPosizione);
         }
     }
 }
