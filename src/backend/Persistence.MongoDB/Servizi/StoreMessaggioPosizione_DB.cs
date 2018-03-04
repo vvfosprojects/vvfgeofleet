@@ -43,7 +43,21 @@ namespace Persistence.MongoDB.Servizi
                 throw new ArgumentException("Deve essere null", nameof(MessaggioPosizione.Id));
 
             messaggio.IstanteArchiviazione = DateTime.UtcNow;
+            messaggio.Ultimo = true;
             this.messaggiPosizioneCollection.InsertOne(messaggio);
+
+            //Elimina il flag ultimo del vecchio ultimo messaggio per quel mezzo
+            var filter = Builders<MessaggioPosizione>.Filter
+                .And(
+                    Builders<MessaggioPosizione>.Filter.Ne(m => m.Id, messaggio.Id),
+                    Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Builders<MessaggioPosizione>.Filter.Eq(m => m.CodiceMezzo, messaggio.CodiceMezzo)
+                );
+
+            var update = Builders<MessaggioPosizione>.Update
+                .Set(m => m.Ultimo, false);
+
+            this.messaggiPosizioneCollection.UpdateMany(filter, update);
         }
     }
 }

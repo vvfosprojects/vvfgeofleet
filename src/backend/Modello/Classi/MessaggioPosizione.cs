@@ -34,5 +34,6 @@ namespace Modello.Classi
         public InfoSO115 InfoSO115 { get; set; }
 
         public DateTime IstanteArchiviazione { get; set; }
+        public bool Ultimo { get; set; }
     }
 }
