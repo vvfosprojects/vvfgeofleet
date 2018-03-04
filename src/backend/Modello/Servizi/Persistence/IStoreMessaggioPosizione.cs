@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IMessaggioPosizioneRepository.cs" company="CNVVF">
+// <copyright file="IStoreMessaggioPosizione.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,23 +17,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Modello.Classi;
 
 namespace Modello.Servizi.Persistence
 {
-    public interface IMessaggioPosizioneRepository
+    public interface IStoreMessaggioPosizione
     {
-        /// <summary>
-        ///   Salva il messaggio di posizione. Inizializza l'attributo id. Imposta la data di salvataggio.
-        /// </summary>
-        /// <param name="messaggioPosizione">Il messaggio di posizione da salvare</param>
-        void Store(MessaggioPosizione messaggioPosizione);
-
-        /// <summary>
-        ///   Preleva dall'archivio il messaggio di posizione avente id specificato
-        /// </summary>
-        /// <param name="id">L'id del messaggio di posizione da recuperare</param>
-        /// <returns></returns>
-        MessaggioPosizione GetById(string id);
+        void Store(MessaggioPosizione messaggio);
     }
 }

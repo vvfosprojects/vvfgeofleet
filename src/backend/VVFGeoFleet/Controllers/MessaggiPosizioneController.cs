@@ -26,11 +26,24 @@ namespace VVFGeoFleet.Controllers
 {
     public class MessaggiPosizioneController : ApiController
     {
-        private readonly IMessaggioPosizioneRepository messaggioPosizioneRepository;
+        private readonly IGetMessaggioPosizioneById getMessaggioPosizioneById;
+        private readonly IStoreMessaggioPosizione storeMessaggioPosizione;
 
-        public MessaggiPosizioneController(IMessaggioPosizioneRepository messaggioPosizioneRepository)
+        public MessaggiPosizioneController(IGetMessaggioPosizioneById getMessaggioPosizioneById,
+            IStoreMessaggioPosizione storeMessaggioPosizione)
         {
-            this.messaggioPosizioneRepository = messaggioPosizioneRepository;
+            if (getMessaggioPosizioneById == null)
+            {
+                throw new ArgumentNullException(nameof(getMessaggioPosizioneById));
+            }
+
+            if (storeMessaggioPosizione == null)
+            {
+                throw new ArgumentNullException(nameof(storeMessaggioPosizione));
+            }
+
+            this.getMessaggioPosizioneById = getMessaggioPosizioneById;
+            this.storeMessaggioPosizione = storeMessaggioPosizione;
         }
 
         /// <summary>
@@ -40,7 +53,7 @@ namespace VVFGeoFleet.Controllers
         /// <returns>Il messaggio</returns>
         public MessaggioPosizione Get(string id)
         {
-            return this.messaggioPosizioneRepository.GetById(id);
+            return this.getMessaggioPosizioneById.Get(id);
         }
 
         /// <summary>
@@ -50,8 +63,7 @@ namespace VVFGeoFleet.Controllers
         /// <returns>L'oggetto inserito con la sua location</returns>
         public IHttpActionResult Post([FromBody]MessaggioPosizione messaggio)
         {
-            messaggio.IstanteArchiviazione = DateTime.UtcNow;
-            this.messaggioPosizioneRepository.Store(messaggio);
+            this.storeMessaggioPosizione.Store(messaggio);
 
             return CreatedAtRoute("DefaultApi", new { id = messaggio.Id }, messaggio);
         }

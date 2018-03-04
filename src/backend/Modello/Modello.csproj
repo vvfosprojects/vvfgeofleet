@@ -57,10 +57,11 @@
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\ProssimitaMezzo.cs" />
     <Compile Include="Servizi\Persistence\GeoQuery\Prossimita\QueryProssimitaResult.cs" />
     <Compile Include="Servizi\Persistence\IGetClassiMezzo.cs" />
+    <Compile Include="Servizi\Persistence\IGetMessaggioPosizioneById.cs" />
     <Compile Include="Servizi\Persistence\IGetMezziSilenti.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneByCodiceMezzo.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneFlotta.cs" />
-    <Compile Include="Servizi\Persistence\IMessaggioPosizioneRepository.cs" />
+    <Compile Include="Servizi\Persistence\IStoreMessaggioPosizione.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\VVFGeoFleet.licenseheader">
