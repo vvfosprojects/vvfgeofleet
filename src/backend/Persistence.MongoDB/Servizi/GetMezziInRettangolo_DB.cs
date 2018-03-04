@@ -39,43 +39,37 @@ namespace Persistence.MongoDB.Servizi
         public QueryInRettangoloResult Get(Rettangolo rettangolo, string[] classiMezzo, int attSec)
         {
             var geoWithinFilter = Builders<MessaggioPosizione>.Filter
-                .GeoWithinBox(m => m.Localizzazione,
+                .GeoWithinBox(
+                    field: m => m.Localizzazione,
                     lowerLeftX: rettangolo.TopLeft.Lon,
                     lowerLeftY: rettangolo.BottomRight.Lat,
                     upperRightX: rettangolo.BottomRight.Lon,
                     upperRightY: rettangolo.TopLeft.Lat);
 
-            var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
-                .Gt(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-attSec));
+            var lastMessageFilter = Builders<MessaggioPosizione>.Filter
+                .Eq(m => m.Ultimo, true);
 
-            FilterDefinition<MessaggioPosizione> classiMezzoFilter = null;
+            var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
+                .Gte(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-attSec));
+
+            var filter = geoWithinFilter & lastMessageFilter & recentMessagesFilter;
 
             if ((classiMezzo != null) && (classiMezzo.Length > 0))
             {
-                classiMezzoFilter = Builders<MessaggioPosizione>.Filter
+                var classFilter = Builders<MessaggioPosizione>.Filter
                     .AnyIn(m => m.ClassiMezzo, classiMezzo);
+
+                filter &= classFilter;
             }
-
-            var messaggiPosizioneAggregate = this.messaggiPosizioneCollection.Aggregate()
-                .SortBy(m => m.CodiceMezzo)
-                .ThenByDescending(m => m.IstanteAcquisizione)
-                .Match(geoWithinFilter)
-                .Match(recentMessagesFilter);
-
-            if (classiMezzoFilter != null)
-                messaggiPosizioneAggregate = messaggiPosizioneAggregate
-                    .Match(classiMezzoFilter);
 
             var sw = new Stopwatch();
             sw.Start();
 
-            var messaggiPosizione = messaggiPosizioneAggregate
-                .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
-                .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"))
-                .ReplaceRoot<MessaggioPosizione>("$messaggio")
-                .ToEnumerable();
+            var messaggiPosizione = this.messaggiPosizioneCollection.Find(filter)
+                .SortBy(m => m.CodiceMezzo)
+                .ToEnumerable()
+                .ToArray();
 
-            var arrayMessaggiPosizione = messaggiPosizione.ToArray();
             sw.Stop();
 
             return new QueryInRettangoloResult()
@@ -83,9 +77,9 @@ namespace Persistence.MongoDB.Servizi
                 IstanteQuery = DateTime.UtcNow,
                 DurataQuery_msec = sw.ElapsedMilliseconds,
                 ClassiMezzo = classiMezzo,
-                NumeroMezzi = arrayMessaggiPosizione.Length,
+                NumeroMezzi = messaggiPosizione.Length,
                 Rettangolo = rettangolo,
-                Risultati = arrayMessaggiPosizione
+                Risultati = messaggiPosizione
             };
         }
     }

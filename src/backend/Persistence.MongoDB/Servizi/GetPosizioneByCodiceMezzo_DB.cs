@@ -35,12 +35,10 @@ namespace Persistence.MongoDB.Servizi
 
         public MessaggioPosizione Get(string codiceMezzo)
         {
-            var dto = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == codiceMezzo)
-               .SortByDescending(m => m.IstanteAcquisizione)
+            return this.messaggiPosizioneCollection.Find(m => m.Ultimo && m.CodiceMezzo == codiceMezzo)
+                .SortByDescending(m => m.IstanteAcquisizione)
                 .Limit(1)
                 .Single();
-
-            return dto;
         }
     }
 }

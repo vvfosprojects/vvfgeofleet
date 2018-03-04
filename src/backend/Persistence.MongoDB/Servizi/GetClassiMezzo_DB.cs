@@ -39,12 +39,9 @@ namespace Persistence.MongoDB.Servizi
         public IDictionary<string, long> Get(int attSec)
         {
             var classiMezzo = this.messaggiPosizioneCollection.Aggregate()
-                .SortBy(m => m.CodiceMezzo)
-                .ThenByDescending(m => m.IstanteAcquisizione)
-                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-attSec))
-                .Group(new BsonDocument { { "_id", "$codiceMezzo" }, { "lastMsg", new BsonDocument { { "$first", "$$ROOT" } } } })
-                .Unwind("lastMsg.classiMezzo")
-                .SortByCount<string>("$lastMsg.classiMezzo")
+                .Match(m => m.Ultimo && m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-attSec))
+                .Unwind("classiMezzo")
+                .SortByCount<string>("$classiMezzo")
                 .ToList();
 
             return classiMezzo.ToDictionary(k => k.Id, v => v.Count);

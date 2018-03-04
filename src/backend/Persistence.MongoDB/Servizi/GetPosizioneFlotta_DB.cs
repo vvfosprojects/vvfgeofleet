@@ -52,29 +52,24 @@ namespace Persistence.MongoDB.Servizi
         /// <returns>La posizione della flotta</returns>
         public IEnumerable<MessaggioPosizione> Get(string[] classiMezzo, int attSec)
         {
-            IAggregateFluent<MessaggioPosizione> query = this.messaggiPosizione.Aggregate<MessaggioPosizione>()
-                .SortBy(m => m.CodiceMezzo)
-                .ThenByDescending(m => m.IstanteAcquisizione);
+            var filter = Builders<MessaggioPosizione>.Filter
+                .And(
+                    Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Builders<MessaggioPosizione>.Filter.Gte(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-attSec))
+                    );
 
             if (classiMezzo != null && classiMezzo.Length > 0)
             {
-                var filter = Builders<MessaggioPosizione>
+                var classFilter = Builders<MessaggioPosizione>
                     .Filter
                     .AnyIn(m => m.ClassiMezzo, classiMezzo);
 
-                query = query
-                    .Match(filter);
+                filter &= classFilter;
             }
 
-            var query2 = query
-                .Match(m => m.IstanteAcquisizione > DateTime.UtcNow.AddSeconds(-attSec))
-                .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
-                .ReplaceRoot<MessaggioPosizione>("$messaggio");
-
-            var resultSet = query2
+            return this.messaggiPosizione.Find(filter)
+                .SortBy(m => m.CodiceMezzo)
                 .ToEnumerable();
-
-            return resultSet;
         }
     }
 }

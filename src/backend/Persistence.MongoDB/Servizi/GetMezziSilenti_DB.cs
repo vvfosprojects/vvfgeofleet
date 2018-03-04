@@ -54,38 +54,23 @@ namespace Persistence.MongoDB.Servizi
         /// <returns>Messaggi posizione meno recenti</returns>
         public IEnumerable<MessaggioPosizione> Get(int daSecondi, string[] classiMezzo)
         {
-            IAggregateFluent<MessaggioPosizione> query = this.messaggiPosizione.Aggregate<MessaggioPosizione>()
-                .SortBy(m => m.CodiceMezzo)
-                .ThenByDescending(m => m.IstanteAcquisizione);
+            var filter = Builders<MessaggioPosizione>.Filter
+                .And(
+                    Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Builders<MessaggioPosizione>.Filter.Lt(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-daSecondi))
+                );
 
             if (classiMezzo != null && classiMezzo.Length > 0)
             {
-                var filter = Builders<MessaggioPosizione>
-                    .Filter
+                var classFilter = Builders<MessaggioPosizione>.Filter
                     .AnyIn(m => m.ClassiMezzo, classiMezzo);
 
-                query = query
-                    .Match(filter);
+                filter &= classFilter;
             }
 
-            var query2 = query
-                .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
-                .Match(new BsonDocument {
-                    {
-                        "messaggio.istanteAcquisizione", new BsonDocument {
-                        {
-                                "$lt", DateTime.UtcNow.AddSeconds(-daSecondi)
-                        }
-                        }
-                    }
-                })
-                .Project(BsonDocument.Parse(@"{ _id: 0, messaggio: 1 }"));
-
-            var resultSet = query2
-                .ReplaceRoot<MessaggioPosizione>("$messaggio")
+            return this.messaggiPosizione.Find(filter)
+                .SortBy(m => m.CodiceMezzo)
                 .ToEnumerable();
-
-            return resultSet;
         }
     }
 }

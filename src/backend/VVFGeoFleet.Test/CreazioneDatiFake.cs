@@ -21,8 +21,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Bogus;
 using Modello.Classi;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using NUnit.Framework;
 using Persistence.MongoDB;
+using Persistence.MongoDB.Servizi;
 
 namespace VVFGeoFleet.Test
 {
@@ -67,10 +70,34 @@ namespace VVFGeoFleet.Test
                 .RuleFor(m => m.Fonte, f => fakerFonte.Generate())
                 .Ignore(m => m.InfoFonte)
                 .RuleFor(m => m.InfoSO115, f => fakerInfoSo115.Generate())
-                .RuleFor(m => m.IstanteArchiviazione, f => f.Date.Past());
+                .RuleFor(m => m.IstanteArchiviazione, f => f.Date.Past())
+                .RuleFor(m => m.Ultimo, f => false);
 
-            var messaggiPosizione = faker.Generate(100000);
+            dbContext.MessaggiPosizioneCollection.UpdateMany(
+                Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                Builders<MessaggioPosizione>.Update.Set(m => m.Ultimo, false)
+                );
+
+            var messaggiPosizione = faker
+                .Generate(50000);
+
             dbContext.MessaggiPosizioneCollection.InsertMany(messaggiPosizione);
+
+            var aggregateOptions = new AggregateOptions() { AllowDiskUse = true };
+            IAggregateFluent<MessaggioPosizione> query = dbContext.MessaggiPosizioneCollection.Aggregate<MessaggioPosizione>(aggregateOptions)
+                .SortBy(m => m.CodiceMezzo)
+                .ThenByDescending(m => m.IstanteAcquisizione);
+
+            var query2 = query
+                .Group(BsonDocument.Parse(@"{ _id: '$codiceMezzo', messaggio: { $first: '$$ROOT' } }"))
+                .Project(new BsonDocument { { "_id", "$messaggio._id" } });
+
+            var ultimiIds = query2.ToEnumerable().ToList();
+
+            dbContext.MessaggiPosizioneCollection.UpdateMany(
+                Builders<MessaggioPosizione>.Filter.In(m => m.Id, ultimiIds.Select(d => d["_id"])),
+                Builders<MessaggioPosizione>.Update.Set(m => m.Ultimo, true)
+            );
         }
     }
 }

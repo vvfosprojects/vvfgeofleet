@@ -39,34 +39,25 @@ namespace Persistence.MongoDB.Servizi
 
         public QueryProssimitaResult Get(Localizzazione punto, float distanzaMaxMt, string[] classiMezzo, int attSec)
         {
-            BsonDocument query;
+            var lastMessageFilter = Builders<MessaggioPosizione>.Filter
+                .Eq(m => m.Ultimo, true);
+
+            var recentMessagesFilter = Builders<MessaggioPosizione>.Filter
+                .Gte(m => m.IstanteAcquisizione, DateTime.UtcNow.AddSeconds(-attSec));
+
+            var filter = lastMessageFilter & recentMessagesFilter;
 
             if ((classiMezzo != null) && (classiMezzo.Length > 0))
-                query = new BsonDocument {
-                { "query", new BsonDocument {
-                    { "istanteAcquisizione", new BsonDocument {
-                        {
-                            "$gt", DateTime.UtcNow.AddSeconds(-attSec)
-                        }
-                    } },
-                    { "classiMezzo", new BsonDocument {
-                        {
-                            "$in", new BsonArray(classiMezzo)
-                        }
-                    } }
-                }
-                } };
-            else
-                query = new BsonDocument {
-                { "query", new BsonDocument {
-                    { "istanteAcquisizione", new BsonDocument {
-                        {
-                            "$gt", DateTime.UtcNow.AddHours(-24)
-                        }
-                    } }
-                }
-                }
-            };
+            {
+                var classFilter = Builders<MessaggioPosizione>.Filter
+                    .AnyIn(m => m.ClassiMezzo, classiMezzo);
+
+                filter &= classFilter;
+            }
+
+            var serializerRegistry = BsonSerializer.SerializerRegistry;
+            var documentSerializer = serializerRegistry.GetSerializer<MessaggioPosizione>();
+            var bsonFilter = filter.Render(documentSerializer, serializerRegistry);
 
             var geoNearOptions = new BsonDocument {
                 { "near", new BsonDocument {
@@ -75,12 +66,13 @@ namespace Persistence.MongoDB.Servizi
                 } },
                 { "distanceField", "distanza" },
                 { "maxDistance", distanzaMaxMt },
-                query,
+                { "query", bsonFilter },
                 { "spherical" , true },
             };
 
             var pipeline = new[] {
                 new BsonDocument { { "$geoNear", geoNearOptions } },
+                new BsonDocument { { "$sort", new BsonDocument { { "codiceMezzo", 1 } } } },
             };
 
             var sw = new Stopwatch();
@@ -91,7 +83,8 @@ namespace Persistence.MongoDB.Servizi
                 {
                     MessaggioPosizione = BsonSerializer.Deserialize<MessaggioPosizione>(d),
                     DistanzaMt = (float)d["distanza"].AsDouble
-                });
+                })
+                .ToArray();
 
             var arrayProssimitaMezzo = prossimitaMezzo.ToArray();
             sw.Stop();

@@ -35,7 +35,7 @@ namespace Persistence.MongoDB
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static IMongoDatabase database;
 
-        public DbContext(string connectionString)
+        internal DbContext(string connectionString)
         {
             if (database == null)
             {
@@ -74,19 +74,35 @@ namespace Persistence.MongoDB
 
         private void CreateIndexes()
         {
+            // Gli indici su Ultimo sono partial indexes (vedi:
+            // https://docs.mongodb.com/manual/core/index-partial/). Infatti non ha senso cercare
+            // documenti con Ultimo == false, ma solo con Ultimo == true.
+
             {
                 var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
-                    .Ascending(_ => _.CodiceMezzo)
-                    .Descending(_ => _.IstanteAcquisizione);
-                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
+                    .Ascending(_ => _.Ultimo)
+                    .Ascending(_ => _.IstanteAcquisizione);
+
+                var indexOptions = new CreateIndexOptions<MessaggioPosizione>
+                {
+                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true)
+                };
+
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
             }
 
             {
                 var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
+                    .Ascending(_ => _.Ultimo)
                     .Geo2DSphere(_ => _.Localizzazione)
-                    .Ascending(_ => _.CodiceMezzo)
-                    .Descending(_ => _.IstanteAcquisizione);
-                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition);
+                    .Ascending(_ => _.IstanteAcquisizione);
+
+                var indexOptions = new CreateIndexOptions<MessaggioPosizione>
+                {
+                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true)
+                };
+
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
             }
         }
 
