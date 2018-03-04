@@ -127,7 +127,7 @@ Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alc
 ## GET /api/classiMezzo?attSec={secondi}
 Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione giunti negli ultimi `attSec` specificati (opzionale - default nel web.config), con la relativa occorrenza, in ordine decrescente di occorrenza. I risultati sono restituiti nella seguente forma:
 
-<pre>
+```json
 [
   {
     "class": "AV",
@@ -139,7 +139,7 @@ Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione
   }
   ...
 ]
-</pre>
+```
 
 # Descrizione dell'architettura
 L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017 Community Edition. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
