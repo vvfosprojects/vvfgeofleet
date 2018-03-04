@@ -46,6 +46,74 @@ Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` 
 Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
 Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
 
+Il risultato è nella forma
+
+```json
+{
+	"istanteQuery": "2018-03-04T20:29:03.686917Z",
+	"punto": {
+		"type": "Point",
+		"lat": -44.630001068115234,
+		"lon": 3.4300000667572021
+	},
+	"distanzaMaxMt": 300000.0,
+	"numeroMezzi": 2,
+	"durataQuery_msec": 5,
+	"risultati": [{
+			"messaggioPosizione": {
+				"id": "5a9c24f74eb6d93300a3e2a0",
+				"codiceMezzo": "M.1101",
+				"classiMezzo": ["AV", "diesel", "nero", "metallizzato"],
+				"localizzazione": {
+					"type": "Point",
+					"lat": -44.7388,
+					"lon": 3.2939
+				},
+				"istanteAcquisizione": "2018-03-04T01:23:46.336Z",
+				"fonte": {
+					"codiceFonte": "J55",
+					"classeFonte": "C2"
+				},
+				"infoFonte": null,
+				"infoSO115": {
+					"stato": "InViaggio",
+					"codiceIntervento": "11KXS",
+					"dataIntervento": "2017-10-24T11:33:16.974Z"
+				},
+				"istanteArchiviazione": "2018-03-04T16:55:19.424Z",
+				"ultimo": true
+			},
+			"distanzaMt": 16208.5889
+		}, {
+			"messaggioPosizione": {
+				"id": "5a9c24ff4eb6d93300a3e822",
+				"codiceMezzo": "M.1236",
+				"classiMezzo": ["AV", "diesel", "amaranto"],
+				"localizzazione": {
+					"type": "Point",
+					"lat": -47.0248,
+					"lon": 1.6938
+				},
+				"istanteAcquisizione": "2018-03-04T14:12:18.937Z",
+				"fonte": {
+					"codiceFonte": "A09",
+					"classeFonte": "C1"
+				},
+				"infoFonte": null,
+				"infoSO115": {
+					"stato": "SulPosto",
+					"codiceIntervento": "79WDW",
+					"dataIntervento": "2017-07-27T21:44:36.896Z"
+				},
+				"istanteArchiviazione": "2018-03-04T16:55:27.099Z",
+				"ultimo": true
+			},
+			"distanzaMt": 298653.844
+		}
+	]
+}
+```
+
 ## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={classe1}&classiMezzo={classe2}&attSec={secondi}
 Restituisce i mezzi all'interno del box specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
 Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
