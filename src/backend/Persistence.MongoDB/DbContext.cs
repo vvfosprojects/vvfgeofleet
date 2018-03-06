@@ -81,11 +81,12 @@ namespace Persistence.MongoDB
             {
                 var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
                     .Ascending(_ => _.Ultimo)
-                    .Ascending(_ => _.IstanteAcquisizione);
+                    .Descending(_ => _.IstanteAcquisizione);
 
                 var indexOptions = new CreateIndexOptions<MessaggioPosizione>
                 {
-                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true)
+                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Background = true
                 };
 
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
@@ -95,11 +96,26 @@ namespace Persistence.MongoDB
                 var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
                     .Ascending(_ => _.Ultimo)
                     .Geo2DSphere(_ => _.Localizzazione)
-                    .Ascending(_ => _.IstanteAcquisizione);
+                    .Descending(_ => _.IstanteAcquisizione);
 
                 var indexOptions = new CreateIndexOptions<MessaggioPosizione>
                 {
-                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true)
+                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Background = true
+                };
+
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
+            }
+
+            //Indice utile a supportare le query sul percorso di un mezzo in un intervallo temporale dato.
+            {
+                var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
+                    .Ascending(_ => _.CodiceMezzo)
+                    .Descending(_ => _.IstanteAcquisizione);
+
+                var indexOptions = new CreateIndexOptions<MessaggioPosizione>
+                {
+                    Background = true
                 };
 
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
