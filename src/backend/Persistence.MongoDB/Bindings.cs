@@ -59,6 +59,9 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Persistence.IGetClassiMezzo,
                 Servizi.GetClassiMezzo_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Persistence.IGetPercorso,
+                Servizi.GetPercorso_DB>(Lifestyle.Scoped);
         }
     }
 }
