@@ -141,8 +141,8 @@ Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione
 ]
 ```
 
-## GET /api/percorso/{codiceMezzo}?from=2018-01-01T00:00:00Z&to=2018-03-04T10:45:52.875Z
-Restituisce tutti i messaggi di posizione del mezzo avente `codiceMezzo` specificato nell'intervallo temporale specificato. Con i messaggi ricevuti è pertanto possibile costruire il percorso del mezzo.
+## GET /api/percorso/{codiceMezzo}?from={isoDate}&to={isoDate}
+Restituisce tutti i messaggi di posizione del mezzo avente `codiceMezzo` specificato nell'intervallo temporale specificato. Con i messaggi ricevuti è pertanto possibile costruire il percorso del mezzo. Le date sono espresse in formato ISO-8601 (per es. 2018-03-04T10:45:52.875Z).
 
 # Descrizione dell'architettura
 L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017 Community Edition. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
