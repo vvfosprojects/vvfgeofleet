@@ -9,15 +9,13 @@ import { Observable } from "rxjs/Rx";
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaService}],
-  //providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake}],
 })
 
 export class AppComponent {
   title = 'VVFGeoFleet Dashboard';
 
   private elencoPosizioniMezzo : PosizioneMezzo[] = [];
-  private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
+  //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
   
   private timer;
   private timerSubcribe: PushSubscription;
@@ -43,12 +41,12 @@ export class AppComponent {
         */
  
         ngOnInit() { 
-          this.timer = Observable.timer(2000,10000).timeout(15000);
+          this.timer = Observable.timer(2000,10000).timeout(30000);
           this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(t));
         }   
 
         aggiorna(tt) {
-          this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
+          //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
           
           this.posizioneFlottaService.getPosizioneFlotta()
