@@ -42,6 +42,17 @@ namespace Persistence.MongoDB
             container.Register<Modello.Servizi.Persistence.IStoreMessaggioPosizione,
                 Servizi.StoreMessaggioPosizione_DB>(Lifestyle.Scoped);
 
+            container.RegisterDecorator(
+                typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
+                typeof(Servizi.StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator),
+                context => container.GetInstance<Modello.Configurazione.IAppConfig>().InterpolationActive
+            );
+
+            container.RegisterInitializer<Servizi.StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator>(sender =>
+            {
+                sender.InterpolationThreshold_mt = container.GetInstance<Modello.Configurazione.IAppConfig>().InterpolationThreshold_mt;
+            });
+
             container.Register<Modello.Servizi.Persistence.IGetPosizioneByCodiceMezzo,
                 Servizi.GetPosizioneByCodiceMezzo_DB>(Lifestyle.Scoped);
 

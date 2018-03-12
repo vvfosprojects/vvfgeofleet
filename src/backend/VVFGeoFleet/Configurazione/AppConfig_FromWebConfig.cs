@@ -27,8 +27,12 @@ namespace VVFGeoFleet.Configurazione
     {
         public string connectionString = ConfigurationManager.ConnectionStrings["db"].ConnectionString;
         public int orizzonteTemporale_sec = Convert.ToInt32(ConfigurationManager.AppSettings["orizzonteTemporale_sec"]);
+        public bool interpolationActive = Convert.ToBoolean(ConfigurationManager.AppSettings["interpolationActive"]);
+        public float interpolationThreshold_mt = Convert.ToSingle(ConfigurationManager.AppSettings["interpolationThreshold_mt"]);
 
         public string ConnectionString { get => this.connectionString; }
         public int OrizzonteTemporale_sec { get => this.orizzonteTemporale_sec; }
+        public bool InterpolationActive { get => this.interpolationActive; }
+        public float InterpolationThreshold_mt { get => this.interpolationThreshold_mt; }
     }
 }

@@ -23,5 +23,12 @@ namespace Modello.Configurazione
     {
         string ConnectionString { get; }
         int OrizzonteTemporale_sec { get; }
+
+        #region Interpolation data
+
+        bool InterpolationActive { get; }
+        float InterpolationThreshold_mt { get; }
+
+        #endregion Interpolation data
     }
 }
