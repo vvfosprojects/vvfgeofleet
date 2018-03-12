@@ -7,6 +7,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://vvfgeofleetdev:23032/api/'
+
 };
 
 //  apiUrl: 'http://vvfgeofleetdev:23032/api/'
