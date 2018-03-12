@@ -1,12 +1,14 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Program",
             "url": "http://localhost:4201",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true            
         }
     ]
 }
