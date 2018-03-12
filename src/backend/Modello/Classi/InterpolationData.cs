@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="MessaggioPosizione.cs" company="CNVVF">
+// <copyright file="InterpolationData.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -21,21 +21,17 @@ using System;
 
 namespace Modello.Classi
 {
-    public class MessaggioPosizione
+    public class InterpolationData
     {
-        public string Id { get; set; }
+        public InterpolationData(int length_sec, int messages, DateTime? lastMsgTime)
+        {
+            Length_sec = length_sec;
+            Messages = messages;
+            LastMsgTime = lastMsgTime;
+        }
 
-        public string CodiceMezzo { get; set; }
-        public string[] ClassiMezzo { get; set; }
-        public Localizzazione Localizzazione { get; set; }
-        public DateTime IstanteAcquisizione { get; set; }
-        public Fonte Fonte { get; set; }
-        public InfoFonte InfoFonte { get; set; }
-        public InfoSO115 InfoSO115 { get; set; }
-
-        public DateTime IstanteArchiviazione { get; set; }
-        public bool Ultimo { get; set; }
-
-        public InterpolationData InterpolationData { get; set; }
+        public int Length_sec { get; set; }
+        public int Messages { get; set; }
+        public DateTime? LastMsgTime { get; set; }
     }
 }

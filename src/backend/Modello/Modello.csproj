@@ -46,6 +46,7 @@
     <Compile Include="Classi\Fonte.cs" />
     <Compile Include="Classi\InfoFonte.cs" />
     <Compile Include="Classi\InfoSO115.cs" />
+    <Compile Include="Classi\InterpolationData.cs" />
     <Compile Include="Classi\Localizzazione.cs" />
     <Compile Include="Classi\MessaggioPosizione.cs" />
     <Compile Include="Configurazione\IAppConfig.cs" />
