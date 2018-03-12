@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
-import { PosizioneMezzoFiltrata } from './posizione-mezzo-filtrata.model';
 
 import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
