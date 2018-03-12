@@ -21,8 +21,10 @@ import * as moment from 'moment';
 
 export class MappaPosizioniFlottaComponent implements OnInit {
   
-  @Input() elencoPosizioni : PosizioneMezzo[];
+  @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
+  @Input() filtriStatiMezzo: string[] = [];
+  
   //lat: number = 51.678418;
   //lon: number = 7.809007;
   start_lat: number = 41.889777;
@@ -39,19 +41,18 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   //private markers: AgmMarker;
 
+  private elencoPosizioniMostrate : PosizioneMezzo[] = [];
+  private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
-  //@ContentChildren(AgmMarker) agmMarkerChildren: QueryList<AgmMarker>;
-  /*
-  constructor( 
-    private agmMarker: AgmMarker,
-    private markerManager: MarkerManager,  
-    private gmapsApi: GoogleMapsAPIWrapper) {   }
-    */
+  private elencoPosizioniNuove : PosizioneMezzo[] = [];
+  private elencoPosizioniEliminate : PosizioneMezzo[] = [];
+  private elencoPosizioniModificate : PosizioneMezzo[] = [];
+
+
   constructor() {}    
 
   ngOnInit() {
 
-       //['6','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png']
 
        //['1','car.png'],
 
@@ -67,77 +68,84 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     ]    ;    
     this.mapIcone = new Map(this.iconeStati);    
 
-    //console.log(this.markerManager);
-/*
-    this.gmapsApi.getNativeMap().then(map => {
-      this.markerManager.getNativeMarker(this.agmMarker).then(marker => { console.log(marker);
-      });
-    });    
-*/
   }
 
-  /*
-  ngAfterViewInit() {
-    console.log(this.markerManager);
-  }
-  */
-  /*
-  ngAfterContentChecked() {
-    console.log("ngAfterContentChecked - agmMarkerChildren:",this.agmMarkerChildren);
-    }
-  */
-    
-/*
+
   ngOnChanges() {
-    console.log('ngOnChanges - elencoPosizioni: ', this.elencoPosizioni );
     
+
+    this.elencoPosizioniNuove = this.elencoPosizioni.
+      filter( (item) => {
+        var v = this.elencoPosizioniMostratePrecedenti.
+        find( x => item.codiceMezzo == x.codiceMezzo );
+        if ( v == null) {return item}
+        else {return null}  }
+       );
+
+    /*
+    console.log('ngOnChanges - elencoPosizioniPrecedenti: ', this.elencoPosizioniPrecedenti );
+    console.log('ngOnChanges - elencoPosizioni: ', this.elencoPosizioni );
+    console.log('ngOnChanges - elencoPosizioniNuove: ', this.elencoPosizioniNuove );
+    */
+
     //this.gmapsApi.getNativeMap().then(map => {
     //  this.markerManager.getNativeMarker(this.agmMarker).then(marker => { console.log(marker);
     //  });
     //});  
     
-   }
-  */
+    this.elencoPosizioniEliminate = this.elencoPosizioniMostratePrecedenti.
+    filter( (item) => {
+      var v = this.elencoPosizioni.find( x => item.codiceMezzo == x.codiceMezzo );
+      if ( v == null) {return item}
+      else {return null}  }
+     );
+
+    this.elencoPosizioniEliminate.forEach( v => { 
+       var k = this.elencoPosizioniMostrate.indexOf( v );
+       if (k != -1) { this.elencoPosizioniMostrate.splice(k,1); 
+      }
+     })
+
+    this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove);
+    this.elencoPosizioniMostratePrecedenti = this.elencoPosizioniMostrate;
+    
+  }
+    
   markerIconUrl(m: PosizioneMezzo) {
-    /*
+    
     if (m.infoSO115 != null) {
       this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);
       }
     else
       {this.iconaStatoMezzoCorrente = '0';}
-    */
-    this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);
+    
     return this.iconaStatoMezzoCorrente;
   }
 
-  clickedMarker(label: string, index: number) {
-    this.clicked_label = this.elencoPosizioni[index].codiceMezzo;
-    console.log('clicked the marker: ' + label + ' ' + index);
+  clickedMarker(mezzo: PosizioneMezzo, index: number) {
+    //this.clicked_label = this.elencoPosizioniMostrate[index].codiceMezzo;
+    this.clicked_label = mezzo.codiceMezzo;
+    console.log('clicked the marker: ', mezzo, index);
   }
 
-  /*
-  caricaAgmMarker(m: AgmMarker) { 
-    console.log('AgmMarker: ', m);
-    this.markerArrays.push(m);
-  }
-  */
-  
   overMarker(mezzo: PosizioneMezzo, index: number) {
-    //this.clicked_label = this.elencoPosizioni[index].codiceMezzo;
-    console.log('over the marker (b): ' + mezzo);
-    console.log('over the marker (c): ' + index);
+    console.log('over the marker: ', mezzo, index);
+  }
+
+  outOfMarker(mezzo: PosizioneMezzo, index: number) {
+    console.log('out of the marker: ', mezzo, index);
   }
 
   setMarkerManager(markerManager: MarkerManager){
     this.markerManager = markerManager;
-    console.log("setMarkerManager: ", markerManager);
+    //console.log("setMarkerManager: ", markerManager);
    }
 
   /**
    * Imposta l'array dei markers presenti sulla mappa
    */
   setMarkers(markers: AgmMarker[]){
-    console.log("AgmMarkers: ", markers);
+    //console.log("AgmMarkers: ", markers);
     this.markerArrays = markers;
     /*
     console.log("NativeMarkers: ");
@@ -148,16 +156,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     }
     */
 
-  /**
-   * Sets the markers, used by spidifier
-   */
-    /*
-    this.markers = markers;
-    for(let marker of markers){
-      this.markerManager.getNativeMarker(marker).then(marker => {
-        this.overlappingMarkerSpidifier.addMarker(marker);
-      });
-    }
-    */
+
+  }
+
+  posizioneMezzoSelezionata(p : PosizioneMezzo) { 
+      var r : boolean = this.filtriStatiMezzo.
+      some(filtro => filtro === p.infoSO115.stato);    
+      return r;
   }
 }

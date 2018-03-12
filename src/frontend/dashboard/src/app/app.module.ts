@@ -42,8 +42,11 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
     FormsModule,
     UiSwitchModule
   ],
-  providers: [{ provide: PosizioneFlottaService, useClass:PosizioneFlottaService},
-    { provide: LOCALE_ID, useValue: "it" }],
+  providers: [
+    //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},
+    { provide: PosizioneFlottaService, useClass:PosizioneFlottaService},
+    { provide: LOCALE_ID, useValue: "it" }
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

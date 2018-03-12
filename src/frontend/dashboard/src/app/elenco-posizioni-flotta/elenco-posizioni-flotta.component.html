@@ -12,15 +12,23 @@
               <th scope="col">Quando</th>
             </thead> 
             <tbody>
-                <tr app-posizione-mezzo *ngFor="let r of elencoPosizioniMezzoFiltrate" [posizioneMezzo]="r" [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"></tr>
+                <tr app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                [posizioneMezzo]="r" 
+                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                [filtriStatiMezzo]="filtriStatiMezzo"></tr>
             </tbody>
           </table>
       </div>
-      <app-filtri [titolo]="titoloFiltroStatiMezzo" [vociFiltro]="vociFiltroStatiMezzo" (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+      <app-filtri [titolo]="titoloFiltroStatiMezzo" 
+          [vociFiltro]="vociFiltroStatiMezzo" 
+          (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
     </div>
     <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9">          
-        <app-mappa-posizioni-flotta [elencoPosizioni]="elencoPosizioniMezzoFiltrate" [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"></app-mappa-posizioni-flotta>
-        <!--<app-mappa-posizioni-flotta [elencoPosizioni]="elencoPosizioniMezzo"></app-mappa-posizioni-flotta>-->
+        <app-mappa-posizioni-flotta
+            [elencoPosizioni]="elencoPosizioni" 
+            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+            [filtriStatiMezzo]="filtriStatiMezzo">
+        </app-mappa-posizioni-flotta>
     </div>
 </div>
 

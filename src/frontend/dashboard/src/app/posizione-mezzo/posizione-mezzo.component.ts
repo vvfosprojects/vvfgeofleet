@@ -10,6 +10,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
+  @Input() filtriStatiMezzo: string[] = [];
 
   private badgeStatoMezzoCorrente: any ;
   private testoStatoMezzoCorrente: any ;
@@ -49,4 +50,13 @@ export class PosizioneMezzoComponent implements OnInit {
     
   }
 
+  ngOnChanges() {
+    //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
+  }
+
+  posizioneMezzoSelezionata() { 
+
+      return this.filtriStatiMezzo.
+      some(filtro => filtro === this.posizioneMezzo.infoSO115.stato);    
+  }
 }
