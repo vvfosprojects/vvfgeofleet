@@ -1,5 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzoFiltrata } from './posizione-mezzo-filtrata.model';
+
 import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
@@ -11,6 +13,7 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
   @Input() elencoPosizioni : PosizioneMezzo[];
+
 
   private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
  
@@ -49,21 +52,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.istanteUltimoAggiornamento = moment().toDate();      
-    this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
-
-    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
 
     this.inizializzaFiltri();  
   }
 
   ngOnChanges(changes: any) {
-    this.istanteUltimoAggiornamento = moment().toDate();      
-    
-    this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
-    
-    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
-        
+  
     this.inizializzaFiltri();  
   }
 
@@ -74,16 +68,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
     */
     
-
-    /*
-    //this.vociFiltroStatiMezzo.find(v => v.codice === "0").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 === null).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "1").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("1") === 0).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "2").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("2") === 0).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "3").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("3") === 0).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "5").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("5") === 0).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("6") === 0).length;
-    this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r => r.infoSO115 != null && r.infoSO115.stato.localeCompare("7") === 0).length;
-    */
+    this.istanteUltimoAggiornamento = moment().toDate();      
+    // elabora solo le posizioni su cui sono disponibili le info di SO115
+    this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
+    // elabora solo le posizioni su cui sono NON disponibili le info di SO115
+    //this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 === null);
     
     this.vociFiltroStatiMezzo.find(v => v.codice === "0").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("0") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "1").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("1") === 0).length;
@@ -92,36 +81,80 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo.find(v => v.codice === "5").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("5") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
-    
 
+    
     this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
 
-    //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni.filter(r => r.infoSO115 === null);
-    
+    /*
+    l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
+    per tutti gli elementi, e di impostarla in base allo stato dei filtri selezionato 
+    (true/false) si è rivelata una soluzione molto lenta e quindi abbandonata
 
+
+        import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+
+        export class PosizioneMezzoFiltrata {
+            constructor (
+                public posizioneMezzo:PosizioneMezzo,       
+                public visible:boolean
+            ) {}
+            
+            }
+
+
+    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni.map( 
+      (posizioneMezzo) => 
+        { return Object.assign({}, {posizioneMezzo, "visible": true }) });
+    */
+    
     if (this.vociFiltroStatiMezzo.length > 0) {
-      this.vociFiltroStatiMezzoDefault = this.vociFiltroStatiMezzo.filter( v => v.selezionato === true);
+    /*
+      l'ipotesi di creare un altro vettore con i soli elementi filtrari 
+      è anch'essa troppo lenta su un elevato numero di elementi
 
-      //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioniMezzoFiltrate.filter(r => this.filtriStatiMezzo.some(filtro => r.infoSO115 != null && filtro === r.infoSO115.stato));
+
+      this.vociFiltroStatiMezzoDefault = this.vociFiltroStatiMezzo.
+      filter( v => v.selezionato === true);
+
       this.elencoPosizioniMezzoFiltrate = this.elencoPosizioniMezzoFiltrate.
-      filter(r => this.vociFiltroStatiMezzoDefault.
+        filter(r => this.vociFiltroStatiMezzoDefault.
         some(filtro => filtro.codice.toString() === r.infoSO115.stato));
+      
+    */
+    /*
+      l'ipotesi di applicare un filtro sullo stesso vettore utilizzando 
+      il metodo forEach() è anch'essa troppo lenta su un elevato numero di elementi
+
+      this.elencoPosizioniMezzoFiltrate.forEach( pos => 
+        pos.selezionata = this.vociFiltroStatiMezzoDefault.
+        some(filtro => filtro.codice.toString() === pos.infoSO115.stato));
+      //console.log(this.elencoPosizioniMezzoFiltrate);
+      
+     */
+
+     // soluzione utilizzando una funzione valutata durante l'aggiornamento della view
+      this.filtriStatiMezzo = this.vociFiltroStatiMezzo
+      .filter(v => v.selezionato)
+      .map(v => (v.codice).toString())
+      ;
+
     }
+        
+
+
   }
 
-  applicaNuovaSelezione() {
-    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
-
-    if (this.filtriStatiMezzo.length > 0) {
-      //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioniMezzoFiltrate.filter(r => this.filtriStatiMezzo.some(filtro => r.infoSO115 != null && filtro === r.infoSO115.stato));
-      this.elencoPosizioniMezzoFiltrate = this.elencoPosizioniMezzoFiltrate.filter(r => this.filtriStatiMezzo.some(filtro => filtro === r.infoSO115.stato));
-    }
-  }
   
   nuovaSelezioneStatiMezzo(event) {
+
+    //console.log('event: ' + event);
     this.filtriStatiMezzo = event;
-    this.applicaNuovaSelezione();
+
+
   }
+  
+
+
 
 
 }

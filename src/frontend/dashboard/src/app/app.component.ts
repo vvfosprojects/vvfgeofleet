@@ -41,7 +41,7 @@ export class AppComponent {
         */
  
         ngOnInit() { 
-          this.timer = Observable.timer(2000,10000).timeout(30000);
+          this.timer = Observable.timer(2000,60000).timeout(120000);
           this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(t));
         }   
 

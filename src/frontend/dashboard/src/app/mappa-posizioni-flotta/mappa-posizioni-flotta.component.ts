@@ -21,8 +21,10 @@ import * as moment from 'moment';
 
 export class MappaPosizioniFlottaComponent implements OnInit {
   
-  @Input() elencoPosizioni : PosizioneMezzo[];
+  @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
+  @Input() filtriStatiMezzo: string[] = [];
+  
   //lat: number = 51.678418;
   //lon: number = 7.809007;
   start_lat: number = 41.889777;
@@ -47,17 +49,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private elencoPosizioniModificate : PosizioneMezzo[] = [];
 
 
-  /*
-  constructor( 
-    private agmMarker: AgmMarker,
-    private markerManager: MarkerManager,  
-    private gmapsApi: GoogleMapsAPIWrapper) {   }
-    */
   constructor() {}    
 
   ngOnInit() {
 
-       //['6','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png']
 
        //['1','car.png'],
 
@@ -81,7 +76,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     this.elencoPosizioniNuove = this.elencoPosizioni.
       filter( (item) => {
-        var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
+        var v = this.elencoPosizioniMostratePrecedenti.
+        find( x => item.codiceMezzo == x.codiceMezzo );
         if ( v == null) {return item}
         else {return null}  }
        );
@@ -161,5 +157,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     */
 
 
+  }
+
+  posizioneMezzoSelezionata(p : PosizioneMezzo) { 
+      var r : boolean = this.filtriStatiMezzo.
+      some(filtro => filtro === p.infoSO115.stato);    
+      return r;
   }
 }

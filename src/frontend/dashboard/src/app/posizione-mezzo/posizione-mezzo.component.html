@@ -1,16 +1,19 @@
-<td>
-    <span>{{posizioneMezzo.fonte.codiceFonte | slice:0:2}}</span>
-</td>
-<td>
-    <span>{{posizioneMezzo.codiceMezzo}}</span>
-</td>
-<td>
-    <!--<div class="{{alertStatoMezzoCorrente}}" role="alert">{{testoStatoMezzoCorrente}}</div>-->
-    <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
-</td>
-<td>
-    <span class="fa fa-clock">{{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
-</td>
+<!--<span *ngIf="posizioneMezzo.selezionata">-->
+<span *ngIf="posizioneMezzoSelezionata()">
+    <td>
+      <span>{{posizioneMezzo.fonte.codiceFonte | slice:0:2}}</span>
+  </td>
+  <td>
+      <span>{{posizioneMezzo.codiceMezzo}}</span>
+  </td>
+  <td>
+      <!--<div class="{{alertStatoMezzoCorrente}}" role="alert">{{testoStatoMezzoCorrente}}</div>-->
+      <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
+  </td>
+  <td>
+      <span class="fa fa-clock">{{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
+  </td>
+</span>
 <!--
 <td>
   <span>{{posizioneMezzo.istanteInvio}}</span>

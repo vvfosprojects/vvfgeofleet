@@ -1,4 +1,3 @@
-<!--[iconUrl]="'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'" -->
 <span><h3>
     Situazione Flotta 
 <h6><span class="badge badge-secondary">
@@ -9,21 +8,21 @@
 </span>
 <div class="card">
   <agm-map [latitude]="start_lat" [longitude]="start_lon">
-      <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
-        <agm-marker
-          *ngFor="let m of elencoPosizioniMostrate; let i = index; "
-          (markerClick)="clickedMarker(m, i)"
-          (mouseOver)="overMarker(m, i)"
-          (mouseOut)="outOfMarker(m, i)"
-          [latitude]="m.localizzazione.lat"
-          [longitude]="m.localizzazione.lon"
-          [openInfoWindow]="true"
-          [iconUrl]="markerIconUrl(m)"
-          >
-          <agm-info-window [disableAutoPan]="true">
-              {{m.codiceMezzo}}
-          </agm-info-window>
-        </agm-marker>
-      <!--</agm-get-map-objects>-->
+      <agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">
+          <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
+            (markerClick)="clickedMarker(m, i)"
+            (mouseOver)="overMarker(m, i)"
+            (mouseOut)="outOfMarker(m, i)"
+            [latitude]="m.localizzazione.lat"
+            [longitude]="m.localizzazione.lon"
+            [openInfoWindow]="true"
+            [iconUrl]="markerIconUrl(m)"
+            [visible]="posizioneMezzoSelezionata(m)"
+            >
+            <agm-info-window [disableAutoPan]="true">
+                {{m.codiceMezzo}}
+            </agm-info-window>
+          </agm-marker>
+      </agm-get-map-objects>
   </agm-map>
 </div>
