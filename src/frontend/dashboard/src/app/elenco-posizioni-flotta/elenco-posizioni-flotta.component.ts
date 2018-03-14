@@ -16,7 +16,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
  
-  private istanteUltimoAggiornamento: Date;
+  public istanteUltimoAggiornamento: Date;
   
   vociFiltroStatiMezzo: VoceFiltro[] = [
       new VoceFiltro(

@@ -14,7 +14,7 @@ import { Observable } from "rxjs/Rx";
 export class AppComponent {
   title = 'VVFGeoFleet Dashboard';
 
-  private elencoPosizioniMezzo : PosizioneMezzo[] = [];
+  public elencoPosizioniMezzo : PosizioneMezzo[] = [];
   //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
   
   private timer;
