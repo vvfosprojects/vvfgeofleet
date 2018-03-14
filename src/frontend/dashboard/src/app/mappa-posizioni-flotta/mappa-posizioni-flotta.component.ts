@@ -41,7 +41,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   //private markers: AgmMarker;
 
-  private elencoPosizioniMostrate : PosizioneMezzo[] = [];
+  public elencoPosizioniMostrate : PosizioneMezzo[] = [];
   private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
   private elencoPosizioniNuove : PosizioneMezzo[] = [];
