@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://geofleet.dipvvf.it/api/'  
+  apiUrl: 'http://geofleet-ws.dipvvf.it/api/'  
 };
 
