@@ -30,35 +30,40 @@ namespace Persistence.MongoDB.Servizi
         /// </summary>
         public float InterpolationThreshold_mt { get; set; }
 
-        public void Store(MessaggioPosizione messaggio)
+        public void Store(MessaggioPosizione newMessage)
         {
-            var lastTwoMessages = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == messaggio.CodiceMezzo)
+            this.decorated.Store(newMessage);
+
+            var lastThreeMessages = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == newMessage.CodiceMezzo)
                 .SortByDescending(m => m.IstanteAcquisizione)
-                .Limit(2)
+                .Limit(3)
                 .ToList();
 
-            if (lastTwoMessages.Count == 2)
+            if (lastThreeMessages.Count == 3)
             {
-                var lastThreeMessages = lastTwoMessages.Concat(new[] { messaggio }).ToArray();
                 if (this.AllInTheSamePosition(lastThreeMessages))
                 {
-                    var msgToInterpolate = lastTwoMessages[0];
-                    var interpolationData = msgToInterpolate.InterpolationData ?? new InterpolationData(0, 0, null);
+                    var interpolatingMessage = lastThreeMessages[0];
+                    var msgToInterpolate = lastThreeMessages[1];
+                    var lastInterpolationData = msgToInterpolate.InterpolationData ?? new InterpolationData(0, 0, null);
 
-                    messaggio.InterpolationData = new InterpolationData(
-                        (int)(interpolationData.Length_sec +
-                            messaggio.IstanteAcquisizione.Subtract(msgToInterpolate.IstanteAcquisizione).TotalSeconds),
-                        interpolationData.Messages + 1,
+                    var interpolationData = new InterpolationData(
+                        (int)(lastInterpolationData.Length_sec +
+                            newMessage.IstanteAcquisizione.Subtract(msgToInterpolate.IstanteAcquisizione).TotalSeconds),
+                        lastInterpolationData.Messages + 1,
                         msgToInterpolate.IstanteAcquisizione);
 
-                    this.messaggiPosizioneCollection.DeleteOne(m => m.Id == msgToInterpolate.Id);
+                    var deleteTask = this.messaggiPosizioneCollection.DeleteOneAsync(m => m.Id == msgToInterpolate.Id);
+                    var updateTask = this.messaggiPosizioneCollection.UpdateOneAsync(
+                        m => m.Id == interpolatingMessage.Id,
+                        Builders<MessaggioPosizione>.Update.Set(m => m.InterpolationData, interpolationData));
+
+                    Task.WaitAll(deleteTask, updateTask);
                 }
             }
-
-            this.decorated.Store(messaggio);
         }
 
-        private bool AllInTheSamePosition(MessaggioPosizione[] messages)
+        private bool AllInTheSamePosition(IList<MessaggioPosizione> messages)
         {
             var first = messages.First();
             var allButFirst = messages.Skip(1);

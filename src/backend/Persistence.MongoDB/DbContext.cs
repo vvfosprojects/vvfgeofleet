@@ -107,6 +107,25 @@ namespace Persistence.MongoDB
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
             }
 
+            //This index is useful on message store to check whether the upcoming message
+            //is more recent than the last one. Thanks to this index, information about message time and _id
+            //is fetched directly from index, with no nooed to access data at all.
+            {
+                var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
+                    .Ascending(_ => _.Ultimo)
+                    .Ascending(_ => _.CodiceMezzo)
+                    .Ascending(_ => _.IstanteAcquisizione)
+                    .Ascending(_ => _.Id);
+
+                var indexOptions = new CreateIndexOptions<MessaggioPosizione>
+                {
+                    PartialFilterExpression = Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
+                    Background = true
+                };
+
+                this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
+            }
+
             //Indice utile a supportare le query sul percorso di un mezzo in un intervallo temporale dato.
             {
                 var indexDefinition = Builders<MessaggioPosizione>.IndexKeys
