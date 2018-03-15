@@ -22,6 +22,7 @@ import * as moment from 'moment';
 export class MappaPosizioniFlottaComponent implements OnInit {
   
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
+  @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
   
@@ -46,8 +47,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private elencoPosizioniNuove : PosizioneMezzo[] = [];
   private elencoPosizioniEliminate : PosizioneMezzo[] = [];
+  private elencoPosizioniRientrate : PosizioneMezzo[] = [];
   private elencoPosizioniModificate : PosizioneMezzo[] = [];
-
+  
 
   constructor() {}    
 
@@ -61,7 +63,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       ['1','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'],
       ['2','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png'],
       ['3','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_blue.png'],
-      ['4','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png'],
+      ['4','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_purple.png'],
       ['5','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_yellow.png'],
       ['6','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png'],
       ['7','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png']
@@ -73,14 +75,23 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   ngOnChanges() {
     
-
-    this.elencoPosizioniNuove = this.elencoPosizioni.
+    // individua le posizioni non ancora elaborare
+    this.elencoPosizioniNuove = this.elencoPosizioniDaElaborare.
       filter( (item) => {
-        var v = this.elencoPosizioniMostratePrecedenti.
-        find( x => item.codiceMezzo == x.codiceMezzo );
-        if ( v == null) {return item}
+        var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
+        if ( v == null) {
+          return item}
         else {return null}  }
        );
+    
+
+    // rimuove dalle posizioni da elaborare quelle Nuove
+    this.elencoPosizioniNuove.forEach( v => { 
+      var k = this.elencoPosizioniDaElaborare.indexOf( v );
+      if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
+     }
+    })
+
 
     /*
     console.log('ngOnChanges - elencoPosizioniPrecedenti: ', this.elencoPosizioniPrecedenti );
@@ -93,20 +104,47 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     //  });
     //});  
     
+    /*
+    // individua le posizioni eliminate estraendo quello non più presenti 
+    // nell'elenco aggiornato rispetto a quello precedente
     this.elencoPosizioniEliminate = this.elencoPosizioniMostratePrecedenti.
     filter( (item) => {
-      var v = this.elencoPosizioni.find( x => item.codiceMezzo == x.codiceMezzo );
+      var v = this.elencoPosizioniDaElaborare.find( x => item.codiceMezzo == x.codiceMezzo );
       if ( v == null) {return item}
       else {return null}  }
-     );
-
+    );
+    */
+     /*
+    // estra le posizioni dei Mezzi rientrati
+    this.elencoPosizioniRientrate = this.elencoPosizioniMostratePrecedenti.
+     filter( (item) => {
+       var v = this.elencoPosizioniDaElaborare.find( x => item.infoSO115.stato == '4' );
+       if ( v != null) {return item}
+       else {return null}  }
+    );
+       
+    // aggiunge alle posizioni da eliminare quelle dei Mezzi rientrati
+    this.elencoPosizioniEliminate = this.elencoPosizioniEliminate.concat(this.elencoPosizioniRientrate);
+    */
+    /*
+    // rimuove dalle posizioni Mostrate quelle Eliminate
     this.elencoPosizioniEliminate.forEach( v => { 
        var k = this.elencoPosizioniMostrate.indexOf( v );
        if (k != -1) { this.elencoPosizioniMostrate.splice(k,1); 
       }
      })
+     */
 
+    // aggiunge alle posizioni Mostrate quelle Nuove     
     this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove);
+
+    // modifica nelle posizioni Mostrate quelle con variazioni
+    this.elencoPosizioniDaElaborare.forEach( item => { 
+      var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+      if ( v != null) {  this.elencoPosizioniMostrate[v] = item; }    
+    } )
+
+    // salva l'elenco delle posizioni Mostrate attualmente
     this.elencoPosizioniMostratePrecedenti = this.elencoPosizioniMostrate;
     
   }
@@ -161,7 +199,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
       var r : boolean = this.filtriStatiMezzo.
-      some(filtro => filtro === p.infoSO115.stato);    
+      some(filtro => filtro === p.infoSO115.stato );    
       return r;
   }
 }

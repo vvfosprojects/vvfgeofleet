@@ -4,6 +4,7 @@ import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
 import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
+
 @Component({
   selector: 'app-elenco-posizioni-flotta',
   templateUrl: './elenco-posizioni-flotta.component.html',
@@ -11,12 +12,15 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 })
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
-  @Input() elencoPosizioni : PosizioneMezzo[];
+  @Input() elencoPosizioni : PosizioneMezzo[] = [];
 
 
-  private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
+  //private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
+  private elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
  
-  public istanteUltimoAggiornamento: Date;
+  private istanteUltimoAggiornamento: Date;
+  private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
+
   
   vociFiltroStatiMezzo: VoceFiltro[] = [
       new VoceFiltro(
@@ -29,14 +33,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         "3", "In rientro dall'intervento", 0, true
       ),
       new VoceFiltro(
+        "4", "Mezzi rientrati dall'intervento", 0, false
+      ),
+      new VoceFiltro(
         "5", "Fuori per motivi di Istituto", 0, true
       ),
       // posizione inviata da una radio non associata a nessun Mezzo
       new VoceFiltro(
         "6", "Posizioni Radio senza Mezzo", 0, false
       ),
+      // posizione inviata da un Mezzo prima dell'attivazione di GeoFleet,
+      // di cui non è rilevabile lo stato
       new VoceFiltro(
-        "7", "Ultima posizione Mezzi in Sede", 0, false
+        "7", "Ultima posizione storica Mezzi", 0, false
       ),
       new VoceFiltro(
         "0", "Stato operativo Sconosciuto", 0, false
@@ -61,13 +70,14 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
   inizializzaFiltri() {
+
+
     /*
     var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
 
     this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
     */
     
-    this.istanteUltimoAggiornamento = moment().toDate();      
     // elabora solo le posizioni su cui sono disponibili le info di SO115
     this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
     // elabora solo le posizioni su cui sono NON disponibili le info di SO115
@@ -77,17 +87,31 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo.find(v => v.codice === "1").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("1") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "2").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("2") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "3").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("3") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "4").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("4") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "5").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("5") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
 
-    
-    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
+     // elabora solo le posizioni arrivate nell'ultimo arco temporale
+    this.elencoPosizioniDaElaborare = this.elencoPosizioni.
+      filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
 
-    /*
+    this.istanteUltimoAggiornamento = moment().toDate();      
+
+    if (this.elencoPosizioniDaElaborare.length > 0) {
+      this.maxIstanteAcquisizionePrecedente = new Date(this.elencoPosizioni.
+        reduce( function (a,b) 
+        { var bb : Date = new Date(b.istanteAcquisizione);
+          var aa : Date  = new Date(a.istanteAcquisizione);
+          return aa>bb ? a : b ;
+        }).istanteAcquisizione);
+    }      
+   /*
     l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
     per tutti gli elementi, e di impostarla in base allo stato dei filtri selezionato 
     (true/false) si è rivelata una soluzione molto lenta e quindi abbandonata
+
+    //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
 
 
         import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
@@ -136,6 +160,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .filter(v => v.selezionato)
       .map(v => (v.codice).toString())
       ;
+
 
     }
         
