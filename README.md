@@ -33,6 +33,17 @@ _To be completed_
 # Note
 Currently the source code and the RESTful interface is a mix of English and Italian words. During the implementation, the Italian words will be translated as much as possible.
 
+# Side features
+
+## Messages interpolation
+
+VVFGeoFleet can receive keep-alive messages (e.g. every minute or so) from vehicles, in order to promptly know whether a vehicle is out-of-field or the GPS device is faulty. In presence of many vehicles (i.e. more than 10.000) those messages might be heavy to be stored.
+
+To cope with this issue, VVFGeoFleet holds only messages carrying position deltas, while interpolating messages received by the same vehicle in the same position. Interpolation information is saved together with the interpolating messages, so to prevent such inforation to get lost.
+
+## Too high velocity warnings
+
+On each position message reception, VVFGeoFleet computes the vehicle velocity comparing the received message with the latest stored one. In case such velocity exceeds a given threshold, a warning is traced in the application log (based on log4net). Too high velocities might be due to bad GPS device configuration of faulty GPS device.
 
 # API Documentation
 
