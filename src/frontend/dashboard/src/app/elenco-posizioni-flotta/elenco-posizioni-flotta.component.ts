@@ -92,9 +92,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
 
-     // elabora solo le posizioni arrivate nell'ultimo arco temporale
+    // elabora solo le posizioni arrivate nell'ultimo arco temporale
+    //quando cambia lo stato, viene recuperato l'ultimo messaggio con la stesso orario, per cui vanno considerati i messaggi >= all'ultimo già elaborato
+
     this.elencoPosizioniDaElaborare = this.elencoPosizioni.
-      filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
+      filter(r => (new Date(r.istanteAcquisizione) >= this.maxIstanteAcquisizionePrecedente ) );
 
     this.istanteUltimoAggiornamento = moment().toDate();      
 
