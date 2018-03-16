@@ -1,12 +1,43 @@
 # VVFGeoFleet
-Sistema per la localizzazione della flotta mezzi VVF
+VVFGeoFleet is a system allowing to track a fleet, where vehicles are equipped with GPS enabled devices periodically sending their position.
 
-# Documentazione API
+The system is composed of two main modules:
+
+* a backend module, based on a RESTful server;
+* a frontend module, based on an Angular GUI.
+
+## The backend
+The backend is written in C# Asp.Net WebApi, using Visual Studio 2017 Community Edition, with a persistence layer based on MongoDB document database.
+
+The backend:
+* collects position messages coming from GPS enabled devices installed on board the vehicles;
+* publishes REST actions to efficiently query the collected data.
+
+Queries allow, for instance, to:
+* getting the current fleet position (also by vehicle class);
+* getting a vehicle position;
+* getting a vehicle tracked path, within a given time interval;
+* getting vehicles near to a given point (also by vehicle class);
+* getting vehicles within a given rectangle;
+* getting vehicles inactive since too much time.
+
+The backend is optimized to collect data and hold them forever, without the need for purging old data periodically. The RESTful API leverages the MongoDB database and its spatial features. All database queries are carefully optimized to exploit indexes; thus, the response time is extremely low even in case of millions messages stored.
+
+The RESTful API enables the frontend to graphically display data, but it is especially conceived to be queried by other applications (B2B) in order to act as a decision support system (DSS).
+
+## The frontend
+The frontend is based on Angular4 and uses Google maps javascript API to show information.
+
+_To be completed_
+
+# Note
+Currently the source code and the RESTful interface is a mix of English and Italian words. During the implementation, the Italian words will be translated as much as possible.
+
+
+# API Documentation
 
 ## POST /api/messaggiPosizione
-Inserisce un nuovo messaggio di geo-localizzazione in archivio.
-
-Esempio di payload.
+Stores a new position message. Position message payloads are structured as follows.
 
 ```json
 {
@@ -22,31 +53,38 @@ Esempio di payload.
         "classeFonte": "gpsTracker"
     },
     "infoFonte": {
-      
+    
     }
 }
 ```
-Restituisce la location del messaggio inserito, ed il messaggio stesso.
+It returns the stored message location, together with the message itself.
 
-## GET /api/messaggiPosizione/{codiceMezzo}
-Restituisce il messaggio avente `codiceMezzo` specificato.
+## GET /api/messaggiPosizione/{id}
+Returns the message with the specified `id`.
 
-## GET /api/posizioneByCodiceMezzo/{codiceMezzo}
-Restituisce la posizione per il mezzo avente `codiceMezzo` specificato.
+## GET /api/posizioneByCodiceMezzo/{vehicleCode}
+Returns current position for the specified vehicle code (translated as `codiceMezzo` in the code).
 
-## GET /api/posizioneFlotta?attSec={secondi}
-Restituisce la posizione dell'intera flotta.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
+Note: should vehicle code contain a dot (.) character, you have to add a trailing slash (/) to the action call. Otherwise you would end up having a 404 error.
 
-## GET /api/posizioneFlotta/perClassi?classiMezzo={classe1}&classiMezzo={classe2}&classiMezzo={classe3}&attSec={secondi}
-Restituisce la posizione dell'intera flotta, limitatamente ai mezzi delle classi specificate come parametro d'ingresso.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
+## GET /api/posizioneFlotta?attSec={seconds}
+Returns current position of the entire fleet.
 
-## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={classe1}&classiMezzo={classe2}&attSec={secondi}
-Restituisce i mezzi in prossimità del punto specificato, entro un raggio massimo specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
+Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file (`orizzonteTemporale_sec` parameter).
 
-Il risultato è nella forma
+## GET /api/posizioneFlotta/perClassi?classiMezzo={class1}&classiMezzo={class2}&attSec={secondi}
+Returns current position of the entire fleet, just for the vehicle classes specified as  input parameters.
+
+Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file.
+
+## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={class1}&classiMezzo={class2}&attSec={secondi}
+Returns vehicles close to the specified point, within the maximum radius specified as input parameter (`distanzaMaxMt`).
+
+Optionally, it is possible to specify an array of vehicle classes as a filter.
+
+Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file. The distance from the specified center is returned, too.
+
+The result is structured as follows.
 
 ```json
 {
@@ -114,18 +152,27 @@ Il risultato è nella forma
 }
 ```
 
-## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={classe1}&classiMezzo={classe2}&attSec={secondi}
-Restituisce i mezzi all'interno del box specificato. E' opzionalmente possibile specificare un array di classi mezzo con cui filtrare i risultati dell'interrogazione.
-Vengono restituite solo le posizioni dei mezzi aggiornate negli ultimi `attSec` secondi (opzionale - default nel web.config).
+## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={class1}&classiMezzo={class2}&attSec={seconds}
+Resturns vehicles within the specified rectangle.
 
-## GET /api/MezziSilenti?daSecondi={daSecondi}
-Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. Per es. se il parametro `daSecondi` vale 86400, viene restituita la posizione dei mezzi che non hanno aggiornamenti di posizione da almeno un giorno.
+Optionally, it is possible to specify an array of vehicle classes as a filter.
 
-## GET /api/MezziSilenti?daSecondi={daSecondi}&classiMezzo={classe1}&classiMezzo={classe2}
-Restituisce la posizione dei mezzi ai quali da troppo tempo non è associato alcun messaggio di posizione. La ricerca è limitata alle classi specificate.
+Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file.
 
-## GET /api/classiMezzo?attSec={secondi}
-Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione giunti negli ultimi `attSec` specificati (opzionale - default nel web.config), con la relativa occorrenza, in ordine decrescente di occorrenza. I risultati sono restituiti nella seguente forma:
+## GET /api/MezziSilenti?daSecondi={seconds}
+Returns position messages for vehicles not updating their position since too long time. Useful to detect anomalies on GPS devices.
+
+For instance, if the `daSecondi` is equal to 86400, the action returns the last position message for each vehicle not sending its position since at least one day.
+
+## GET /api/MezziSilenti?daSecondi={seconds}&classiMezzo={class1}&classiMezzo={class2}
+Returns position messages for vehicles not updating their position since too long time. Results are filtered by vehicle classes specified as input parameters.
+
+## GET /api/classiMezzo?attSec={seconds}
+Returns all vehicle classes with their occurrence for all active vehicles (i.e. those which sent their position within the specified seconds).
+
+This is a faceted search useful to have information about vehicle classes, especially useful to enable fleet filtering by class.
+
+Results are returned in the following form.
 
 ```json
 [
@@ -141,20 +188,24 @@ Restituisce la lista di tutti i valori classiMezzo relativi a messaggi posizione
 ]
 ```
 
-## GET /api/percorso/{codiceMezzo}?from={isoDate}&to={isoDate}
-Restituisce tutti i messaggi di posizione del mezzo avente `codiceMezzo` specificato nell'intervallo temporale specificato. Con i messaggi ricevuti è pertanto possibile costruire il percorso del mezzo. Le date sono espresse in formato ISO-8601 (per es. 2018-03-04T10:45:52.875Z).
+## GET /api/percorso/{vehicleCode}?from={isoDate}&to={isoDate}
+Returns the path tracked for vehicle having the code specified as parameter, within the specified time interval.
 
-# Descrizione dell'architettura
-L'applicazione è sviluppata in linguaggio C# con Visual Studio 2017 Community Edition. L'architettura è una WebApi, basata su servizi REST, con uno strato di persistenza basato su MongoDB.
+Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
-# Librerie utilizzate
 
-- *MongoDB.Driver*: driver C# per l'integrazione con MongoDB;
-- *SimpleInjector*: libreria per la Dependency Injection (DI);
-- *log4net*: libreria per il logging applicativo;
-- *NUnit v3*: libreria per la stesura degli unit tests;
-- *Moq*: libreria per la generazione di classi mock;
-- *Bogus*: libreria per la generazione di istanze fake di classi.
+# Dependencies
+VVFGeoFleet backend depends on the following libraries.
 
-# Licenza
-Il codice sorgente è rilasciato nei termini della licenza AGPL-3.0.
+* **MongoDB.Driver**: C# driver for MongoDB;
+* **SimpleInjector**: Dependency Injection (DI) library;
+* **log4net**: application log;
+* **NUnit v3**: unit tests library;
+* **Moq**: mock classes generation library;
+* **Bogus**: fake data generation library.
+
+# Licence
+Source code is released under the terms of AGPL-3.0 license.
+
+# Disclaimer
+Use this project at yuor own risk. The authors are not responsible for any damage which might result from this project usage.
