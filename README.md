@@ -48,7 +48,11 @@ On each position message reception, VVFGeoFleet computes the vehicle velocity co
 # API Documentation
 
 ## POST /api/messaggiPosizione
+
+###### Complexity: `O(log Nv)` Nv being the total number of vehicles.
+
 Stores a new position message. Position message payloads are structured as follows.
+
 
 ```json
 {
@@ -71,24 +75,39 @@ Stores a new position message. Position message payloads are structured as follo
 It returns the stored message location, together with the message itself.
 
 ## GET /api/messaggiPosizione/{id}
+
+###### Complexity: `O(log Nm)` Nm being the number of stored messages.
+
 Returns the message with the specified `id`.
 
 ## GET /api/posizioneByCodiceMezzo/{vehicleCode}
+
+###### Complexity: `O(log V)` V being the total number of vehicles.
+
 Returns current position for the specified vehicle code (translated as `codiceMezzo` in the code).
 
 Note: should vehicle code contain a dot (.) character, you have to add a trailing slash (/) to the action call. Otherwise you would end up having a 404 error.
 
 ## GET /api/posizioneFlotta?attSec={seconds}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns current position of the entire fleet.
 
 Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file (`orizzonteTemporale_sec` parameter).
 
 ## GET /api/posizioneFlotta/perClassi?classiMezzo={class1}&classiMezzo={class2}&attSec={secondi}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns current position of the entire fleet, just for the vehicle classes specified as  input parameters.
 
 Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file.
 
 ## GET /api/prossimita?lat={lat}&lon={lon}&distanzaMaxMt={distMt}&classiMezzo={class1}&classiMezzo={class2}&attSec={secondi}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns vehicles close to the specified point, within the maximum radius specified as input parameter (`distanzaMaxMt`).
 
 Optionally, it is possible to specify an array of vehicle classes as a filter.
@@ -164,6 +183,9 @@ The result is structured as follows.
 ```
 
 ## GET /api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={class1}&classiMezzo={class2}&attSec={seconds}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Resturns vehicles within the specified rectangle.
 
 Optionally, it is possible to specify an array of vehicle classes as a filter.
@@ -171,14 +193,23 @@ Optionally, it is possible to specify an array of vehicle classes as a filter.
 Only the updated positions are returned, i.e. those arrived since the last `attSec` seconds. `attSec` parameter is optional and defaults to the value contained in the `Web.Config` file.
 
 ## GET /api/MezziSilenti?daSecondi={seconds}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns position messages for vehicles not updating their position since too long time. Useful to detect anomalies on GPS devices.
 
 For instance, if the `daSecondi` is equal to 86400, the action returns the last position message for each vehicle not sending its position since at least one day.
 
 ## GET /api/MezziSilenti?daSecondi={seconds}&classiMezzo={class1}&classiMezzo={class2}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns position messages for vehicles not updating their position since too long time. Results are filtered by vehicle classes specified as input parameters.
 
 ## GET /api/classiMezzo?attSec={seconds}
+
+###### Complexity: `O(Nv)` Nv being the total number of vehicles.
+
 Returns all vehicle classes with their occurrence for all active vehicles (i.e. those which sent their position within the specified seconds).
 
 This is a faceted search useful to have information about vehicle classes, especially useful to enable fleet filtering by class.
@@ -200,6 +231,9 @@ Results are returned in the following form.
 ```
 
 ## GET /api/percorso/{vehicleCode}?from={isoDate}&to={isoDate}
+
+###### Complexity: `O(log Nm)` Nm being the total number of stored messages.
+
 Returns the path tracked for vehicle having the code specified as parameter, within the specified time interval.
 
 Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
