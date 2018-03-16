@@ -260,4 +260,4 @@ VVFGeoFleet frontend depends (also) on the following libraries.
 Source code is released under the terms of AGPL-3.0 license.
 
 # Disclaimer
-Use this project at yuor own risk. The authors are not responsible for any damage which might result from this project usage.
+Use this project at your own risk. The authors are not responsible for any damage which might result from this project usage.
