@@ -195,7 +195,7 @@ Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
 
 # Dependencies
-VVFGeoFleet backend depends on the following libraries.
+VVFGeoFleet backend depends (also) on the following libraries.
 
 * **MongoDB.Driver**: C# driver for MongoDB;
 * **SimpleInjector**: Dependency Injection (DI) library;
@@ -203,6 +203,13 @@ VVFGeoFleet backend depends on the following libraries.
 * **NUnit v3**: unit tests library;
 * **Moq**: mock classes generation library;
 * **Bogus**: fake data generation library.
+
+VVFGeoFleet frontend depends (also) on the following libraries.
+
+* **@agm/core**: Angular Google Maps;
+* **bootstrap**: Bootstrap css library;
+* **moment.js**: date and time handling routines;
+* **typescript**: dev library enhancing javascript to be OOP.
 
 # Licence
 Source code is released under the terms of AGPL-3.0 license.
