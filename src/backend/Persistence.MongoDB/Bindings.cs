@@ -53,6 +53,17 @@ namespace Persistence.MongoDB
                 sender.InterpolationThreshold_mt = container.GetInstance<Modello.Configurazione.IAppConfig>().InterpolationThreshold_mt;
             });
 
+            container.RegisterDecorator(
+                typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
+                typeof(Servizi.StoreMessaggioPosizione_LogTooHighVelocities_Decorator),
+                context => container.GetInstance<Modello.Configurazione.IAppConfig>().TooHighVelocityLoggingActive
+            );
+
+            container.RegisterInitializer<Servizi.StoreMessaggioPosizione_LogTooHighVelocities_Decorator>(sender =>
+            {
+                sender.VelocityThreshold_Kmh = container.GetInstance<Modello.Configurazione.IAppConfig>().VelocityThreshold_Kmh;
+            });
+
             container.Register<Modello.Servizi.Persistence.IGetPosizioneByCodiceMezzo,
                 Servizi.GetPosizioneByCodiceMezzo_DB>(Lifestyle.Scoped);
 
