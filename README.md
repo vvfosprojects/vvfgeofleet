@@ -82,7 +82,7 @@ Returns the message with the specified `id`.
 
 ## GET /api/posizioneByCodiceMezzo/{vehicleCode}
 
-###### Complexity: `O(log V)` V being the total number of vehicles.
+###### Complexity: `O(log Nv)` Nv being the total number of vehicles.
 
 Returns current position for the specified vehicle code (translated as `codiceMezzo` in the code).
 
