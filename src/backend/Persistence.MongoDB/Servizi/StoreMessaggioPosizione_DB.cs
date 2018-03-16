@@ -64,7 +64,7 @@ namespace Persistence.MongoDB.Servizi
                 this.InsertAsFirstMessage(newMessage);
             else
             {
-                var newMessageIsMoreRecent = newMessage.IstanteAcquisizione > lastStoredMessageData.msgTime;
+                var newMessageIsMoreRecent = newMessage.IstanteAcquisizione >= lastStoredMessageData.msgTime;
 
                 if (newMessageIsMoreRecent)
                 {

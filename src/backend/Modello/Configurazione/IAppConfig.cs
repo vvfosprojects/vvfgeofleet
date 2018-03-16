@@ -30,5 +30,12 @@ namespace Modello.Configurazione
         float InterpolationThreshold_mt { get; }
 
         #endregion Interpolation data
+
+        #region Too high velocity logging
+
+        bool TooHighVelocityLoggingActive { get; }
+        int VelocityThreshold_Kmh { get; }
+
+        #endregion Too high velocity logging
     }
 }

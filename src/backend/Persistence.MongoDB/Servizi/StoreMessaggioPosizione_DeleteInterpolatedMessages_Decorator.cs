@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Device.Location;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +35,7 @@ namespace Persistence.MongoDB.Servizi
 
             var lastThreeMessages = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == newMessage.CodiceMezzo)
                 .SortByDescending(m => m.IstanteAcquisizione)
+                .ThenByDescending(m => m.Id)
                 .Limit(3)
                 .ToList();
 
@@ -73,10 +73,7 @@ namespace Persistence.MongoDB.Servizi
 
         private bool AreCloseEnough(Localizzazione loc1, Localizzazione loc2)
         {
-            var coord1 = new GeoCoordinate(loc1.Lat, loc1.Lon);
-            var coord2 = new GeoCoordinate(loc2.Lat, loc2.Lon);
-
-            var distance = coord1.GetDistanceTo(coord2);
+            var distance = loc1.GetDistanceTo(loc2);
             return distance <= InterpolationThreshold_mt;
         }
     }
