@@ -95,6 +95,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     // elabora solo le posizioni arrivate nell'ultimo arco temporale
     //quando cambia lo stato, viene recuperato l'ultimo messaggio con la stesso orario, per cui vanno considerati i messaggi >= all'ultimo già elaborato
 
+    
     this.elencoPosizioniDaElaborare = this.elencoPosizioni.
       filter(r => (new Date(r.istanteAcquisizione) >= this.maxIstanteAcquisizionePrecedente ) );
 
