@@ -1,8 +1,25 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright file="StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator.cs" company="CNVVF">
+// Copyright (C) 2017 - CNVVF
+//
+// This file is part of VVFGeoFleet.
+// VVFGeoFleet is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// SOVVF is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/.
+// </copyright>
+//-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
-using System.Device.Location;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
@@ -30,35 +47,41 @@ namespace Persistence.MongoDB.Servizi
         /// </summary>
         public float InterpolationThreshold_mt { get; set; }
 
-        public void Store(MessaggioPosizione messaggio)
+        public void Store(MessaggioPosizione newMessage)
         {
-            var lastTwoMessages = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == messaggio.CodiceMezzo)
+            this.decorated.Store(newMessage);
+
+            var lastThreeMessages = this.messaggiPosizioneCollection.Find(m => m.CodiceMezzo == newMessage.CodiceMezzo)
                 .SortByDescending(m => m.IstanteAcquisizione)
-                .Limit(2)
+                .ThenByDescending(m => m.Id)
+                .Limit(3)
                 .ToList();
 
-            if (lastTwoMessages.Count == 2)
+            if (lastThreeMessages.Count == 3)
             {
-                var lastThreeMessages = lastTwoMessages.Concat(new[] { messaggio }).ToArray();
                 if (this.AllInTheSamePosition(lastThreeMessages))
                 {
-                    var msgToInterpolate = lastTwoMessages[0];
-                    var interpolationData = msgToInterpolate.InterpolationData ?? new InterpolationData(0, 0, null);
+                    var interpolatingMessage = lastThreeMessages[0];
+                    var msgToInterpolate = lastThreeMessages[1];
+                    var lastInterpolationData = msgToInterpolate.InterpolationData ?? new InterpolationData(0, 0, null);
 
-                    messaggio.InterpolationData = new InterpolationData(
-                        (int)(interpolationData.Length_sec +
-                            messaggio.IstanteAcquisizione.Subtract(msgToInterpolate.IstanteAcquisizione).TotalSeconds),
-                        interpolationData.Messages + 1,
+                    var interpolationData = new InterpolationData(
+                        (int)(lastInterpolationData.Length_sec +
+                            newMessage.IstanteAcquisizione.Subtract(msgToInterpolate.IstanteAcquisizione).TotalSeconds),
+                        lastInterpolationData.Messages + 1,
                         msgToInterpolate.IstanteAcquisizione);
 
-                    this.messaggiPosizioneCollection.DeleteOne(m => m.Id == msgToInterpolate.Id);
+                    var deleteTask = this.messaggiPosizioneCollection.DeleteOneAsync(m => m.Id == msgToInterpolate.Id);
+                    var updateTask = this.messaggiPosizioneCollection.UpdateOneAsync(
+                        m => m.Id == interpolatingMessage.Id,
+                        Builders<MessaggioPosizione>.Update.Set(m => m.InterpolationData, interpolationData));
+
+                    Task.WaitAll(deleteTask, updateTask);
                 }
             }
-
-            this.decorated.Store(messaggio);
         }
 
-        private bool AllInTheSamePosition(MessaggioPosizione[] messages)
+        private bool AllInTheSamePosition(IList<MessaggioPosizione> messages)
         {
             var first = messages.First();
             var allButFirst = messages.Skip(1);
@@ -68,10 +91,7 @@ namespace Persistence.MongoDB.Servizi
 
         private bool AreCloseEnough(Localizzazione loc1, Localizzazione loc2)
         {
-            var coord1 = new GeoCoordinate(loc1.Lat, loc1.Lon);
-            var coord2 = new GeoCoordinate(loc2.Lat, loc2.Lon);
-
-            var distance = coord1.GetDistanceTo(coord2);
+            var distance = loc1.GetDistanceTo(loc2);
             return distance <= InterpolationThreshold_mt;
         }
     }

@@ -25,7 +25,6 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using NUnit.Framework;
 using Persistence.MongoDB;
-using Persistence.MongoDB.Servizi;
 
 namespace VVFGeoFleet.Test
 {

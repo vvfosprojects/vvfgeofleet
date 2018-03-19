@@ -22,7 +22,6 @@ using System.Diagnostics;
 using System.Linq;
 using Modello.Classi;
 using Modello.Servizi.Persistence.GeoQuery.InRettangolo;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Persistence.MongoDB.Servizi
