@@ -17,6 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System.Device.Location;
+
 namespace Modello.Classi
 {
     public class Localizzazione
@@ -34,6 +36,20 @@ namespace Modello.Classi
         {
             get { return this.coordinates[0]; }
             set { coordinates[0] = value; }
+        }
+
+        /// <summary>
+        ///   The distance between the two coordinates, in meters.
+        /// </summary>
+        /// <param name="loc">The second location</param>
+        /// <returns>The distance in meters</returns>
+        public double GetDistanceTo(Localizzazione loc)
+        {
+            var coord1 = new GeoCoordinate(this.Lat, this.Lon);
+            var coord2 = new GeoCoordinate(loc.Lat, loc.Lon);
+
+            var distance = coord1.GetDistanceTo(coord2);
+            return distance;
         }
     }
 }

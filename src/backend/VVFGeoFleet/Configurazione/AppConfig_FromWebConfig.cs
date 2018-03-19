@@ -29,10 +29,14 @@ namespace VVFGeoFleet.Configurazione
         public int orizzonteTemporale_sec = Convert.ToInt32(ConfigurationManager.AppSettings["orizzonteTemporale_sec"]);
         public bool interpolationActive = Convert.ToBoolean(ConfigurationManager.AppSettings["interpolationActive"]);
         public float interpolationThreshold_mt = Convert.ToSingle(ConfigurationManager.AppSettings["interpolationThreshold_mt"]);
+        public bool tooHighVelocityLoggingActive = Convert.ToBoolean(ConfigurationManager.AppSettings["tooHighVelocityLoggingActive"]);
+        public int velocityThreshold_Kmh = Convert.ToInt32(ConfigurationManager.AppSettings["velocityThreshold_Kmh"]);
 
         public string ConnectionString { get => this.connectionString; }
         public int OrizzonteTemporale_sec { get => this.orizzonteTemporale_sec; }
         public bool InterpolationActive { get => this.interpolationActive; }
         public float InterpolationThreshold_mt { get => this.interpolationThreshold_mt; }
+        public bool TooHighVelocityLoggingActive { get => this.tooHighVelocityLoggingActive; }
+        public int VelocityThreshold_Kmh { get => this.velocityThreshold_Kmh; }
     }
 }
