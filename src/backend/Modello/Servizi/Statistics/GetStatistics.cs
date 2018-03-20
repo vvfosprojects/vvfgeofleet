@@ -65,7 +65,6 @@ namespace Modello.Servizi.Statistics
 
             return new
             {
-                DailyStats = dailyStats,
                 LastNews = new
                 {
                     NumberOfMessagesStoredInTheLastMinute = numberOfMessagesStoredInTheLastMinuteTask.Result,
@@ -75,7 +74,8 @@ namespace Modello.Servizi.Statistics
                     TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result,
                     NumberOfVehicles = numberOfVehiclesTask.Result,
                     NumberOfActiveVehicles = numberOfActiveVehiclesTask.Result,
-                }
+                },
+                DailyStats = dailyStats
             };
         }
     }
