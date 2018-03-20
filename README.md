@@ -230,7 +230,7 @@ Results are returned in the following form.
     "class": "APS",
     "count": 322
   }
-  ...
+  //...
 ]
 ```
 
@@ -238,7 +238,46 @@ Results are returned in the following form.
 
 ###### Complexity: `O(Nm)` Nm being the total number of stored messages.
 
-Returns statistics about system operations (i.e. numer of messages processed per day, total number of message stored, message arrival rate, etc.).
+Returns statistics about system operations (i.e. numer of messages processed per day, total number of message stored, message arrival rate, etc.). Statistics JSON format is the following:
+
+```json
+{
+	"lastNews": {
+		"messages": {
+			"numberOfMessagesStoredInTheLastMinute": 123,
+			"numberOfMessagesStoredInTheLastHour": 6543,
+			"averageNumberOfMessagesPerMinute": 109.05,
+			"averageNumberOfMessagesPerSecond": 1.8175,
+			"totalNumberOfMessagesStored": 1234567
+		},
+		"vehicles": {
+			"numberOfVehicles": 10000,
+			"numberOfVehiclesActiveWithin72h": 1678,
+			"numberOfVehiclesActiveWithin48h": 1567,
+			"numberOfVehiclesActiveWithin24h": 1456,
+			"numberOfVehiclesActiveWithin1h": 1345,
+			"numberOfVehiclesActiveWithin1m": 44
+		}
+	},
+	"dailyStats": [{
+			"key": {
+				"year": 2018,
+				"month": 3,
+				"day": 20
+			},
+			"messageCount": 122345
+		}, {
+			"key": {
+				"year": 2018,
+				"month": 3,
+				"day": 19
+			},
+			"messageCount": 123456
+		},
+		//...
+	]
+}
+```
 
 ## GET /api/percorso/{vehicleCode}?from={isoDate}&to={isoDate}
 
