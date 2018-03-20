@@ -29,28 +29,36 @@ namespace Modello.Servizi.Statistics
     {
         private readonly IGetDailyStats getDailyStats;
         private readonly IGetNumberOfMessagesStoredByTimeInterval getNumberOfMessagesStoredByTimeInterval;
+        private readonly IGetNumberOfVehicles getNumberOfVehicles;
 
         public GetStatistics(
             IGetDailyStats getDailyStats,
-            IGetNumberOfMessagesStoredByTimeInterval getNumberOfMessagesStoredByTimeInterval)
+            IGetNumberOfMessagesStoredByTimeInterval getNumberOfMessagesStoredByTimeInterval,
+            IGetNumberOfVehicles getNumberOfVehicles)
         {
             this.getDailyStats = getDailyStats ?? throw new ArgumentNullException(nameof(getDailyStats));
             this.getNumberOfMessagesStoredByTimeInterval = getNumberOfMessagesStoredByTimeInterval ?? throw new ArgumentNullException(nameof(getNumberOfMessagesStoredByTimeInterval));
+            this.getNumberOfVehicles = getNumberOfVehicles ?? throw new ArgumentNullException(nameof(getNumberOfVehicles));
         }
 
         public object Get()
         {
-            var howManyDays = 30;
+            const int howManyDays = 30;
+            const int vehiclesActiveWithinSeconds = 60 * 60 * 24;
             var dailyStats = this.getDailyStats.Get(howManyDays);
 
             var numberOfMessagesStoredInTheLastMinuteTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
             var numberOfMessagesStoredInTheLastHourTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddHours(-1), DateTime.UtcNow);
             var totalNumberOfMessagesStoredTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.MinValue, DateTime.MaxValue);
+            var numberOfVehiclesTask = this.getNumberOfVehicles.GetAsync();
+            var numberOfActiveVehiclesTask = this.getNumberOfVehicles.GetActiveAsync(vehiclesActiveWithinSeconds);
 
             Task.WaitAll(
                 numberOfMessagesStoredInTheLastMinuteTask,
                 numberOfMessagesStoredInTheLastHourTask,
-                totalNumberOfMessagesStoredTask);
+                totalNumberOfMessagesStoredTask,
+                numberOfVehiclesTask,
+                numberOfActiveVehiclesTask);
 
             var averageNumberOfMessagesPerMinute = numberOfMessagesStoredInTheLastHourTask.Result / 60d;
             var averageNumberOfMessagesPerSecond = numberOfMessagesStoredInTheLastHourTask.Result / 60d / 60d;
@@ -64,7 +72,9 @@ namespace Modello.Servizi.Statistics
                     NumberOfMessagesStoredInTheLastHour = numberOfMessagesStoredInTheLastHourTask.Result,
                     AverageNumberOfMessagesPerMinute = averageNumberOfMessagesPerMinute,
                     AverageNumberOfMessagesPerSecond = averageNumberOfMessagesPerSecond,
-                    TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result
+                    TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result,
+                    NumberOfVehicles = numberOfVehiclesTask.Result,
+                    NumberOfActiveVehicles = numberOfActiveVehiclesTask.Result,
                 }
             };
         }

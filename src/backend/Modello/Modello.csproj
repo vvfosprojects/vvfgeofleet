@@ -75,6 +75,7 @@
     <Compile Include="Servizi\Statistics\GetStatistics.cs" />
     <Compile Include="Servizi\Statistics\IGetDailyStats.cs" />
     <Compile Include="Servizi\Statistics\IGetNumberOfMessagesStoredByTimeInterval.cs" />
+    <Compile Include="Servizi\Statistics\IGetNumberOfVehicles.cs" />
     <Compile Include="Servizi\Statistics\IGetStatistics.cs" />
   </ItemGroup>
   <ItemGroup>
