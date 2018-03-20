@@ -22,15 +22,19 @@ export class PosizioneMezzoComponent implements OnInit {
 
   ngOnInit() {
 
+    //['4',['rientrato','badge-info']],
+    //['5',['istituto','badge-warning']],
+    //['6',['radio','badge-secondary']],
+
     this.defStatiMezzo = [
       ['0',['sconosciuto','badge-light']],
       ['1',['in viaggio','badge-success']],
       ['2',['sul posto','badge-danger']],
       ['3',['in rientro','badge-primary']],
-      ['4',['rientrato','badge-info']],
-      ['5',['istituto','badge-warning']],
-      ['6',['radio','badge-secondary']],
-      ['7',['ultima','badge-dark']],      
+      ['4',['rientrato','badge-secondary']],
+      ['5',['istituto','badge-istituto']],
+      ['6',['radio','badge-radio']],
+      ['7',['ultima','badge-storico']],      
     ]    ;    
     this.mapAlert = new Map(this.defStatiMezzo);        
 

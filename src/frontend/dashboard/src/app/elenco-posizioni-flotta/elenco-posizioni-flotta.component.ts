@@ -19,7 +19,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   private elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
  
   private istanteUltimoAggiornamento: Date;
-  private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
+  private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   
   vociFiltroStatiMezzo: VoceFiltro[] = [
@@ -33,7 +33,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         "3", "In rientro dall'intervento", 0, true
       ),
       new VoceFiltro(
-        "4", "Mezzi rientrati dall'intervento", 0, false
+        "4", "Mezzi rientrati in Sede", 0, false
       ),
       new VoceFiltro(
         "5", "Fuori per motivi di Istituto", 0, true
@@ -92,24 +92,25 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
 
-    // elabora solo le posizioni arrivate nell'ultimo arco temporale
-    //quando cambia lo stato, viene recuperato l'ultimo messaggio con la stesso orario, per cui vanno considerati i messaggi >= all'ultimo già elaborato
-
-    
+    // assegnna alle posizioni da elaborare quelle archiviate successivamente 
+    //all'istante di elborazione precedente
     this.elencoPosizioniDaElaborare = this.elencoPosizioni.
-      filter(r => (new Date(r.istanteAcquisizione) >= this.maxIstanteAcquisizionePrecedente ) );
+      filter(r => (new Date(r.istanteArchiviazione) > this.maxistanteArchiviazionePrecedente ) );
+      //filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
 
     this.istanteUltimoAggiornamento = moment().toDate();      
 
     if (this.elencoPosizioniDaElaborare.length > 0) {
-      this.maxIstanteAcquisizionePrecedente = new Date(this.elencoPosizioni.
+      this.maxistanteArchiviazionePrecedente = new Date(this.elencoPosizioni.
         reduce( function (a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
+        { var bb : Date = new Date(b.istanteArchiviazione);
+          var aa : Date  = new Date(a.istanteArchiviazione);
           return aa>bb ? a : b ;
-        }).istanteAcquisizione);
+        }).istanteArchiviazione);
     }      
-   /*
+
+
+    /*
     l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
     per tutti gli elementi, e di impostarla in base allo stato dei filtri selezionato 
     (true/false) si è rivelata una soluzione molto lenta e quindi abbandonata
