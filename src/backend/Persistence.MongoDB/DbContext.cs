@@ -34,6 +34,7 @@ namespace Persistence.MongoDB
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private static IMongoDatabase database;
+        private static string[] nonLoggedCommandNames = new[] { "isMaster", "buildInfo" };
 
         internal DbContext(string connectionString)
         {
@@ -58,7 +59,8 @@ namespace Persistence.MongoDB
                     {
                         cb.Subscribe<CommandStartedEvent>(e =>
                         {
-                            log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
+                            if (!nonLoggedCommandNames.Contains(e.CommandName))
+                                log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
                         });
                     },
                     Server = url.Server,
