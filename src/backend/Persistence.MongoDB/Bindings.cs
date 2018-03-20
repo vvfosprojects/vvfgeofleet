@@ -90,6 +90,9 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Statistics.IGetDailyStats,
                 Servizi.Statistics.GetDailyStats_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Statistics.IGetNumberOfVehicles,
+                Servizi.Statistics.GetNumberOfVehicles_DB>(Lifestyle.Scoped);
         }
     }
 }

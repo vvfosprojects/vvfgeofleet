@@ -81,6 +81,7 @@
     <Compile Include="Servizi\GetMessaggioPosizioneById_DB.cs" />
     <Compile Include="Servizi\Statistics\GetDailyStats_DB.cs" />
     <Compile Include="Servizi\Statistics\GetNumberOfMessagesStoredByTimeInterval_DB.cs" />
+    <Compile Include="Servizi\Statistics\GetNumberOfVehicles_DB.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_DB.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_LogTooHighVelocities_Decorator.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator.cs" />
