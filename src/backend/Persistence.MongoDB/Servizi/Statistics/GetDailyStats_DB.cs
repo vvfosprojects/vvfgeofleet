@@ -51,7 +51,9 @@ namespace Persistence.MongoDB.Servizi.Statistics
                     g => new
                     {
                         key = g.Key,
-                        messageCount = g.Count()
+                        interpolatedMessageCount = g.Count(),
+                        nonInterpolatedMessageCount = g.Sum(m =>
+                            1 + (m.InterpolationData != null ? m.InterpolationData.Messages : 0))
                     })
                 .SortByDescending(r => r.key.year)
                 .ThenByDescending(r => r.key.month)

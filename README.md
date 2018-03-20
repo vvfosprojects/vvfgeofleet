@@ -265,14 +265,16 @@ Returns statistics about system operations (i.e. numer of messages processed per
 				"month": 3,
 				"day": 20
 			},
-			"messageCount": 122345
+			"interpolatedMessageCount": 100000,
+			"nonInterpolatedMessageCount": 120000
 		}, {
 			"key": {
 				"year": 2018,
 				"month": 3,
 				"day": 19
 			},
-			"messageCount": 123456
+			"interpolatedMessageCount": 110000,
+			"nonInterpolatedMessageCount": 130000
 		},
 		//...
 	]
