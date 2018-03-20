@@ -120,6 +120,7 @@
     <Compile Include="Controllers\MessaggiPosizioneController.cs" />
     <Compile Include="Controllers\PosizioneFlottaController.cs" />
     <Compile Include="Controllers\ProssimitaController.cs" />
+    <Compile Include="Controllers\StatisticsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

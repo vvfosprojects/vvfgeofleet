@@ -84,6 +84,12 @@ namespace Persistence.MongoDB
 
             container.Register<Modello.Servizi.Persistence.IGetPercorso,
                 Servizi.GetPercorso_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Statistics.IGetNumberOfMessagesStoredByTimeInterval,
+                Servizi.Statistics.GetNumberOfMessagesStoredByTimeInterval_DB>(Lifestyle.Scoped);
+
+            container.Register<Modello.Servizi.Statistics.IGetDailyStats,
+                Servizi.Statistics.GetDailyStats_DB>(Lifestyle.Scoped);
         }
     }
 }

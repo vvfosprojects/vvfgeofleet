@@ -45,6 +45,10 @@ To cope with this issue, VVFGeoFleet holds only messages carrying position delta
 
 On each position message reception, VVFGeoFleet computes the vehicle velocity comparing the received message with the latest stored one. In case such velocity exceeds a given threshold, a warning is traced in the application log (based on log4net). Too high velocities might be due to bad GPS device configuration of faulty GPS device.
 
+## Online statistics
+
+System publishes statistics about message arrival per day, total number of stored messages, messages arrival rate, etc. Statistics can be read to check correct system operation, and can be processed through automated systems in order to raise alarms in case of anomalous indicators.
+
 # API Documentation
 
 ## POST /api/messaggiPosizione
@@ -228,6 +232,13 @@ Results are returned in the following form.
   }
   ...
 ]
+
+## GET /api/statistics
+
+###### Complexity: `O(Nm)` Nm being the total number of stored messages.
+
+Returns statistics about system operations (i.e. numer of messages processed per day, total number of message stored, message arrival rate, etc.).
+
 ```
 
 ## GET /api/percorso/{vehicleCode}?from={isoDate}&to={isoDate}

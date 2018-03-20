@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGetClassiMezzo.cs" company="CNVVF">
+// <copyright file="IGetStatistics.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,12 +17,16 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Modello.Servizi.Persistence
+namespace Modello.Servizi.Statistics
 {
-    public interface IGetClassiMezzo
+    public interface IGetStatistics
     {
-        IDictionary<string, long> Get(int activeWithinSeconds);
+        object Get();
     }
 }

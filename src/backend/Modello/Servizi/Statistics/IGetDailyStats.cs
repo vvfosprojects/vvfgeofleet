@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGetClassiMezzo.cs" company="CNVVF">
+// <copyright file="IGetDailyStats.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,12 +17,24 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Modello.Servizi.Persistence
+namespace Modello.Servizi.Statistics
 {
-    public interface IGetClassiMezzo
+    /// <summary>
+    ///   Gets statistics on the number of inserted records day per day
+    /// </summary>
+    public interface IGetDailyStats
     {
-        IDictionary<string, long> Get(int activeWithinSeconds);
+        /// <summary>
+        ///   Gets statistics on the number of inserted records day per day
+        /// </summary>
+        /// <param name="howManyDays">The number of past days to go behind</param>
+        /// <returns>Statistics</returns>
+        IEnumerable<object> Get(int howManyDays);
     }
 }
