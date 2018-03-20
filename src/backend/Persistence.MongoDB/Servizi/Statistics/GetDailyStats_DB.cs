@@ -51,7 +51,7 @@ namespace Persistence.MongoDB.Servizi.Statistics
                     g => new
                     {
                         key = g.Key,
-                        count = g.Count()
+                        messageCount = g.Count()
                     })
                 .SortByDescending(r => r.key.year)
                 .ThenByDescending(r => r.key.month)

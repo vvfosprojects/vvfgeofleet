@@ -44,21 +44,22 @@ namespace Modello.Servizi.Statistics
         public object Get()
         {
             const int howManyDays = 30;
-            const int vehiclesActiveWithinSeconds = 60 * 60 * 24;
             var dailyStats = this.getDailyStats.Get(howManyDays);
 
             var numberOfMessagesStoredInTheLastMinuteTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
             var numberOfMessagesStoredInTheLastHourTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddHours(-1), DateTime.UtcNow);
             var totalNumberOfMessagesStoredTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.MinValue, DateTime.MaxValue);
-            var numberOfVehiclesTask = this.getNumberOfVehicles.GetAsync();
-            var numberOfActiveVehiclesTask = this.getNumberOfVehicles.GetActiveAsync(vehiclesActiveWithinSeconds);
+            var numberOfVehicles = this.getNumberOfVehicles.Get();
+            var numberOfVehiclesActiveWithin72h = this.getNumberOfVehicles.GetActive(60 * 60 * 72);
+            var numberOfVehiclesActiveWithin48h = this.getNumberOfVehicles.GetActive(60 * 60 * 48);
+            var numberOfVehiclesActiveWithin24h = this.getNumberOfVehicles.GetActive(60 * 60 * 24);
+            var numberOfVehiclesActiveWithin1h = this.getNumberOfVehicles.GetActive(60 * 60);
+            var numberOfVehiclesActiveWithin1m = this.getNumberOfVehicles.GetActive(60);
 
             Task.WaitAll(
                 numberOfMessagesStoredInTheLastMinuteTask,
                 numberOfMessagesStoredInTheLastHourTask,
-                totalNumberOfMessagesStoredTask,
-                numberOfVehiclesTask,
-                numberOfActiveVehiclesTask);
+                totalNumberOfMessagesStoredTask);
 
             var averageNumberOfMessagesPerMinute = numberOfMessagesStoredInTheLastHourTask.Result / 60d;
             var averageNumberOfMessagesPerSecond = numberOfMessagesStoredInTheLastHourTask.Result / 60d / 60d;
@@ -67,13 +68,23 @@ namespace Modello.Servizi.Statistics
             {
                 LastNews = new
                 {
-                    NumberOfMessagesStoredInTheLastMinute = numberOfMessagesStoredInTheLastMinuteTask.Result,
-                    NumberOfMessagesStoredInTheLastHour = numberOfMessagesStoredInTheLastHourTask.Result,
-                    AverageNumberOfMessagesPerMinute = averageNumberOfMessagesPerMinute,
-                    AverageNumberOfMessagesPerSecond = averageNumberOfMessagesPerSecond,
-                    TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result,
-                    NumberOfVehicles = numberOfVehiclesTask.Result,
-                    NumberOfActiveVehicles = numberOfActiveVehiclesTask.Result,
+                    Messages = new
+                    {
+                        NumberOfMessagesStoredInTheLastMinute = numberOfMessagesStoredInTheLastMinuteTask.Result,
+                        NumberOfMessagesStoredInTheLastHour = numberOfMessagesStoredInTheLastHourTask.Result,
+                        AverageNumberOfMessagesPerMinute = averageNumberOfMessagesPerMinute,
+                        AverageNumberOfMessagesPerSecond = averageNumberOfMessagesPerSecond,
+                        TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result,
+                    },
+                    Vehicles = new
+                    {
+                        NumberOfVehicles = numberOfVehicles,
+                        NumberOfVehiclesActiveWithin72h = numberOfVehiclesActiveWithin72h,
+                        NumberOfVehiclesActiveWithin48h = numberOfVehiclesActiveWithin48h,
+                        NumberOfVehiclesActiveWithin24h = numberOfVehiclesActiveWithin24h,
+                        NumberOfVehiclesActiveWithin1h = numberOfVehiclesActiveWithin1h,
+                        NumberOfVehiclesActiveWithin1m = numberOfVehiclesActiveWithin1m
+                    }
                 },
                 DailyStats = dailyStats
             };
