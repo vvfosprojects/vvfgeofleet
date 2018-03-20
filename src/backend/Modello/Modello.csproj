@@ -30,6 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SimpleInjector, Version=4.0.12.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.0.12\lib\net45\SimpleInjector.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleInjector.Packaging, Version=4.0.12.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Packaging.4.0.12\lib\net40\SimpleInjector.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Device" />
@@ -44,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bindings.cs" />
     <Compile Include="Classi\Fonte.cs" />
     <Compile Include="Classi\InfoFonte.cs" />
     <Compile Include="Classi\InfoSO115.cs" />
@@ -65,6 +72,10 @@
     <Compile Include="Servizi\Persistence\IGetPosizioneByCodiceMezzo.cs" />
     <Compile Include="Servizi\Persistence\IGetPosizioneFlotta.cs" />
     <Compile Include="Servizi\Persistence\IStoreMessaggioPosizione.cs" />
+    <Compile Include="Servizi\Statistics\GetStatistics.cs" />
+    <Compile Include="Servizi\Statistics\IGetDailyStats.cs" />
+    <Compile Include="Servizi\Statistics\IGetNumberOfMessagesStoredByTimeInterval.cs" />
+    <Compile Include="Servizi\Statistics\IGetStatistics.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\VVFGeoFleet.licenseheader">

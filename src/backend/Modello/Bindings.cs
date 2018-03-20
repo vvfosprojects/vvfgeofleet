@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGetClassiMezzo.cs" company="CNVVF">
+// <copyright file="Bindings.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,12 +17,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using System.Collections.Generic;
+using SimpleInjector;
+using SimpleInjector.Packaging;
 
-namespace Modello.Servizi.Persistence
+namespace Modello
 {
-    public interface IGetClassiMezzo
+    public class Bindings : IPackage
     {
-        IDictionary<string, long> Get(int activeWithinSeconds);
+        public void RegisterServices(Container container)
+        {
+            container.Register<Servizi.Statistics.IGetStatistics,
+                Servizi.Statistics.GetStatistics>(Lifestyle.Scoped);
+        }
     }
 }

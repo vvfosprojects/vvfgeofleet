@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGetClassiMezzo.cs" company="CNVVF">
+// <copyright file="StatisticsController.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,12 +17,28 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using Modello.Servizi.Statistics;
 
-namespace Modello.Servizi.Persistence
+namespace VVFGeoFleet.Controllers
 {
-    public interface IGetClassiMezzo
+    public class StatisticsController : ApiController
     {
-        IDictionary<string, long> Get(int activeWithinSeconds);
+        private readonly IGetStatistics getStatistics;
+
+        public StatisticsController(IGetStatistics getStatistics)
+        {
+            this.getStatistics = getStatistics ?? throw new ArgumentNullException(nameof(getStatistics));
+        }
+
+        public object Get()
+        {
+            return this.getStatistics.Get();
+        }
     }
 }
