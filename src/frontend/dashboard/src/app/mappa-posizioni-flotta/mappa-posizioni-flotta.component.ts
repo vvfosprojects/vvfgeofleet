@@ -50,7 +50,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private elencoPosizioniRientrate : PosizioneMezzo[] = [];
   private elencoPosizioniModificate : PosizioneMezzo[] = [];
   
-
   constructor() {}    
 
   ngOnInit() {
