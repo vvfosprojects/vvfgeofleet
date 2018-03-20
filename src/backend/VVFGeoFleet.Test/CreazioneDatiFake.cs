@@ -70,7 +70,8 @@ namespace VVFGeoFleet.Test
                 .Ignore(m => m.InfoFonte)
                 .RuleFor(m => m.InfoSO115, f => fakerInfoSo115.Generate())
                 .RuleFor(m => m.IstanteArchiviazione, f => f.Date.Past())
-                .RuleFor(m => m.Ultimo, f => false);
+                .RuleFor(m => m.Ultimo, f => false)
+                .Ignore(m => m.InterpolationData);
 
             dbContext.MessaggiPosizioneCollection.UpdateMany(
                 Builders<MessaggioPosizione>.Filter.Eq(m => m.Ultimo, true),
@@ -78,9 +79,13 @@ namespace VVFGeoFleet.Test
                 );
 
             var messaggiPosizione = faker
-                .Generate(50000);
+                .Generate(100000)
+                .ToArray();
 
-            dbContext.MessaggiPosizioneCollection.InsertMany(messaggiPosizione);
+            for (int i = 0; i < 10; i++)
+                dbContext.MessaggiPosizioneCollection.InsertMany(messaggiPosizione
+                    .Skip(i * 10000)
+                    .Take(10000));
 
             var aggregateOptions = new AggregateOptions() { AllowDiskUse = true };
             IAggregateFluent<MessaggioPosizione> query = dbContext.MessaggiPosizioneCollection.Aggregate<MessaggioPosizione>(aggregateOptions)
