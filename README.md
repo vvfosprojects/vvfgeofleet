@@ -190,7 +190,7 @@ The result is structured as follows.
 
 ###### Complexity: `O(Nv)` Nv being the total number of vehicles.
 
-Resturns vehicles within the specified rectangle.
+Returns vehicles within the specified rectangle.
 
 Optionally, it is possible to specify an array of vehicle classes as a filter.
 
@@ -232,14 +232,13 @@ Results are returned in the following form.
   }
   ...
 ]
+```
 
 ## GET /api/statistics
 
 ###### Complexity: `O(Nm)` Nm being the total number of stored messages.
 
 Returns statistics about system operations (i.e. numer of messages processed per day, total number of message stored, message arrival rate, etc.).
-
-```
 
 ## GET /api/percorso/{vehicleCode}?from={isoDate}&to={isoDate}
 
