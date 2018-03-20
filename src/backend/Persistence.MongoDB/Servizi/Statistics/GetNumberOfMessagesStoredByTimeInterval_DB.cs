@@ -44,10 +44,9 @@ namespace Persistence.MongoDB.Servizi.Statistics
 
         public Task<long> GetAsync(DateTime fromTime, DateTime toTime)
         {
-            return this.messaggiPosizioneCollection.Find(m =>
+            return this.messaggiPosizioneCollection.CountAsync(m =>
                 m.IstanteArchiviazione >= fromTime &&
-                m.IstanteArchiviazione <= toTime)
-            .CountAsync();
+                m.IstanteArchiviazione <= toTime);
         }
     }
 }
