@@ -39,7 +39,7 @@ export class AppComponent {
       
         }   
         */
- 
+  
         ngOnInit() { 
           this.aggiorna('-');
           this.timer = Observable.timer(60000,10000).timeout(120000);
