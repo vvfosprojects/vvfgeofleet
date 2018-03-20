@@ -16,7 +16,8 @@ export class PosizioneMezzo {
             stato:string,
             codiceIntervento:string,
             dataIntervento: string
-        }
+        },
+        public istanteArchiviazione: string
     ) {}
     
     }
