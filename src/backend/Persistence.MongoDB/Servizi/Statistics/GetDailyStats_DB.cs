@@ -20,11 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Statistics;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Persistence.MongoDB.Servizi.Statistics
