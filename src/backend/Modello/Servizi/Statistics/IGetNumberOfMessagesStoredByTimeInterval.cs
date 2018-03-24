@@ -24,8 +24,20 @@ namespace Modello.Servizi.Statistics
 {
     public interface IGetNumberOfMessagesStoredByTimeInterval
     {
-        long Get(DateTime fromTime, DateTime toTime);
+        /// <summary>
+        ///   Gets the number of messages stored.
+        /// </summary>
+        /// <param name="fromTime">Start of time interval</param>
+        /// <param name="toTime">End of time interval</param>
+        /// <returns>Information about number of messages</returns>
+        MsgNum Get(DateTime fromTime, DateTime toTime);
 
-        Task<long> GetAsync(DateTime fromTime, DateTime toTime);
+        /// <summary>
+        ///   Gets the number of messages stored.
+        /// </summary>
+        /// <param name="fromTime">Start of time interval</param>
+        /// <param name="toTime">End of time interval</param>
+        /// <returns>Information about number of messages</returns>
+        Task<MsgNum> GetAsync(DateTime fromTime, DateTime toTime);
     }
 }

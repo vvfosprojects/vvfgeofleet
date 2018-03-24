@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Statistics;
 using MongoDB.Driver;
@@ -37,7 +38,12 @@ namespace Persistence.MongoDB.Servizi.Statistics
 
         public IEnumerable<object> Get(int howManyDays)
         {
-            var rows = this.messaggiPosizioneCollection.Aggregate()
+            return this.GetAsync(howManyDays).Result;
+        }
+
+        public async Task<IEnumerable<object>> GetAsync(int howManyDays)
+        {
+            return await this.messaggiPosizioneCollection.Aggregate()
                 .Match(m => m.IstanteArchiviazione >= DateTime.UtcNow.Date.AddDays(-howManyDays))
                 .Group(m => new
                 {
@@ -48,16 +54,13 @@ namespace Persistence.MongoDB.Servizi.Statistics
                     g => new
                     {
                         key = g.Key,
-                        interpolatedMessageCount = g.Count(),
-                        nonInterpolatedMessageCount = g.Sum(m =>
-                            1 + (m.InterpolationData != null ? m.InterpolationData.Messages : 0))
+                        Net = g.Count(),
+                        WithInterpolation = g.Sum(m => 1 + (m.InterpolationData != null ? m.InterpolationData.Messages : 0))
                     })
                 .SortByDescending(r => r.key.year)
                 .ThenByDescending(r => r.key.month)
                 .ThenByDescending(r => r.key.day)
-                .ToList();
-
-            return rows;
+                .ToListAsync();
         }
     }
 }

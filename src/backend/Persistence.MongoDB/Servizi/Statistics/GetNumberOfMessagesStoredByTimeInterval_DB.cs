@@ -18,6 +18,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Modello.Classi;
 using Modello.Servizi.Statistics;
@@ -34,16 +35,21 @@ namespace Persistence.MongoDB.Servizi.Statistics
             this.messaggiPosizioneCollection = messaggiPosizioneCollection ?? throw new ArgumentNullException(nameof(messaggiPosizioneCollection));
         }
 
-        public long Get(DateTime fromTime, DateTime toTime)
+        public MsgNum Get(DateTime fromTime, DateTime toTime)
         {
             return this.GetAsync(fromTime, toTime).Result;
         }
 
-        public Task<long> GetAsync(DateTime fromTime, DateTime toTime)
+        public async Task<MsgNum> GetAsync(DateTime fromTime, DateTime toTime)
         {
-            return this.messaggiPosizioneCollection.CountAsync(m =>
-                m.IstanteArchiviazione >= fromTime &&
-                m.IstanteArchiviazione <= toTime);
+            var msgNumTask = await this.messaggiPosizioneCollection.Aggregate()
+                .Match(m => m.IstanteArchiviazione >= fromTime &&
+                    m.IstanteArchiviazione <= toTime)
+                .Group(m => (object)null,
+                    g => new MsgNum(g.Count(), g.Sum(m => 1 + (m.InterpolationData == null ? 0 : m.InterpolationData.Messages))))
+                .FirstOrDefaultAsync();
+
+            return msgNumTask ?? MsgNum.NullValue;
         }
     }
 }

@@ -244,19 +244,28 @@ Returns statistics about system operations (i.e. numer of messages processed per
 {
 	"lastNews": {
 		"messages": {
-			"numberOfMessagesStoredInTheLastMinute": 123,
-			"numberOfMessagesStoredInTheLastHour": 6543,
-			"averageNumberOfMessagesPerMinute": 109.05,
-			"averageNumberOfMessagesPerSecond": 1.8175,
-			"totalNumberOfMessagesStored": 1234567
+			"numberOfMessagesStoredInTheLastMinute": {
+				"net": 100,
+				"withInterpolation": 1000
+			},
+			"numberOfMessagesStoredInTheLastHour": {
+				"net": 6000,
+				"withInterpolation": 60000
+			},
+			"totalNumberOfMessagesStored": {
+				"net": 1000000,
+				"withInterpolation": 10000000
+			},
+			"averageNumberOfMessagesPerMinute": 100.0,
+			"averageNumberOfMessagesPerSecond": 1.6667
 		},
 		"vehicles": {
-			"numberOfVehicles": 10000,
-			"numberOfVehiclesActiveWithin72h": 1678,
-			"numberOfVehiclesActiveWithin48h": 1567,
-			"numberOfVehiclesActiveWithin24h": 1456,
-			"numberOfVehiclesActiveWithin1h": 1345,
-			"numberOfVehiclesActiveWithin1m": 44
+			"numberOfVehicles": 1000,
+			"numberOfVehiclesActiveWithin72h": 1500,
+			"numberOfVehiclesActiveWithin48h": 1400,
+			"numberOfVehiclesActiveWithin24h": 1300,
+			"numberOfVehiclesActiveWithin1h": 1200,
+			"numberOfVehiclesActiveWithin1m": 50
 		}
 	},
 	"dailyStats": [{
@@ -265,18 +274,18 @@ Returns statistics about system operations (i.e. numer of messages processed per
 				"month": 3,
 				"day": 20
 			},
-			"interpolatedMessageCount": 100000,
-			"nonInterpolatedMessageCount": 120000
+			"net": 10000,
+			"withInterpolation": 100000
 		}, {
 			"key": {
 				"year": 2018,
 				"month": 3,
 				"day": 19
 			},
-			"interpolatedMessageCount": 110000,
-			"nonInterpolatedMessageCount": 130000
+			"net": 12000,
+			"withInterpolation": 120000
 		},
-		//...
+		...
 	]
 }
 ```

@@ -38,14 +38,14 @@ namespace Modello.Servizi.Statistics
             this.getNumberOfVehicles = getNumberOfVehicles ?? throw new ArgumentNullException(nameof(getNumberOfVehicles));
         }
 
-        public object Get()
+        public async Task<object> GetAsync()
         {
             const int howManyDays = 30;
-            var dailyStats = this.getDailyStats.Get(howManyDays);
-
+            var dailyStatsTask = this.getDailyStats.GetAsync(howManyDays);
             var numberOfMessagesStoredInTheLastMinuteTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow);
             var numberOfMessagesStoredInTheLastHourTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.UtcNow.AddHours(-1), DateTime.UtcNow);
             var totalNumberOfMessagesStoredTask = this.getNumberOfMessagesStoredByTimeInterval.GetAsync(DateTime.MinValue, DateTime.MaxValue);
+
             var numberOfVehicles = this.getNumberOfVehicles.Get();
             var numberOfVehiclesActiveWithin72h = this.getNumberOfVehicles.GetActive(60 * 60 * 72);
             var numberOfVehiclesActiveWithin48h = this.getNumberOfVehicles.GetActive(60 * 60 * 48);
@@ -53,13 +53,13 @@ namespace Modello.Servizi.Statistics
             var numberOfVehiclesActiveWithin1h = this.getNumberOfVehicles.GetActive(60 * 60);
             var numberOfVehiclesActiveWithin1m = this.getNumberOfVehicles.GetActive(60);
 
-            Task.WaitAll(
-                numberOfMessagesStoredInTheLastMinuteTask,
-                numberOfMessagesStoredInTheLastHourTask,
-                totalNumberOfMessagesStoredTask);
+            var dailyStats = await dailyStatsTask;
+            var numberOfMessagesStoredInTheLastMinute = await numberOfMessagesStoredInTheLastMinuteTask;
+            var numberOfMessagesStoredInTheLastHour = await numberOfMessagesStoredInTheLastHourTask;
+            var totalNumberOfMessagesStored = await totalNumberOfMessagesStoredTask;
 
-            var averageNumberOfMessagesPerMinute = numberOfMessagesStoredInTheLastHourTask.Result / 60d;
-            var averageNumberOfMessagesPerSecond = numberOfMessagesStoredInTheLastHourTask.Result / 60d / 60d;
+            var averageNumberOfMessagesPerMinute = numberOfMessagesStoredInTheLastHour.NumberWithInterpolated / 60d;
+            var averageNumberOfMessagesPerSecond = numberOfMessagesStoredInTheLastHour.NumberWithInterpolated / 60d / 60d;
 
             return new
             {
@@ -67,11 +67,23 @@ namespace Modello.Servizi.Statistics
                 {
                     Messages = new
                     {
-                        NumberOfMessagesStoredInTheLastMinute = numberOfMessagesStoredInTheLastMinuteTask.Result,
-                        NumberOfMessagesStoredInTheLastHour = numberOfMessagesStoredInTheLastHourTask.Result,
+                        NumberOfMessagesStoredInTheLastMinute = new
+                        {
+                            Net = numberOfMessagesStoredInTheLastMinute.NetNumber,
+                            WithInterpolation = numberOfMessagesStoredInTheLastMinute.NumberWithInterpolated
+                        },
+                        NumberOfMessagesStoredInTheLastHour = new
+                        {
+                            Net = numberOfMessagesStoredInTheLastHour.NetNumber,
+                            WithInterpolation = numberOfMessagesStoredInTheLastHour.NumberWithInterpolated
+                        },
+                        TotalNumberOfMessagesStored = new
+                        {
+                            Net = totalNumberOfMessagesStored.NetNumber,
+                            WithInterpolation = totalNumberOfMessagesStored.NumberWithInterpolated
+                        },
                         AverageNumberOfMessagesPerMinute = averageNumberOfMessagesPerMinute,
                         AverageNumberOfMessagesPerSecond = averageNumberOfMessagesPerSecond,
-                        TotalNumberOfMessagesStored = totalNumberOfMessagesStoredTask.Result,
                     },
                     Vehicles = new
                     {
