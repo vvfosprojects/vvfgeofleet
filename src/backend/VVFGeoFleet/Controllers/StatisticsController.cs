@@ -18,14 +18,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Http;
+using log4net;
 using Modello.Servizi.Statistics;
 
 namespace VVFGeoFleet.Controllers
 {
     public class StatisticsController : ApiController
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IGetStatistics getStatistics;
 
         public StatisticsController(IGetStatistics getStatistics)
@@ -35,7 +39,13 @@ namespace VVFGeoFleet.Controllers
 
         public async Task<object> Get()
         {
-            return await this.getStatistics.GetAsync();
+            var sw = new Stopwatch();
+            sw.Start();
+            var result = await this.getStatistics.GetAsync();
+            sw.Stop();
+            log.Info($"Statistics computed in { sw.ElapsedMilliseconds } msec");
+
+            return result;
         }
     }
 }
