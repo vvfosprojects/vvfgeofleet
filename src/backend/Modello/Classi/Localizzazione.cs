@@ -23,7 +23,7 @@ namespace Modello.Classi
 {
     public class Localizzazione
     {
-        public string type = "Point";
+        private string type = "Point";
         private double[] coordinates = new double[2];
 
         public double Lat

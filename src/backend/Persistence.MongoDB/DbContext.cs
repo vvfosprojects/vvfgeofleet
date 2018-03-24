@@ -158,6 +158,7 @@ namespace Persistence.MongoDB
                 cm.AutoMap();
                 cm.UnmapProperty(c => c.Lat);
                 cm.UnmapProperty(c => c.Lon);
+                cm.MapField("type");
                 cm.MapField("coordinates");
             });
         }
