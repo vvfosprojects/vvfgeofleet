@@ -51,6 +51,7 @@ namespace Persistence.MongoDB.Servizi
                 );
 
             var lastStoredMessageData = this.messaggiPosizioneCollection.Find(filter)
+                .Sort(Builders<MessaggioPosizione>.Sort.Descending(m => m.IstanteAcquisizione))
                 .Project(m => new
                 {
                     msgTime = m.IstanteAcquisizione,
