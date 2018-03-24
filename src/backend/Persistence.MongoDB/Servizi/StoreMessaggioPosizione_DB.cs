@@ -56,12 +56,17 @@ namespace Persistence.MongoDB.Servizi
                     msgTime = m.IstanteAcquisizione,
                     msgId = m.Id
                 })
-                .Limit(2)
                 .ToList();
 
-            if (lastStoredMessageData.Count == 2)
+            //Check whether more messages are marked as last (it's an anomaly). In case, fix.
+            if (lastStoredMessageData.Count >= 2)
             {
-                log.Warn($"At least two messages found marked last. vehicleCode: { newMessage.CodiceMezzo } id1: { lastStoredMessageData[0].msgId } id2: { lastStoredMessageData[1].msgId } ");
+                var idsToReset = lastStoredMessageData.Skip(1).Select(m => m.msgId);
+                log.Warn($"More messages found marked as last. vehicleCode: { newMessage.CodiceMezzo } ids: { string.Join(", ", idsToReset) } ");
+                this.messaggiPosizioneCollection.UpdateManyAsync(
+                    Builders<MessaggioPosizione>.Filter.In(m => m.Id, idsToReset),
+                    Builders<MessaggioPosizione>.Update.Set(m => m.Ultimo, false));
+                log.Info($"Anomalous ids have been reset. Anomaly fixed.");
             }
 
             var noLastMessage = !lastStoredMessageData.Any();
