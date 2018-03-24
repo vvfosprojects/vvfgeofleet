@@ -18,10 +18,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Threading.Tasks;
+
 namespace Modello.Servizi.Statistics
 {
     public interface IGetStatistics
     {
-        object Get();
+        Task<object> GetAsync();
     }
 }

@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="StatisticsController.cs" company="CNVVF">
+// <copyright file="MsgNum.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,25 +17,25 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-using System;
-using System.Threading.Tasks;
-using System.Web.Http;
-using Modello.Servizi.Statistics;
-
-namespace VVFGeoFleet.Controllers
+namespace Modello.Servizi.Statistics
 {
-    public class StatisticsController : ApiController
+    public class MsgNum
     {
-        private readonly IGetStatistics getStatistics;
-
-        public StatisticsController(IGetStatistics getStatistics)
+        public MsgNum(long netNumber, long numberWithInterpolated)
         {
-            this.getStatistics = getStatistics ?? throw new ArgumentNullException(nameof(getStatistics));
+            NetNumber = netNumber;
+            NumberWithInterpolated = numberWithInterpolated;
         }
 
-        public async Task<object> Get()
+        public long NetNumber { get; }
+        public long NumberWithInterpolated { get; }
+
+        public static MsgNum NullValue
         {
-            return await this.getStatistics.GetAsync();
+            get
+            {
+                return new MsgNum(0, 0);
+            }
         }
     }
 }

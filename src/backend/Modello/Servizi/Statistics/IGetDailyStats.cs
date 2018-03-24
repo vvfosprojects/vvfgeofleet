@@ -18,6 +18,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Modello.Servizi.Statistics
 {
@@ -32,5 +33,12 @@ namespace Modello.Servizi.Statistics
         /// <param name="howManyDays">The number of past days to go behind</param>
         /// <returns>Statistics</returns>
         IEnumerable<object> Get(int howManyDays);
+
+        /// <summary>
+        ///   Gets statistics on the number of inserted records day per day
+        /// </summary>
+        /// <param name="howManyDays">The number of past days to go behind</param>
+        /// <returns>Statistics</returns>
+        Task<IEnumerable<object>> GetAsync(int howManyDays);
     }
 }
