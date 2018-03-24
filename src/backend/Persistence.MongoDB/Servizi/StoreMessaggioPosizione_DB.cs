@@ -20,6 +20,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using log4net;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
 using MongoDB.Driver;
@@ -28,6 +29,8 @@ namespace Persistence.MongoDB.Servizi
 {
     internal class StoreMessaggioPosizione_DB : IStoreMessaggioPosizione
     {
+        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection;
 
         public StoreMessaggioPosizione_DB(IMongoCollection<MessaggioPosizione> messaggiPosizioneCollection)
@@ -53,20 +56,26 @@ namespace Persistence.MongoDB.Servizi
                     msgTime = m.IstanteAcquisizione,
                     msgId = m.Id
                 })
-                .Limit(1) //having more than one such message is an anomaly
-                .SingleOrDefault();
+                .Limit(2)
+                .ToList();
 
-            var noLastMessage = lastStoredMessageData == null;
+            if (lastStoredMessageData.Count == 2)
+            {
+                log.Warn($"At least two messages found marked last. vehicleCode: { newMessage.CodiceMezzo } id1: { lastStoredMessageData[0].msgId } id2: { lastStoredMessageData[1].msgId } ");
+            }
+
+            var noLastMessage = !lastStoredMessageData.Any();
 
             if (noLastMessage)
                 this.InsertAsFirstMessage(newMessage);
             else
             {
-                var newMessageIsMoreRecent = newMessage.IstanteAcquisizione >= lastStoredMessageData.msgTime;
+                var singleLastStoredMessageData = lastStoredMessageData[0];
+                var newMessageIsMoreRecent = newMessage.IstanteAcquisizione >= singleLastStoredMessageData.msgTime;
 
                 if (newMessageIsMoreRecent)
                 {
-                    this.InsertMoreRecentMessage(newMessage, lastStoredMessageData.msgId);
+                    this.InsertMoreRecentMessage(newMessage, singleLastStoredMessageData.msgId);
                 }
                 else
                 {
