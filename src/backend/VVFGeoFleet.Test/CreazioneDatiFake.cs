@@ -32,7 +32,7 @@ namespace VVFGeoFleet.Test
     public class CreazioneDatiFake
     {
         [Test]
-        //[Ignore("Serve a riempire il database con dati fake")]
+        [Ignore("It's not a test fixture. It is intended to fill database with fake data.")]
         public void Popola_database_con_dati_fake()
         {
             var dbContext = new DbContext("mongodb://localhost:27017/vvfgeofleet");

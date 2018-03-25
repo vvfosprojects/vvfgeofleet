@@ -18,17 +18,16 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente set di attributi.
 // Modificare i valori di questi attributi per modificare le informazioni associate a un assembly.
-[assembly: AssemblyTitle("Persistence.MongoDB")]
+[assembly: AssemblyTitle("VVFGeoFleet.IntegrationTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Persistence.MongoDB")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyProduct("VVFGeoFleet.IntegrationTest")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -38,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Se il progetto viene esposto a COM, il GUID seguente verrà utilizzato come ID della libreria dei tipi
-[assembly: Guid("a5eb7ac8-7715-4a42-ab29-43f6d82dbb03")]
+[assembly: Guid("9cca2dc1-5757-4f26-a66e-3a09c311e595")]
 
 // Le informazioni sulla versione di un assembly sono costituite dai seguenti quattro valori:
 //
@@ -48,5 +47,3 @@ using System.Runtime.InteropServices;
 // alla revisione e alla build usando l'asterisco '*' come illustrato di seguito: [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: InternalsVisibleTo("VVFGeoFleet.Test")]
-[assembly: InternalsVisibleTo("VVFGeoFleet.IntegrationTest")]
