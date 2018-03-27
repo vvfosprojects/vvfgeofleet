@@ -18,6 +18,11 @@ import { FormsModule } from '@angular/forms';
 
 
 import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
+import { registerLocaleData } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
+
+registerLocaleData(localeIt);
+
 import { LOCALE_ID } from '@angular/core';
 
 import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
@@ -45,7 +50,7 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
   providers: [
     //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},
     { provide: PosizioneFlottaService, useClass:PosizioneFlottaService},
-    { provide: LOCALE_ID, useValue: "it" }
+    { provide: LOCALE_ID, useValue: "it-IT" }
 ],
   bootstrap: [AppComponent]
 })
