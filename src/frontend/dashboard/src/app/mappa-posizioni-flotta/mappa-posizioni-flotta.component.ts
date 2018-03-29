@@ -55,17 +55,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   ngOnInit() {
 
 
-       //['1','car.png'],
-
        this.iconeStati = [
-      ['0','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_black.png'],
-      ['1','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'],
-      ['2','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png'],
-      ['3','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_blue.png'],
-      ['4','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_gray.png'],
-      ['5','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_yellow.png'],
-      ['6','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_orange.png'],
-      ['7','http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_purple.png']
+      ['0','assets/images/mm_20_black.png'],
+      ['1','assets/images/mm_20_green.png'],
+      ['2','assets/images/mm_20_red.png'],
+      ['3','assets/images/mm_20_blue.png'],
+      ['4','assets/images/mm_20_gray.png'],
+      ['5','assets/images/mm_20_yellow.png'],
+      ['6','assets/images/mm_20_orange.png'],
+      ['7','assets/images/mm_20_cyan.png']
     ]    ;    
     this.mapIcone = new Map(this.iconeStati);    
 

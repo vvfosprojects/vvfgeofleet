@@ -21,33 +21,32 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   public istanteUltimoAggiornamento: Date;
   private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
-  
   vociFiltroStatiMezzo: VoceFiltro[] = [
       new VoceFiltro(
-        "1", "In viaggio verso l'intervento ", 0, true
+        "1", "In viaggio verso l'intervento ", 0, true, "", "badge-success"
       ),
       new VoceFiltro(
-        "2", "Arrivato sull'intervento", 0, true
+        "2", "Arrivato sull'intervento", 0, true, "", "badge-danger"
       ),
       new VoceFiltro(
-        "3", "In rientro dall'intervento", 0, true
+        "3", "In rientro dall'intervento", 0, true, "", "badge-primary"
       ),
       new VoceFiltro(
-        "4", "Mezzi rientrati in Sede", 0, false
+        "4", "Mezzi rientrati in Sede", 0, false, "", "badge-secondary"
       ),
       new VoceFiltro(
-        "5", "Fuori per motivi di Istituto", 0, true
+        "5", "Fuori per motivi di Istituto", 0, true, "", "badge-istituto"
       ),
       // posizione inviata da una radio non associata a nessun Mezzo
       new VoceFiltro(
-        "6", "Posizioni Radio senza Mezzo", 0, false
+        "6", "Posizioni Radio senza Mezzo", 0, false, "", "badge-radio"
       ),
       // posizione inviata da un Mezzo fuori servizio  
       new VoceFiltro(
-        "7", "Mezzi fuori servizio", 0, false
+        "7", "Mezzi fuori servizio", 0, false, "","badge-fuori-servizio"
       ),
       new VoceFiltro(
-        "0", "Stato operativo Sconosciuto", 0, false
+        "0", "Stato operativo Sconosciuto", 0, false, "", "badge-light"
       )
     ];
 
