@@ -16,9 +16,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
 
   //private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
-  private elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
+  public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
  
-  private istanteUltimoAggiornamento: Date;
+  public istanteUltimoAggiornamento: Date;
   private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   
@@ -42,10 +42,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       new VoceFiltro(
         "6", "Posizioni Radio senza Mezzo", 0, false
       ),
-      // posizione inviata da un Mezzo prima dell'attivazione di GeoFleet,
-      // di cui non è rilevabile lo stato
+      // posizione inviata da un Mezzo fuori servizio  
       new VoceFiltro(
-        "7", "Ultima posizione storica Mezzi", 0, false
+        "7", "Mezzi fuori servizio", 0, false
       ),
       new VoceFiltro(
         "0", "Stato operativo Sconosciuto", 0, false
