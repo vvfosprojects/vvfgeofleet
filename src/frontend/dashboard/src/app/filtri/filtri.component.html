@@ -5,11 +5,11 @@
         <label>
           <div *ngIf= "v.selezionato === true"> 
             <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
-            <span class="badge badge-pill badge-info">{{ v.cardinalita }}</span>
+            <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
           </div>
           <div *ngIf= "v.selezionato === false"> 
             <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
-            <span class="badge badge-pill badge-info">{{ v.cardinalita }}</span>
+            <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
           </div>
         </label>
       </div>

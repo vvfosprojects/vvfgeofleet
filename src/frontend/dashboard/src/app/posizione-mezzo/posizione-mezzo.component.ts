@@ -36,7 +36,7 @@ export class PosizioneMezzoComponent implements OnInit {
       ['4',['rientrato','badge-secondary']],
       ['5',['istituto','badge-istituto']],
       ['6',['radio','badge-radio']],
-      ['7',['ultima','badge-storico']],      
+      ['7',['ultima','badge-fuori-servizio']],      
     ]    ;    
     this.mapAlert = new Map(this.defStatiMezzo);        
 

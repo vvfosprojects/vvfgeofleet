@@ -1,11 +1,1 @@
-.badge-radio {
-    background-color:#e7a34b
-  }
-
-.badge-storico {
-    background-color:#cf0bd6
-  }
-
-.badge-istituto {
-    background-color:#f5f108
-  }  
+@import '../shared/css/badge-stati-mezzo.css';
