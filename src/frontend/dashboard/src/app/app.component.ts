@@ -21,6 +21,7 @@ export class AppComponent {
   private timerSubcribe: PushSubscription;
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
+          
         }
         
         /*

@@ -1,17 +1,17 @@
 <!--<span *ngIf="posizioneMezzo.selezionata">-->
 <span *ngIf="posizioneMezzoSelezionata()">
-    <td>
-      <span class="fas fa-building">{{posizioneMezzo.fonte.codiceFonte | slice:0:2}}</span>
+  <td>
+      <span class="fa fa-building-o"> {{sedeMezzo()}}</span>
   </td>
   <td>
-      <span class="fa fa-truck">{{posizioneMezzo.codiceMezzo}}</span>
+      <span class="fa fa-truck"> {{posizioneMezzo.codiceMezzo}}</span>
   </td>
   <td>
       <!--<div class="{{alertStatoMezzoCorrente}}" role="alert">{{testoStatoMezzoCorrente}}</div>-->
       <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
   </td>
   <td>
-      <span class="fas fa-clock">{{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
+      <span class="fa fa-clock-o"> {{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
   </td>
 </span>
 <!--

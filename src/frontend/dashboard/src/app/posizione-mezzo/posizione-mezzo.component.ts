@@ -18,6 +18,8 @@ export class PosizioneMezzoComponent implements OnInit {
   private defStatiMezzo: any ;
   private mapAlert: any ;
 
+  private sedeMezzoCorrente: string ;
+  
   constructor() { }
 
   ngOnInit() {
@@ -58,8 +60,14 @@ export class PosizioneMezzoComponent implements OnInit {
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
   }
 
-  posizioneMezzoSelezionata() { 
+  sedeMezzo() {
+    this.sedeMezzoCorrente = this.posizioneMezzo.classiMezzo.
+      find( i =>  i.substr(0,5) == "PROV:");
 
+    return this.sedeMezzoCorrente.substr(5,2);
+  }
+
+  posizioneMezzoSelezionata() { 
       return this.filtriStatiMezzo.
       some(filtro => filtro === this.posizioneMezzo.infoSO115.stato);    
   }
