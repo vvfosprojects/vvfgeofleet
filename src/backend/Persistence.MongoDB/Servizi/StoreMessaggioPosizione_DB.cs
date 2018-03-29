@@ -43,6 +43,9 @@ namespace Persistence.MongoDB.Servizi
             if (!string.IsNullOrWhiteSpace(newMessage.Id))
                 throw new ArgumentException("Must be null", nameof(MessaggioPosizione.Id));
 
+            if (newMessage.IstanteAcquisizione.Kind == DateTimeKind.Unspecified)
+                throw new ArgumentException($"Date.Kind cannot be unspecified. Only local and UTC time is allowed. SourceCode: { newMessage.Fonte.CodiceFonte }.");
+
             //fetch time and id of the last stored message for this vehicle
             var filter = Builders<MessaggioPosizione>.Filter
                 .And(
