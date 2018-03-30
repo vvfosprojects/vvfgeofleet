@@ -49,7 +49,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private elencoPosizioniEliminate : PosizioneMezzo[] = [];
   private elencoPosizioniRientrate : PosizioneMezzo[] = [];
   private elencoPosizioniModificate : PosizioneMezzo[] = [];
-  
+  private sedeMezzoCorrente : string;
+
   constructor() {}    
 
   ngOnInit() {
@@ -57,9 +58,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
        this.iconeStati = [
       ['0','assets/images/mm_20_black.png'],
-      ['1','assets/images/mm_20_green.png'],
-      ['2','assets/images/mm_20_red.png'],
-      ['3','assets/images/mm_20_blue.png'],
+      ['1','assets/images/mm_20_red.png'],
+      ['2','assets/images/mm_20_blue.png'],
+      ['3','assets/images/mm_20_green.png'],
       ['4','assets/images/mm_20_gray.png'],
       ['5','assets/images/mm_20_yellow.png'],
       ['6','assets/images/mm_20_orange.png'],
@@ -165,6 +166,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   overMarker(mezzo: PosizioneMezzo, index: number) {
     console.log('over the marker: ', mezzo, index);
+    this.sedeMezzo(mezzo);
   }
 
   outOfMarker(mezzo: PosizioneMezzo, index: number) {
@@ -199,4 +201,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       some(filtro => filtro === p.infoSO115.stato );    
       return r;
   }
+
+  sedeMezzo(p : PosizioneMezzo) {
+    this.sedeMezzoCorrente = p.classiMezzo.
+      find( i =>  i.substr(0,5) == "PROV:");
+    
+    this.sedeMezzoCorrente = this.sedeMezzoCorrente.substr(5,2) ;
+
+    return this.sedeMezzoCorrente;
+  }
+
 }

@@ -1,8 +1,10 @@
 import { Component, Input, Output, OnInit } from '@angular/core';
 import { PosizioneMezzo } from './posizione-mezzo.model';
 
+//selector: '[app-posizione-mezzo]',
+
 @Component({
-  selector: '[app-posizione-mezzo]',
+  selector: 'app-posizione-mezzo',
   templateUrl: './posizione-mezzo.component.html',
   styleUrls: ['./posizione-mezzo.component.css']
 })
@@ -19,6 +21,8 @@ export class PosizioneMezzoComponent implements OnInit {
   private mapAlert: any ;
 
   private sedeMezzoCorrente: string ;
+
+  private currentItem: any;
   
   constructor() { }
 
@@ -30,14 +34,15 @@ export class PosizioneMezzoComponent implements OnInit {
 
     this.defStatiMezzo = [
       ['0',['sconosciuto','badge-light']],
-      ['1',['in viaggio','badge-success']],
-      ['2',['sul posto','badge-danger']],
-      ['3',['in rientro','badge-primary']],
+      ['1',['in viaggio','badge-danger']],
+      ['2',['sul posto','badge-primary']],
+      ['3',['in rientro','badge-success']],
       ['4',['rientrato','badge-secondary']],
       ['5',['istituto','badge-istituto']],
       ['6',['radio','badge-radio']],
       ['7',['ultima','badge-fuori-servizio']],      
     ]    ;    
+
     this.mapAlert = new Map(this.defStatiMezzo);        
 
     this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
@@ -64,11 +69,29 @@ export class PosizioneMezzoComponent implements OnInit {
     this.sedeMezzoCorrente = this.posizioneMezzo.classiMezzo.
       find( i =>  i.substr(0,5) == "PROV:");
 
-    return this.sedeMezzoCorrente.substr(5,2);
+    this.sedeMezzoCorrente = this.sedeMezzoCorrente.substr(5,2) ;
+
+    return this.sedeMezzoCorrente;
   }
 
   posizioneMezzoSelezionata() { 
       return this.filtriStatiMezzo.
       some(filtro => filtro === this.posizioneMezzo.infoSO115.stato);    
   }
+
+  private mouseIn() {
+    this.currentItem = this.posizioneMezzo;
+    //console.log('mouseIn', this.currentItem, this.posizioneMezzo);
+  }
+
+  private mouseOut() {
+    this.currentItem = null;    
+    //console.log('mouseOut', this.currentItem, this.posizioneMezzo);
+  }
+
+  private centerOnMap() {
+    this.currentItem = null;    
+    //console.log('mouseOut', this.currentItem, this.posizioneMezzo);
+  }
+
 }

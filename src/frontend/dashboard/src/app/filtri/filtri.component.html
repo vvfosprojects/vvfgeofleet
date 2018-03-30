@@ -3,14 +3,26 @@
       <h6>{{ titolo }}</h6>
       <div *ngFor="let v of vociFiltro">
         <label>
-          <div *ngIf= "v.selezionato === true"> 
-            <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
-            <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
-          </div>
-          <div *ngIf= "v.selezionato === false"> 
-            <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
-            <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
-          </div>
+          <!--<div class="row">-->
+            <div *ngIf= "v.selezionato === true" > 
+              <!--<div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">-->
+                  <img src="{{v.icona}}" height="20" width="12">
+                  <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
+              <!--</div>-->
+              <!--<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 text-right">-->
+                  <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
+              <!--</div>-->
+            </div>
+            <div *ngIf= "v.selezionato === false"> 
+              <!--<div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">-->
+                  <img src="{{v.icona}}" height="20" width="12">
+                  <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
+              <!--</div>-->
+              <!--<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 text-right">-->
+                  <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
+              <!--</div>-->
+            </div>
+          <!--</div>-->
         </label>
       </div>
     </div>
