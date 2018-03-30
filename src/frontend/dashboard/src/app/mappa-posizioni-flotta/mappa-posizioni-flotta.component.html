@@ -1,14 +1,12 @@
-<span><h3>
+<span class="h3">
     Situazione Flotta 
     <!--
     <i class="fa fa-truck"></i>
     <img src="assets/images/Fire-Truck.png"/>
     -->
-<h6><span class="badge badge-secondary">
-  {{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}} 
 </span>
-</h6>
-</h3>
+<span class="h6 badge badge-secondary">
+  {{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}} 
 </span>
 <div class="card">
   <agm-map [latitude]="start_lat" [longitude]="start_lon">
@@ -22,10 +20,15 @@
             [openInfoWindow]="true"
             [iconUrl]="markerIconUrl(m)"
             [visible]="posizioneMezzoSelezionata(m)"
+            data-toggle="tooltip" data-html="true" 
+            title="{{sedeMezzo(m)}} - {{m.codiceMezzo}} - {{m.istanteAcquisizione}}, {{m.fonte.classeFonte}}, {{m.fonte.codiceFonte}}">
+    
             >
+            <!--
             <agm-info-window [disableAutoPan]="true">
                 {{m.codiceMezzo}}
             </agm-info-window>
+            -->
           </agm-marker>
       </agm-get-map-objects>
   </agm-map>

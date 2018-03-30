@@ -2,30 +2,42 @@
 
 </h3>
 <div class="row h8">
-    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
-      <div class="card card-inverse row_text p-1">
-          <table class="table table-hover table-responsive header-fixed">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+        <div class="area-elenco card card-inverse row_text p-1">
             <!--
-            <thead>
-              <th scope="col">Sede</th>
-              <th scope="col">Mezzo</th>
-              <th scope="col">Stato</th>
-              <th scope="col">Quando</th>
-            </thead> 
+            <div class="card card-inverse row_text p-1">
+            <table class="table table-hover table-responsive header-fixed">
             -->
-            <tbody>
-                <tr app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                <!--
+                <thead>
+                <th scope="col">Sede</th>
+                <th scope="col">Mezzo</th>
+                <th scope="col">Stato</th>
+                <th scope="col">Quando</th>
+                </thead> 
+                -->
+            <!--
+                <tbody>
+                    <tr app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                    [posizioneMezzo]="r" 
+                    [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                    [filtriStatiMezzo]="filtriStatiMezzo"></tr>
+                </tbody>
+            </table>
+            </div>
+            -->
+            <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                 [posizioneMezzo]="r" 
                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                [filtriStatiMezzo]="filtriStatiMezzo"></tr>
-            </tbody>
-          </table>
-      </div>
-      <app-filtri [titolo]="titoloFiltroStatiMezzo" 
-          [vociFiltro]="vociFiltroStatiMezzo" 
-          (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+                [filtriStatiMezzo]="filtriStatiMezzo"></app-posizione-mezzo>
+        </div>
+        <div>
+            <app-filtri [titolo]="titoloFiltroStatiMezzo" 
+            [vociFiltro]="vociFiltroStatiMezzo" 
+            (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+        </div>
     </div>
-    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-9 col-9">          
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">          
         <app-mappa-posizioni-flotta
             [elencoPosizioni]="elencoPosizioni" 
             [elencoPosizioniDaElaborare]="elencoPosizioniDaElaborare" 

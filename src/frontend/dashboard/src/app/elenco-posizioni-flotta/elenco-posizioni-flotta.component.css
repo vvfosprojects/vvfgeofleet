@@ -1,11 +1,17 @@
+.area-elenco  {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 350px;
+}
 
-
+/*
 .header-fixed  {
     display: block;
     overflow-y: auto;
     height: 300px;
 }
-
+*/
 
 
 /*

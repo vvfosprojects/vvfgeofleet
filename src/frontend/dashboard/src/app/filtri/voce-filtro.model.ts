@@ -5,6 +5,7 @@ export class VoceFiltro {
         public cardinalita: number,
         public selezionato: boolean = true,
         public tooltip: string = "",
-        public badgeCardinalita: string = "badge-info"
+        public badgeCardinalita: string = "badge-info",
+        public icona: string = ""
     ) {}
 }

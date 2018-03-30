@@ -1,5 +1,28 @@
+<div *ngIf="posizioneMezzoSelezionata()" class="card card-inverse row_text p-1 text-left"
+  [ngClass]="{'highlight' : posizioneMezzo==currentItem, 
+  'not-highlight' : posizioneMezzo!=currentItem }"
+  (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()">
+    <div class="row"
+        data-toggle="tooltip" data-html="true" 
+        title="{{posizioneMezzo.istanteAcquisizione}}, {{posizioneMezzo.fonte.classeFonte}}, {{posizioneMezzo.fonte.codiceFonte}}">
+        <!--title="{{posizioneMezzo.istanteAcquisizione}}, {{posizioneMezzo.fonte.classeFonte}}, {{posizioneMezzo.fonte.codiceFonte}}, (Int.{{posizioneMezzo.InfoSO115.codiceIntervento}} - {{posizioneMezzo.InfoSO115.dataIntervento}})">-->
+      <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
+                <span class="fa fa-building-o"> {{sedeMezzo()}}</span>
+                <span class="fa fa-truck"> {{posizioneMezzo.codiceMezzo}}</span>
+                <span class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</span>    
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 text-left">
+                <span class="fa fa-clock-o"> {{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
+            </div>
+        </div>
+    </div>  
+</div>
+
 <!--<span *ngIf="posizioneMezzo.selezionata">-->
-<span *ngIf="posizioneMezzoSelezionata()">
+<!--
+  <span *ngIf="posizioneMezzoSelezionata()">
   <td>
       <span class="fa fa-building-o"> {{sedeMezzo()}}</span>
   </td>
@@ -7,13 +30,13 @@
       <span class="fa fa-truck"> {{posizioneMezzo.codiceMezzo}}</span>
   </td>
   <td>
-      <!--<div class="{{alertStatoMezzoCorrente}}" role="alert">{{testoStatoMezzoCorrente}}</div>-->
       <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
   </td>
   <td>
       <span class="fa fa-clock-o"> {{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
   </td>
 </span>
+-->
 <!--
 <td>
   <span>{{posizioneMezzo.istanteInvio}}</span>
