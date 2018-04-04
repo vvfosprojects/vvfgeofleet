@@ -14,12 +14,16 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
 
-
-  //private elencoPosizioniMezzoFiltrate: PosizioneMezzo[] = [];
   public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
- 
   public istanteUltimoAggiornamento: Date;
+  public mezzoSelezionato: PosizioneMezzo;
+
+  startLat: number = 41.889777;
+  startLon: number = 12.490689;
+  startZoom: number = 6;
+
   private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
+
 
   /*
   vociFiltroStatiMezzo: VoceFiltro[] = [
@@ -214,7 +218,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
   
 
-
-
+  centraSuMappa(posizioneMezzo) {
+    this.mezzoSelezionato = posizioneMezzo;
+    this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
+    this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
+    this.startZoom = 12;
+    //console.log("Mezzo selezionato", event);
+  }
 
 }
