@@ -25,17 +25,28 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
-  
+
+  @Input() mapLat: number ;
+  @Input() mapLon: number ;
+  @Input() mapZoom: number ;
+
+  @Input() mezzoSelezionato: PosizioneMezzo ;
+
   //lat: number = 51.678418;
   //lon: number = 7.809007;
+  
   start_lat: number = 41.889777;
   start_lon: number = 12.490689;
+  start_zoom: number = 6;
   
+
   clicked_label: string;
 
   private iconaStatoMezzoCorrente: any ;
   private iconeStati: any ;
   private mapIcone: any ;
+  private iconeStatiSelezionato: any ;
+  private mapIconeSelezionato: any ;
   
   private markerManager: MarkerManager ;
   private markerArrays: AgmMarker[];
@@ -67,6 +78,22 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       ['7','assets/images/mm_20_cyan.png']
     ]    ;    
     this.mapIcone = new Map(this.iconeStati);    
+
+    this.iconeStatiSelezionato = [
+      ['0','assets/images/mm_20_black.png'],
+      ['1','assets/images/mm_20_red.png'],
+      ['2','assets/images/mm_20_blue.png'],
+      ['3','assets/images/mm_20_green.png'],
+      ['4','assets/images/mm_20_gray.png'],
+      ['5','assets/images/mm_40_yellow.png'],
+      ['6','assets/images/mm_20_orange.png'],
+      ['7','assets/images/mm_20_cyan.png']
+    ]    ;    
+    this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
+    
+    if ( this.mapLat == null ) { this.mapLat = this.start_lat; }
+    if ( this.mapLon == null ) { this.mapLon = this.start_lon; }
+    if ( this.mapZoom == null ) { this.mapZoom = this.start_zoom; }
 
   }
 
@@ -148,13 +175,32 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
     
   markerIconUrl(m: PosizioneMezzo) {
-    
-    if (m.infoSO115 != null) {
-      this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);
-      }
+    //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
+
+    /*
+    if (m == this.mezzoSelezionato) {
+      this.iconaStatoMezzoCorrente = 'assets/images/car.png'; }
     else
-      {this.iconaStatoMezzoCorrente = '0';}
-    
+    {
+    */ 
+    if (m.infoSO115 != null) {
+      if (m == this.mezzoSelezionato) {
+          this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get(m.infoSO115.stato);
+        }
+      else
+        {
+          this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);          
+        }
+      }
+    else {
+      if (m == this.mezzoSelezionato) {
+        this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get('0');
+        }
+      else
+        {
+          this.iconaStatoMezzoCorrente = this.mapIcone.get('0');          
+        }
+      }
     return this.iconaStatoMezzoCorrente;
   }
 

@@ -29,7 +29,8 @@
             <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                 [posizioneMezzo]="r" 
                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                [filtriStatiMezzo]="filtriStatiMezzo"></app-posizione-mezzo>
+                [filtriStatiMezzo]="filtriStatiMezzo"
+                (mezzoSelezionato)="centraSuMappa($event)"></app-posizione-mezzo>
         </div>
         <div>
             <app-filtri [titolo]="titoloFiltroStatiMezzo" 
@@ -42,7 +43,12 @@
             [elencoPosizioni]="elencoPosizioni" 
             [elencoPosizioniDaElaborare]="elencoPosizioniDaElaborare" 
             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-            [filtriStatiMezzo]="filtriStatiMezzo">
+            [filtriStatiMezzo]="filtriStatiMezzo"
+            [mapLat]="startLat"
+            [mapLon]="startLon"
+            [mapZoom]="startZoom"
+            [mezzoSelezionato]="mezzoSelezionato"
+        >
         </app-mappa-posizioni-flotta>
     </div>
 </div>

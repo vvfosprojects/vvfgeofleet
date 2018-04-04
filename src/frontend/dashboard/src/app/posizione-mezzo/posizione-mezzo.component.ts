@@ -1,5 +1,6 @@
-import { Component, Input, Output, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from './posizione-mezzo.model';
+//import { EventEmitter } from 'events';
 
 //selector: '[app-posizione-mezzo]',
 
@@ -13,7 +14,9 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
-
+  @Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
+  private currentItem: PosizioneMezzo;
+    
   private badgeStatoMezzoCorrente: any ;
   private testoStatoMezzoCorrente: any ;
   private defStatoMezzoCorrente: any ;
@@ -22,8 +25,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
   private sedeMezzoCorrente: string ;
 
-  private currentItem: any;
-  
+
   constructor() { }
 
   ngOnInit() {
@@ -90,7 +92,7 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   private centerOnMap() {
-    this.currentItem = null;    
+    this.mezzoSelezionato.emit(this.posizioneMezzo );
     //console.log('mouseOut', this.currentItem, this.posizioneMezzo);
   }
 
