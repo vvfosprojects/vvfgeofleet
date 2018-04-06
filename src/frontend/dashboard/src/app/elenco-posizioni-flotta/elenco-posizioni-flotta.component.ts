@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
-
 import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
+//import { UiSwitchModule } from 'angular2-ui-switch';
+import { UiSwitchModule } from 'ngx-ui-switch';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -24,6 +25,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
+  centerOnLast: boolean = true;
 
   /*
   vociFiltroStatiMezzo: VoceFiltro[] = [
@@ -201,6 +203,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
+      if (this.mezzoSelezionato == null || this.centerOnLast) {
+        this.mezzoSelezionato = this.elencoPosizioni[0];
+      }
 
     }
         
@@ -223,7 +228,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
     this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
     this.startZoom = 12;
-    //console.log("Mezzo selezionato", event);
+    //console.log("centraSuMappa", this.mezzoSelezionato);
   }
 
 }

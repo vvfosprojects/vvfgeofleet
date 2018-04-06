@@ -12,9 +12,9 @@ import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flot
 import { AgmCoreModule } from '@agm/core';
 import { MappaPosizioniFlottaComponent } from './mappa-posizioni-flotta/mappa-posizioni-flotta.component';
 import { FiltriComponent } from './filtri/filtri.component';
-//import { UiSwitchModule } from 'angular2-ui-switch/src';
+//import { UiSwitchModule } from 'angular2-ui-switch';
+import { UiSwitchModule } from 'ngx-ui-switch';
 import { FormsModule } from '@angular/forms';
-
 
 
 import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
@@ -45,7 +45,7 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
     HttpModule,
     BrowserModule,
     FormsModule,
-    //UiSwitchModule
+    UiSwitchModule
   ],
   providers: [
     //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},

@@ -63,7 +63,7 @@ export class AgmGetMapObjectsDirective implements AfterViewInit {
 
     // get marker manager
     this.markerManager = this.googleMarkerManager;
-    console.log("ngAfterViewInit: ", this.markerManager);
+    //console.log("ngAfterViewInit: ", this.markerManager);
     
     // get markers
     this.markerChildren.changes.subscribe(markers => {

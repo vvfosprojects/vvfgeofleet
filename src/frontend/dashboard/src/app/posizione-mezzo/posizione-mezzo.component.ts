@@ -17,13 +17,16 @@ export class PosizioneMezzoComponent implements OnInit {
   @Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   private currentItem: PosizioneMezzo;
     
+  private iconaMezzoCorrente: string;
   private badgeStatoMezzoCorrente: any ;
   private testoStatoMezzoCorrente: any ;
+  private defIconeFonte: any;
   private defStatoMezzoCorrente: any ;
   private defStatiMezzo: any ;
   private mapAlert: any ;
+  private mapIconeFonte: any;
 
-  private sedeMezzoCorrente: string ;
+
 
 
   constructor() { }
@@ -47,6 +50,15 @@ export class PosizioneMezzoComponent implements OnInit {
 
     this.mapAlert = new Map(this.defStatiMezzo);        
 
+    this.defIconeFonte = [
+      [ 'SERCOM/SO115/MEZZI', 'fa-truck'],
+      [ 'TTK', 'fa-truck'],
+      [ 'SERCOM/SO115/MEZZIFITTIZI', 'fa-bus'],
+      [ 'SERCOM/SO115/RADIO', 'fa-tty']
+    ] ;
+
+    this.mapIconeFonte = new Map(this.defIconeFonte);        
+
     this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     /*    
     if (this.posizioneMezzo.infoSO115 != null) {
@@ -59,6 +71,10 @@ export class PosizioneMezzoComponent implements OnInit {
     
     this.badgeStatoMezzoCorrente = this.defStatoMezzoCorrente[1];
     this.testoStatoMezzoCorrente = this.defStatoMezzoCorrente[0];
+
+    this.iconaMezzoCorrente = this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
+
+    //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
     
   }
@@ -68,16 +84,18 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   sedeMezzo() {
-    this.sedeMezzoCorrente = this.posizioneMezzo.classiMezzo.
-      find( i =>  i.substr(0,5) == "PROV:");
+   return (this.posizioneMezzo.classiMezzo.
+     find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);
+  }
 
-    this.sedeMezzoCorrente = this.sedeMezzoCorrente.substr(5,2) ;
 
-    return this.sedeMezzoCorrente;
+  classiMezzoDepurata() {
+    return this.posizioneMezzo.classiMezzo.
+      filter( i =>  (i.substr(0,5) != "PROV:") )
   }
 
   posizioneMezzoSelezionata() { 
-      return this.filtriStatiMezzo.
+    return this.filtriStatiMezzo.
       some(filtro => filtro === this.posizioneMezzo.infoSO115.stato);    
   }
 
@@ -93,7 +111,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
   private centerOnMap() {
     this.mezzoSelezionato.emit(this.posizioneMezzo );
-    //console.log('mouseOut', this.currentItem, this.posizioneMezzo);
+    //console.log('centerOnMap', this.posizioneMezzo);
   }
 
 }

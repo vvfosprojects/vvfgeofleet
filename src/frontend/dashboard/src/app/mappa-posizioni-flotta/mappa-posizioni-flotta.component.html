@@ -17,12 +17,12 @@
             (mouseOut)="outOfMarker(m, i)"
             [latitude]="m.localizzazione.lat"
             [longitude]="m.localizzazione.lon"
-            [openInfoWindow]="true"
+            [openInfoWindow]="false"
             [iconUrl]="markerIconUrl(m)"
             [visible]="posizioneMezzoSelezionata(m)"
+            [zIndex]="indiceMezzoSelezionato(m)"
             data-toggle="tooltip" data-html="true" 
-            title="{{sedeMezzo(m)}} - {{m.codiceMezzo}} - {{m.istanteAcquisizione}}, {{m.fonte.classeFonte}}, {{m.fonte.codiceFonte}}">
-    
+            title="{{classiMezzoDepurata(m)}} {{m.codiceMezzo}} ({{sedeMezzo(m)}}) del {{m.istanteAcquisizione | date:'shortDate'}} {{m.istanteAcquisizione | date:'shortTime'}} (da {{m.fonte.classeFonte}}:{{m.fonte.codiceFonte}})">    
             >
             <!--
             <agm-info-window [disableAutoPan]="true">
