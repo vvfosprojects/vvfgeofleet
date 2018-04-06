@@ -28,6 +28,7 @@
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
+    "ngx-ui-switch": "^1.6.0",
     "rxjs": "^5.4.2",
     "zone.js": "^0.8.14"
   },

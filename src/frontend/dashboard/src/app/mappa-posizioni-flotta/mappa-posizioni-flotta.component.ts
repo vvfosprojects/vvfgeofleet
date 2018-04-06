@@ -80,14 +80,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     this.mapIcone = new Map(this.iconeStati);    
 
     this.iconeStatiSelezionato = [
-      ['0','assets/images/mm_20_black.png'],
-      ['1','assets/images/mm_20_red.png'],
-      ['2','assets/images/mm_20_blue.png'],
-      ['3','assets/images/mm_20_green.png'],
-      ['4','assets/images/mm_20_gray.png'],
-      ['5','assets/images/mm_40_yellow.png'],
-      ['6','assets/images/mm_20_orange.png'],
-      ['7','assets/images/mm_20_cyan.png']
+      ['0','assets/images/mm_30_black.png'],
+      ['1','assets/images/mm_30_red.png'],
+      ['2','assets/images/mm_30_blue.png'],
+      ['3','assets/images/mm_30_green.png'],
+      ['4','assets/images/mm_30_gray.png'],
+      ['5','assets/images/mm_30_yellow.png'],
+      ['6','assets/images/mm_30_orange.png'],
+      ['7','assets/images/mm_30_cyan.png']
     ]    ;    
     this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
     
@@ -99,7 +99,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
 
   ngOnChanges() {
-    
+
+    //console.log("ngOnChanges()-mezzo Selezionato", this.mezzoSelezionato);
     // individua le posizioni non ancora elaborare
     this.elencoPosizioniNuove = this.elencoPosizioniDaElaborare.
       filter( (item) => {
@@ -184,16 +185,16 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     {
     */ 
     if (m.infoSO115 != null) {
-      if (m == this.mezzoSelezionato) {
+      if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
           this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get(m.infoSO115.stato);
         }
       else
         {
-          this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);          
+          this.iconaStatoMezzoCorrente = this.mapIcone.get(m.infoSO115.stato);  
         }
       }
     else {
-      if (m == this.mezzoSelezionato) {
+      if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
         this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get('0');
         }
       else
@@ -207,16 +208,17 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   clickedMarker(mezzo: PosizioneMezzo, index: number) {
     //this.clicked_label = this.elencoPosizioniMostrate[index].codiceMezzo;
     this.clicked_label = mezzo.codiceMezzo;
-    console.log('clicked the marker: ', mezzo, index);
+    //console.log('clicked the marker: ', mezzo, index);
   }
 
   overMarker(mezzo: PosizioneMezzo, index: number) {
-    console.log('over the marker: ', mezzo, index);
+    //console.log('over the marker: ', mezzo, index);
+    this.mezzoSelezionato = mezzo;
     this.sedeMezzo(mezzo);
   }
 
   outOfMarker(mezzo: PosizioneMezzo, index: number) {
-    console.log('out of the marker: ', mezzo, index);
+    //console.log('out of the marker: ', mezzo, index);
   }
 
   setMarkerManager(markerManager: MarkerManager){
@@ -249,12 +251,26 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
   sedeMezzo(p : PosizioneMezzo) {
-    this.sedeMezzoCorrente = p.classiMezzo.
-      find( i =>  i.substr(0,5) == "PROV:");
-    
-    this.sedeMezzoCorrente = this.sedeMezzoCorrente.substr(5,2) ;
-
-    return this.sedeMezzoCorrente;
+    return (p.classiMezzo.
+      find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
   }
 
+
+  classiMezzoDepurata(p : PosizioneMezzo) {
+    return p.classiMezzo.
+      filter( i =>  (i.substr(0,5) != "PROV:") )
+  }
+
+  indiceMezzoSelezionato(m: PosizioneMezzo) {
+    //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
+
+    /*
+    if (m == this.mezzoSelezionato) {
+      this.iconaStatoMezzoCorrente = 'assets/images/car.png'; }
+    else
+    {
+    */ 
+   if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
+      { return 2; } else {return 1; }
+  }
 }

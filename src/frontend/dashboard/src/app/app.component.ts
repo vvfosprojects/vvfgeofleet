@@ -43,7 +43,7 @@ export class AppComponent {
   
         ngOnInit() { 
           this.aggiorna('-');
-          this.timer = Observable.timer(60000,10000).timeout(120000);
+          this.timer = Observable.timer(9000,9000).timeout(120000);
           this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(t));
         }   
 
@@ -67,7 +67,7 @@ export class AppComponent {
     
         ngOnDestroy(){
           this.timerSubcribe.unsubscribe();
-          console.log("Destroy timer");
+          //console.log("Destroy timer");
       
         }
 

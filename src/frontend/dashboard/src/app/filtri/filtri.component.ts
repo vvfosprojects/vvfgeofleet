@@ -36,7 +36,7 @@ export class FiltriComponent implements OnInit {
   }
 
   public selezione(event, codice) {
-    console.log('event: ' + event);
+    //console.log('event: ' + event);
     /*
     console.log('codice: ' + this.vociFiltro[0].codice);
     console.log('codice: ' + this.vociFiltro[1].codice);
