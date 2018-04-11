@@ -33,7 +33,9 @@
                 [posizioneMezzo]="r" 
                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                 [filtriStatiMezzo]="filtriStatiMezzo"
-                (mezzoSelezionato)="centraSuMappa($event)"></app-posizione-mezzo>
+                (mezzoSelezionato)="centraSuMappa($event)"
+                (mezzoSelezionato)="evidenziaSuMappa($event)"
+                ></app-posizione-mezzo>
         </div>
         <div>
             <app-filtri [titolo]="titoloFiltroStatiMezzo" 
