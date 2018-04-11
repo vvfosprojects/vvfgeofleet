@@ -223,11 +223,22 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
   
 
-  centraSuMappa(posizioneMezzo) {
-    this.mezzoSelezionato = posizioneMezzo;
-    this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
-    this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
-    this.startZoom = 12;
+  centraSuMappa(evento) {
+    var tipoevento: string = evento[1];
+    if (tipoevento == "click") {
+      this.mezzoSelezionato = evento[0];
+      this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
+      this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
+      this.startZoom = 12;
+    }
+    //console.log("centraSuMappa", this.mezzoSelezionato);
+  }
+
+  evidenziaSuMappa(evento) {
+    var tipoevento: string = evento[1];
+    if (tipoevento == "mouseover") {
+      this.mezzoSelezionato = evento[0];
+    }
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
 

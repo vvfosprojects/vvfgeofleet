@@ -195,7 +195,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       }
     else {
       if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
-        this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get('0');
+      this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get('0');
         }
       else
         {

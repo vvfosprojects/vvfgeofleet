@@ -14,7 +14,8 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
-  @Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
+  //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
+  @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
     
   private iconaMezzoCorrente: string;
@@ -101,6 +102,8 @@ export class PosizioneMezzoComponent implements OnInit {
 
   private mouseIn() {
     this.currentItem = this.posizioneMezzo;
+    this.mezzoSelezionato.emit([this.posizioneMezzo, "mouseover"] );
+    //console.log('mouseIn', $event);    
     //console.log('mouseIn', this.currentItem, this.posizioneMezzo);
   }
 
@@ -110,8 +113,8 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   private centerOnMap() {
-    this.mezzoSelezionato.emit(this.posizioneMezzo );
-    //console.log('centerOnMap', this.posizioneMezzo);
+    this.mezzoSelezionato.emit([this.posizioneMezzo, "click"] );
+    //console.log('centerOnMap', $event);
   }
 
 }
