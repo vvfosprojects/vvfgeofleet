@@ -72,7 +72,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       "assets/images/mm_20_green.png"
     ),
     new VoceFiltro(
-      "4", "Mezzi rientrati in Sede", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
+      "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
     ),
     new VoceFiltro(
       "5", "Fuori per motivi di Istituto", 0, true, "", "badge-info", "assets/images/mm_20_yellow.png"
