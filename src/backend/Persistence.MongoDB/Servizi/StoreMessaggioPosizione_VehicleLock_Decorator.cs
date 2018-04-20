@@ -18,14 +18,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using log4net;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Persistence.MongoDB.Classes;
 
