@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindings.cs" />
+    <Compile Include="Classes\VehicleLock.cs" />
     <Compile Include="DbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servizi\GetClassiMezzo_DB.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Servizi\Statistics\GetNumberOfMessagesStoredByTimeInterval_DB.cs" />
     <Compile Include="Servizi\Statistics\GetNumberOfVehicles_DB.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_DB.cs" />
+    <Compile Include="Servizi\StoreMessaggioPosizione_VehicleLock_Decorator.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_LogTooHighVelocities_Decorator.cs" />
     <Compile Include="Servizi\StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator.cs" />
   </ItemGroup>

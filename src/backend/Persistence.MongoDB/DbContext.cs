@@ -27,6 +27,7 @@ using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Events;
+using Persistence.MongoDB.Classes;
 
 namespace Persistence.MongoDB
 {
@@ -141,6 +142,20 @@ namespace Persistence.MongoDB
 
                 this.MessaggiPosizioneCollection.Indexes.CreateOne(indexDefinition, indexOptions);
             }
+
+            // This index supports vehicle locking. The index expires (thus unlocking the vehicle) in
+            // case of application failure.
+            {
+                var indexDefinition = Builders<VehicleLock>.IndexKeys
+                    .Ascending(i => i.InsertionTime);
+
+                var indexOptions = new CreateIndexOptions
+                {
+                    ExpireAfter = new System.TimeSpan(0, 0, 30)
+                };
+
+                this.VehicleLocks.Indexes.CreateOne(indexDefinition, indexOptions);
+            }
         }
 
         private void MapClasses()
@@ -161,6 +176,14 @@ namespace Persistence.MongoDB
                 cm.MapField("type");
                 cm.MapField("coordinates");
             });
+
+            BsonClassMap.RegisterClassMap<VehicleLock>(cm =>
+            {
+                cm.AutoMap();
+                cm.MapIdMember(c => c.VehicleCode);
+                cm.GetMemberMap(c => c.InsertionTime)
+                  .SetElementName("ts");
+            });
         }
 
         public IMongoCollection<MessaggioPosizione> MessaggiPosizioneCollection
@@ -168,6 +191,14 @@ namespace Persistence.MongoDB
             get
             {
                 return database.GetCollection<MessaggioPosizione>("messaggiPosizione");
+            }
+        }
+
+        public IMongoCollection<VehicleLock> VehicleLocks
+        {
+            get
+            {
+                return database.GetCollection<VehicleLock>("vehicleLocks");
             }
         }
     }

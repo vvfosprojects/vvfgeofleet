@@ -17,6 +17,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+using MongoDB.Bson;
+using Persistence.MongoDB.Classes;
 using SimpleInjector;
 using SimpleInjector.Packaging;
 
@@ -36,6 +38,11 @@ namespace Persistence.MongoDB
                 return container.GetInstance<DbContext>().MessaggiPosizioneCollection;
             }, Lifestyle.Scoped);
 
+            container.Register<global::MongoDB.Driver.IMongoCollection<VehicleLock>>(() =>
+            {
+                return container.GetInstance<DbContext>().VehicleLocks;
+            }, Lifestyle.Scoped);
+
             container.Register<Modello.Servizi.Persistence.IGetMessaggioPosizioneById,
                 Servizi.GetMessaggioPosizioneById_DB>(Lifestyle.Scoped);
 
@@ -45,6 +52,7 @@ namespace Persistence.MongoDB
             container.RegisterDecorator(
                 typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
                 typeof(Servizi.StoreMessaggioPosizione_DeleteInterpolatedMessages_Decorator),
+                Lifestyle.Scoped,
                 context => container.GetInstance<Modello.Configurazione.IAppConfig>().InterpolationActive
             );
 
@@ -53,16 +61,26 @@ namespace Persistence.MongoDB
                 sender.InterpolationThreshold_mt = container.GetInstance<Modello.Configurazione.IAppConfig>().InterpolationThreshold_mt;
             });
 
-            container.RegisterDecorator(
-                typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
-                typeof(Servizi.StoreMessaggioPosizione_LogTooHighVelocities_Decorator),
-                context => container.GetInstance<Modello.Configurazione.IAppConfig>().TooHighVelocityLoggingActive
-            );
-
             container.RegisterInitializer<Servizi.StoreMessaggioPosizione_LogTooHighVelocities_Decorator>(sender =>
             {
                 sender.VelocityThreshold_Kmh = container.GetInstance<Modello.Configurazione.IAppConfig>().VelocityThreshold_Kmh;
             });
+
+            container.RegisterDecorator(
+                typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
+                typeof(Servizi.StoreMessaggioPosizione_LogTooHighVelocities_Decorator),
+                Lifestyle.Scoped,
+                context => container.GetInstance<Modello.Configurazione.IAppConfig>().TooHighVelocityLoggingActive
+            );
+
+            container.RegisterInitializer<Servizi.StoreMessaggioPosizione_VehicleLock_Decorator>(sender =>
+            {
+                sender.NumberOfRetries = container.GetInstance<Modello.Configurazione.IAppConfig>().NumberOfRetries;
+                sender.RetriesInterval_msec = container.GetInstance<Modello.Configurazione.IAppConfig>().RetriesInterval_msec;
+            });
+
+            container.RegisterDecorator<Modello.Servizi.Persistence.IStoreMessaggioPosizione,
+                Servizi.StoreMessaggioPosizione_VehicleLock_Decorator>(Lifestyle.Scoped);
 
             container.Register<Modello.Servizi.Persistence.IGetPosizioneByCodiceMezzo,
                 Servizi.GetPosizioneByCodiceMezzo_DB>(Lifestyle.Scoped);
