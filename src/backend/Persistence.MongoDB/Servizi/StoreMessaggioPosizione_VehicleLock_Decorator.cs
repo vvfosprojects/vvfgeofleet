@@ -61,7 +61,26 @@ namespace Persistence.MongoDB.Servizi
         {
             var vehicleCode = newMessage.CodiceMezzo;
 
-            // acquire the lock
+            acquireLock(vehicleCode);
+
+            try
+            {
+                // inserts the positione message
+                this.decorated.Store(newMessage);
+            }
+            finally
+            {
+                releaseLock(vehicleCode);
+            }
+        }
+
+        private void releaseLock(string vehicleCode)
+        {
+            this.vehicleLocksCollection.DeleteOne(doc => doc.VehicleCode == vehicleCode);
+        }
+
+        private void acquireLock(string vehicleCode)
+        {
             var lockDoc = new VehicleLock(vehicleCode);
 
             var lockAcquired = false;
@@ -90,17 +109,6 @@ namespace Persistence.MongoDB.Servizi
 
                     Thread.Sleep(this.RetriesInterval_msec);
                 }
-            }
-
-            try
-            {
-                // inserts the positione message
-                this.decorated.Store(newMessage);
-            }
-            finally
-            {
-                // release the lock
-                this.vehicleLocksCollection.DeleteOne(doc => doc.VehicleCode == vehicleCode);
             }
         }
     }
