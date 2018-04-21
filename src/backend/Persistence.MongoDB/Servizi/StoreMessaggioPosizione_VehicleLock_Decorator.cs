@@ -92,11 +92,16 @@ namespace Persistence.MongoDB.Servizi
                 }
             }
 
-            // inserts the positione message
-            this.decorated.Store(newMessage);
-
-            // release the lock
-            this.vehicleLocksCollection.DeleteOne(doc => doc.VehicleCode == vehicleCode);
+            try
+            {
+                // inserts the positione message
+                this.decorated.Store(newMessage);
+            }
+            finally
+            {
+                // release the lock
+                this.vehicleLocksCollection.DeleteOne(doc => doc.VehicleCode == vehicleCode);
+            }
         }
     }
 }
