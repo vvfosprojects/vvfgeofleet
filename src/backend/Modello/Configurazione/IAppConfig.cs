@@ -44,5 +44,12 @@ namespace Modello.Configurazione
         int RetriesInterval_msec { get; }
 
         #endregion vechicle Locking
+
+        #region ip based authorization
+
+        bool IpAuthEnabled { get; }
+        string[] AuthorizedIpSources { get; }
+
+        #endregion ip based authorization
     }
 }

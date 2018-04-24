@@ -49,6 +49,10 @@ On each position message reception, VVFGeoFleet computes the vehicle velocity co
 
 System publishes statistics about message arrival per day, total number of stored messages, messages arrival rate, etc. Statistics can be read to check correct system operation, and can be processed through automated systems in order to raise alarms in case of anomalous indicators.
 
+## IP-based authorization
+
+Posting position messages can be subject to client authorization, based on IP source address. The web.config allows to enable/disable IP-based authorization through a flag and to specify the list of allowed IP and/or networks (e.g. 127.0.0.1, 8.8.8.8, 10.0.0.0/24, 172.16.0.0/16).
+
 # API Documentation
 
 ## POST /api/messaggiPosizione
