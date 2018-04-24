@@ -3,6 +3,7 @@ import { PosizioneMezzo } from './posizione-mezzo/posizione-mezzo.model';
 import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
 import { Observable } from "rxjs/Rx";
+import * as moment from 'moment';
 
 
 @Component({
@@ -19,6 +20,12 @@ export class AppComponent {
   
   private timer;
   private timerSubcribe: PushSubscription;
+
+  public istanteUltimoAggiornamento: Date;
+
+  private maxIstanteAcquisizionePrecedente: Date ;
+  public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
+
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
           
@@ -50,8 +57,20 @@ export class AppComponent {
         aggiorna(tt) {
           //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
+          var attSec : Number;
+
+          this.istanteUltimoAggiornamento = moment().toDate();      
           
-          this.posizioneFlottaService.getPosizioneFlotta()
+          // aggiungere sempre X secondi per essere sicuri di perdersi
+          // meno posizioni possibili, a causa della distanza di tempo tra
+          // l'invio della richiesta dal client e la sua ricezione dal ws
+          // Per essere certi, è necessaria un API che restituisca i messaggi
+          // acquisiti successivamente ad un certo istante
+          if (this.maxIstanteAcquisizionePrecedente == null) { attSec = null;}
+          else {attSec = moment(this.istanteUltimoAggiornamento).
+            diff(this.maxIstanteAcquisizionePrecedente, 'seconds') + 10 ; }
+           
+          this.posizioneFlottaService.getPosizioneFlotta(attSec)
           .subscribe( posizioni => {
             //console.log("posizioneFlottaService: ", posizioni);
             this.elencoPosizioniMezzo = posizioni.sort( 
@@ -62,7 +81,20 @@ export class AppComponent {
               }
             );
           });
-            
+
+          if (this.elencoPosizioniMezzo.length > 0) {
+            this.maxIstanteAcquisizione = new Date(this.elencoPosizioniMezzo.
+              reduce( function (a,b) 
+              { var bb : Date = new Date(b.istanteAcquisizione);
+                var aa : Date  = new Date(a.istanteAcquisizione);
+                return aa>bb ? a : b ;
+              }).istanteAcquisizione);
+
+            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+
+          }      
+      
+     
         }
     
         ngOnDestroy(){
@@ -70,5 +102,8 @@ export class AppComponent {
           //console.log("Destroy timer");
       
         }
+
+
+       
 
 }

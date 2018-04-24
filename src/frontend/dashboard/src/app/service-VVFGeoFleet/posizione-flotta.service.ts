@@ -35,11 +35,15 @@ export class PosizioneFlottaService {
     constructor(private http: Http) { }
     //constructor(private http: HttpClient) { }
     
-    public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
+    public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
       // this.http.get(API_URL + 'posizioneFlotta', options )
+      var richiestaAPI :string;
 
       
-      var observable: Observable<Response> = this.http.get(API_URL + 'posizioneFlotta') ;
+      if (attSec == null) { richiestaAPI = 'posizioneFlotta'; }
+      else {  richiestaAPI = 'posizioneFlotta?attSec='+ String(attSec);}
+      
+      var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
       //return this.http.get(API_URL + 'posizioneFlotta').      
       return observable.      

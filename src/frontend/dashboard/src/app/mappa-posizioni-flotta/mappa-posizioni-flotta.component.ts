@@ -101,7 +101,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   ngOnChanges() {
 
     //console.log("ngOnChanges()-mezzo Selezionato", this.mezzoSelezionato);
-    // individua le posizioni non ancora elaborare
+    // individua le posizioni non ancora elaborate
     this.elencoPosizioniNuove = this.elencoPosizioniDaElaborare.
       filter( (item) => {
         var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
@@ -110,6 +110,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         else {return null}  }
        );
     
+    // aggiunge alle posizioni Mostrate quelle Nuove     
+    this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove);
 
     // rimuove dalle posizioni da elaborare quelle Nuove
     this.elencoPosizioniNuove.forEach( v => { 
@@ -161,8 +163,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
      })
      */
 
-    // aggiunge alle posizioni Mostrate quelle Nuove     
-    this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove);
 
     // modifica nelle posizioni Mostrate quelle con variazioni
     this.elencoPosizioniDaElaborare.forEach( item => { 
@@ -207,7 +207,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   clickedMarker(mezzo: PosizioneMezzo, index: number) {
     //this.clicked_label = this.elencoPosizioniMostrate[index].codiceMezzo;
-    this.clicked_label = mezzo.codiceMezzo;
+    //this.clicked_label = mezzo.codiceMezzo;
+    this.mezzoSelezionato.codiceMezzo = mezzo.codiceMezzo;
+    this.mapLat = Number(mezzo.localizzazione.lat);
+    this.mapLon = Number(mezzo.localizzazione.lon);
+    this.mapZoom = 12;    
+
     //console.log('clicked the marker: ', mezzo, index);
   }
 
