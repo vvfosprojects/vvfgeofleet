@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Configuration;
+using System.Linq;
 using Modello.Configurazione;
 
 namespace VVFGeoFleet.Configurazione
@@ -33,6 +34,8 @@ namespace VVFGeoFleet.Configurazione
         public readonly int velocityThreshold_Kmh = Convert.ToInt32(ConfigurationManager.AppSettings["velocityThreshold_Kmh"]);
         private readonly int numberOfRetries = Convert.ToInt32(ConfigurationManager.AppSettings["numberOfRetries"]);
         private readonly int retriesInterval_msec = Convert.ToInt32(ConfigurationManager.AppSettings["retriesInterval_msec"]);
+        public readonly bool ipAuthEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["ipAuthorizationEnabled"]);
+        public readonly string[] authorizedIpSources = Convert.ToString(ConfigurationManager.AppSettings["authorizedIpSources"]).Split(',').Select(s => s.Trim()).ToArray();
 
         public string ConnectionString { get => this.connectionString; }
         public int OrizzonteTemporale_sec { get => this.orizzonteTemporale_sec; }
@@ -42,5 +45,7 @@ namespace VVFGeoFleet.Configurazione
         public int VelocityThreshold_Kmh { get => this.velocityThreshold_Kmh; }
         public int NumberOfRetries { get => this.numberOfRetries; }
         public int RetriesInterval_msec { get => this.retriesInterval_msec; }
+        public bool IpAuthEnabled { get => this.ipAuthEnabled; }
+        public string[] AuthorizedIpSources { get => this.authorizedIpSources; }
     }
 }

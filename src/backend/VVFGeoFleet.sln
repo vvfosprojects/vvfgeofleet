@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVFGeoFleet.Test", "VVFGeoF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VVFGeoFleet.IntegrationTest", "VVFGeoFleet.IntegrationTest\VVFGeoFleet.IntegrationTest.csproj", "{9CCA2DC1-5757-4F26-A66E-3A09C311E595}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IpTools", "IpTools\IpTools.csproj", "{6BC12BD0-21E7-4C09-ADF9-50D629046411}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{9CCA2DC1-5757-4F26-A66E-3A09C311E595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CCA2DC1-5757-4F26-A66E-3A09C311E595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CCA2DC1-5757-4F26-A66E-3A09C311E595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC12BD0-21E7-4C09-ADF9-50D629046411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC12BD0-21E7-4C09-ADF9-50D629046411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC12BD0-21E7-4C09-ADF9-50D629046411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC12BD0-21E7-4C09-ADF9-50D629046411}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
