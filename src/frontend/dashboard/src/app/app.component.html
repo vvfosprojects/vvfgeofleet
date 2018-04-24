@@ -34,7 +34,11 @@
   <!-- Enable bootstrap 4 theme -->
   <script>window.__theme = 'bs4';</script>
   <div class="container-fluid">
-    <app-elenco-posizioni-flotta [elencoPosizioni]="elencoPosizioniMezzo"></app-elenco-posizioni-flotta>
+    <app-elenco-posizioni-flotta 
+      [elencoUltimePosizioni]="elencoPosizioniMezzo"
+      [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+      [maxIstanteAcquisizione]="maxIstanteAcquisizione">
+    </app-elenco-posizioni-flotta>
   </div>
 </body>
 

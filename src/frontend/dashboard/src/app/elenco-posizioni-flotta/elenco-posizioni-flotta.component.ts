@@ -13,17 +13,20 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 })
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
-  @Input() elencoPosizioni : PosizioneMezzo[] = [];
+  @Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
+  @Input() istanteUltimoAggiornamento: Date;
+  @Input() maxIstanteAcquisizione: Date ;
+  
+  private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
+  public elencoPosizioni : PosizioneMezzo[] = [];
   public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
-  public istanteUltimoAggiornamento: Date;
   public mezzoSelezionato: PosizioneMezzo;
 
   startLat: number = 41.889777;
   startLon: number = 12.490689;
   startZoom: number = 6;
 
-  private maxistanteArchiviazionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   centerOnLast: boolean = true;
 
@@ -109,13 +112,49 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   inizializzaFiltri() {
 
+    if (this.elencoPosizioni.length == 0 ) 
+      { this.elencoPosizioni = this.elencoUltimePosizioni; }
+    else
+      {
 
+        // individua le posizioni non ancora elaborate
+        var elencoPosizioniNuove: PosizioneMezzo[] = this.elencoUltimePosizioni.
+          filter( (item) => {
+            var v = this.elencoPosizioni.find( x => item.codiceMezzo == x.codiceMezzo );
+            if ( v == null) {
+              return item}
+            else {return null}  }
+          );
+          
+        // aggiunge le posizioni non ancora elaborate
+        this.elencoPosizioni = this.elencoPosizioni.concat(elencoPosizioniNuove);
+
+        // rimuove dalle posizioni da elaborare quelle Nuove
+        elencoPosizioniNuove.forEach( v => { 
+            var k = this.elencoUltimePosizioni.indexOf( v );
+            if (k != -1) { this.elencoUltimePosizioni.splice(k,1); 
+                  }
+          });
+
+        // modifica nelle posizioni Mostrate quelle con variazioni
+        this.elencoUltimePosizioni.forEach( item => { 
+          var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+          if ( v != null) {  this.elencoPosizioni[v] = item; }    
+        } )
+
+        // riordina l'array
+        this.elencoPosizioni = this.elencoPosizioni.sort( 
+          function(a,b) 
+          { var bb : Date = new Date(b.istanteAcquisizione);
+            var aa : Date  = new Date(a.istanteAcquisizione);
+            return aa>bb ? -1 : aa<bb ? 1 : 0;
+          });
+      }
     /*
     var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
 
     this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
     */
-    
     // elabora solo le posizioni su cui sono disponibili le info di SO115
     this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
     // elabora solo le posizioni su cui sono NON disponibili le info di SO115
@@ -133,20 +172,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     // assegnna alle posizioni da elaborare quelle archiviate successivamente 
     //all'istante di elborazione precedente
     this.elencoPosizioniDaElaborare = this.elencoPosizioni.
-      filter(r => (new Date(r.istanteArchiviazione) > this.maxistanteArchiviazionePrecedente ) );
+      filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
       //filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
 
-    this.istanteUltimoAggiornamento = moment().toDate();      
-
-    if (this.elencoPosizioniDaElaborare.length > 0) {
-      this.maxistanteArchiviazionePrecedente = new Date(this.elencoPosizioni.
-        reduce( function (a,b) 
-        { var bb : Date = new Date(b.istanteArchiviazione);
-          var aa : Date  = new Date(a.istanteArchiviazione);
-          return aa>bb ? a : b ;
-        }).istanteArchiviazione);
-    }      
-
+    this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
 
     /*
     l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
