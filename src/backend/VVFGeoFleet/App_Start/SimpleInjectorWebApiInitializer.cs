@@ -21,6 +21,7 @@
 
 namespace VVFGeoFleet.App_Start
 {
+    using System;
     using System.Linq;
     using System.Reflection;
     using System.Web.Compilation;
@@ -54,6 +55,23 @@ namespace VVFGeoFleet.App_Start
             // Scan all the referenced assemblies for packages containing DI wiring rules
             var assemblies = BuildManager.GetReferencedAssemblies().Cast<Assembly>();
             container.RegisterPackages(assemblies);
+
+            BindLocally(container);
+        }
+
+        private static void BindLocally(Container container)
+        {
+            container.RegisterDecorator(typeof(Modello.Servizi.Persistence.IStoreMessaggioPosizione),
+                typeof(Authorization.IpBased.IpAuthChecker),
+                Lifestyle.Scoped,
+                context => container.GetInstance<Modello.Configurazione.IAppConfig>().IpAuthEnabled);
+
+            container.RegisterInitializer<Authorization.IpBased.IpAuthChecker>(c =>
+            {
+                c.AllowedSources = container.GetInstance<Modello.Configurazione.IAppConfig>().AuthorizedIpSources;
+            });
+
+            container.Register<IpTools.IpNetworkChecker>(Lifestyle.Scoped);
         }
     }
 }

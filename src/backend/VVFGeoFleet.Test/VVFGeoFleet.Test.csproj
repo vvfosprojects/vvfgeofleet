@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreazioneDatiFake.cs" />
+    <Compile Include="IpCheckerTester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +85,10 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\IpTools\IpTools.csproj">
+      <Project>{6BC12BD0-21E7-4C09-ADF9-50D629046411}</Project>
+      <Name>IpTools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Modello\Modello.csproj">
       <Project>{96daf73a-ca16-4f9f-b1bd-053e6af1157d}</Project>
       <Name>Modello</Name>
