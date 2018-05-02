@@ -27,7 +27,7 @@ export class PosizioneMezzoComponent implements OnInit {
   private mapAlert: any ;
   private mapIconeFonte: any;
 
-
+  private istanteAcquisizionePosizioneMezzo: Date;
 
 
   constructor() { }
@@ -75,6 +75,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
     this.iconaMezzoCorrente = this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
 
+    this.istanteAcquisizionePosizioneMezzo = new Date(this.posizioneMezzo.istanteAcquisizione);
     //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
     
@@ -117,4 +118,18 @@ export class PosizioneMezzoComponent implements OnInit {
     //console.log('centerOnMap', $event);
   }
 
+  private toolTipText() {
+    var testo : String;
+    testo = this.classiMezzoDepurata() + " " + this.posizioneMezzo.codiceMezzo +
+    " (" + this.sedeMezzo() + ") del " + this.posizioneMezzo.istanteAcquisizione + 
+    " (da " + this.posizioneMezzo.fonte.classeFonte + ":" + this.posizioneMezzo.fonte.codiceFonte + ")";
+
+    if (this.posizioneMezzo.infoSO115 != null && 
+        this.posizioneMezzo.infoSO115.codiceIntervento != null &&
+        new Number(this.posizioneMezzo.infoSO115.codiceIntervento) != 0) {
+      testo = testo + " - Intervento " + this.posizioneMezzo.infoSO115.codiceIntervento + " del " +
+      new Date(this.posizioneMezzo.infoSO115.dataIntervento).toLocaleDateString() ;
+    }
+    return testo;
+  }
 }

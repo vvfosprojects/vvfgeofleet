@@ -278,4 +278,19 @@ export class MappaPosizioniFlottaComponent implements OnInit {
    if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
       { return 2; } else {return 1; }
   }
+
+  toolTipText(item : PosizioneMezzo) {
+    var testo : String;
+    testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
+    " (" + this.sedeMezzo(item) + ") del " + item.istanteAcquisizione + 
+    " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
+
+    if (item.infoSO115 != null && 
+      item.infoSO115.codiceIntervento != null &&
+        new Number(item.infoSO115.codiceIntervento) != 0) {
+      testo = testo + " - Intervento " + item.infoSO115.codiceIntervento + " del " +
+      new Date(item.infoSO115.dataIntervento).toLocaleDateString() ;
+    }
+    return testo;
+  }  
 }

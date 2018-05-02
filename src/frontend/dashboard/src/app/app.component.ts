@@ -26,6 +26,7 @@ export class AppComponent {
   private maxIstanteAcquisizionePrecedente: Date ;
   public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
 
+  private trimSec: Number = 0;
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
           
@@ -68,8 +69,11 @@ export class AppComponent {
           // acquisiti successivamente ad un certo istante
           if (this.maxIstanteAcquisizionePrecedente == null) { attSec = null;}
           else {attSec = moment(this.istanteUltimoAggiornamento).
-            diff(this.maxIstanteAcquisizionePrecedente, 'seconds') + 10 ; }
-           
+            diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
+            this.trimSec.valueOf() ; }
+        
+          //console.log("istanti",this.istanteUltimoAggiornamento,this.maxIstanteAcquisizionePrecedente);
+
           this.posizioneFlottaService.getPosizioneFlotta(attSec)
           .subscribe( posizioni => {
             //console.log("posizioneFlottaService: ", posizioni);
@@ -83,18 +87,53 @@ export class AppComponent {
           });
 
           if (this.elencoPosizioniMezzo.length > 0) {
-            this.maxIstanteAcquisizione = new Date(this.elencoPosizioniMezzo.
-              reduce( function (a,b) 
-              { var bb : Date = new Date(b.istanteAcquisizione);
-                var aa : Date  = new Date(a.istanteAcquisizione);
-                return aa>bb ? a : b ;
-              }).istanteAcquisizione);
+            //l'attSec deve essere calcolato in relazione all'istante 
+            //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
+            //eventuali messaggi "futuri", consentiti dagli adapter SO115.
 
-            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+            // imposta maxIstanteAcquisizione filtrando le posizioni precedente all'
+            // istanteUltimoAggiornamento
+            var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
+            elencoPosizioniMezzoDepurate = this.elencoPosizioniMezzo.filter(
+              i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
+            );            
+            if (elencoPosizioniMezzoDepurate.length > 0) {
+              this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
+                reduce( function (a,b) 
+                { var bb : Date = new Date(b.istanteAcquisizione);
+                  var aa : Date  = new Date(a.istanteAcquisizione);
+                  return aa>bb ? a : b ;
+                }).istanteAcquisizione);
 
+              this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+              }
+
+            //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
+
+            // imposta trimSec calcolando la differenza di tempo tra l'
+            // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
+            // purchè succesive a istanteUltimoAggiornamento
+            this.trimSec = 0;
+            var elencoPosizioniMezzoTrim : PosizioneMezzo[];
+            elencoPosizioniMezzoTrim = this.elencoPosizioniMezzo.filter(
+              i => (new Date(i.istanteAcquisizione) >= new Date(this.istanteUltimoAggiornamento) )
+              );
+            //console.log("elencoPosizioniMezzoTrim", elencoPosizioniMezzoTrim);
+            if (elencoPosizioniMezzoTrim.length > 0) {
+                this.trimSec = moment(
+                  new Date(elencoPosizioniMezzoTrim.
+                      reduce( function (a,b) 
+                      { var bb : Date = new Date(b.istanteAcquisizione);
+                        var aa : Date  = new Date(a.istanteAcquisizione);
+                        return aa>bb ? a : b ;
+                      }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
+              }
+            //console.log("trimSec", this.trimSec);
+            this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
+            //console.log("trimSec adj", this.trimSec);
           }      
       
-     
+
         }
     
         ngOnDestroy(){
