@@ -78,7 +78,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
     ),
     new VoceFiltro(
-      "5", "Fuori per motivi di Istituto", 0, true, "", "badge-info", "assets/images/mm_20_yellow.png"
+      "5", "Fuori per motivi di Istituto", 0, false, "", "badge-info", "assets/images/mm_20_yellow.png"
     ),
     // posizione inviata da una radio non associata a nessun Mezzo
     new VoceFiltro(
