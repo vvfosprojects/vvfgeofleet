@@ -1,9 +1,8 @@
 
-//Get all recent positions
+### Get all recent positions
 GET http://localhost:23032/api/posizioneflotta HTTP/1.1
 
-
-//Post a position message
+### Post a position message
 POST http://localhost:23032/api/messaggiPosizione HTTP/1.1
 Content-Type: application/json
 
@@ -11,10 +10,10 @@ Content-Type: application/json
     "codiceMezzo": "APS.12345",
     "classiMezzo": [ "APS", "benzina" ],
     "localizzazione": {
-        "lat": 14.2345,
+        "lat": 14.3345,
         "lon": 43.4321
     },
-    "istanteAcquisizione": "2018-05-07T22:12:00.1234Z",
+    "istanteAcquisizione": "2018-05-07T22:15:00.1234Z",
     "fonte": {
         "codiceFonte": "AH222",
         "classeFonte": "gpsTracker"
