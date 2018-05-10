@@ -20,7 +20,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
-  public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
+ // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
   public mezzoSelezionato: PosizioneMezzo;
 
   startLat: number = 41.889777;
@@ -139,7 +139,18 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         // modifica nelle posizioni Mostrate quelle con variazioni
         this.elencoUltimePosizioni.forEach( item => { 
           var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
-          if ( v != null) {  this.elencoPosizioni[v] = item; }    
+          if ( v != null) {  
+            if (item.infoSO115.stato != "0")
+              { this.elencoPosizioni[v] = item; }
+            else
+              { this.elencoPosizioni[v].fonte = item.fonte;
+                this.elencoPosizioni[v].classiMezzo = item.classiMezzo;
+                this.elencoPosizioni[v].istanteAcquisizione = item.istanteAcquisizione;
+                this.elencoPosizioni[v].istanteArchiviazione = item.istanteArchiviazione;
+                this.elencoPosizioni[v].istanteInvio = item.istanteInvio;
+                this.elencoPosizioni[v].localizzazione = item.localizzazione;
+              }
+          }    
         } )
 
         // riordina l'array
@@ -155,6 +166,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
     */
+
+    // filtra solo le posizioni su cui sono disponibili le info di SO115
+    this.elencoUltimePosizioni = this.elencoUltimePosizioni.filter(r => r.infoSO115 != null);
+
     // elabora solo le posizioni su cui sono disponibili le info di SO115
     this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);
     // elabora solo le posizioni su cui sono NON disponibili le info di SO115
@@ -169,12 +184,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = this.elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
 
+    /*
     // assegnna alle posizioni da elaborare quelle archiviate successivamente 
     //all'istante di elborazione precedente
     this.elencoPosizioniDaElaborare = this.elencoPosizioni.
       filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
       //filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
-
+    */
     this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
 
     /*

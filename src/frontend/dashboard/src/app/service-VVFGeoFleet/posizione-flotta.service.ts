@@ -46,18 +46,32 @@ export class PosizioneFlottaService {
       var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
       //return this.http.get(API_URL + 'posizioneFlotta').      
+      
+      /*
       return observable.      
         map((r : Response) => r.json().
           map(e => 
-            {
+            { 
               let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
             return Object.assign(posizioneMezzo, e);
             }
           )
         )
         .catch(this.handleError);
+      */
+      return observable.      
+      map((r : Response) => r.json().
+        map((e : PosizioneMezzo) => 
+          { if (e.infoSO115 == null) 
+            { e.infoSO115 = Object.create( {stato: String}); 
+            e.infoSO115.stato = "0";}
+            let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
+          return Object.assign(posizioneMezzo, e);
+          }
+        )
+      )
+      .catch(this.handleError);
       
-
       /*
         console.log('getPosizioneFlotta');
       

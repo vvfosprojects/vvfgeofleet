@@ -39,7 +39,7 @@ export class PosizioneMezzoComponent implements OnInit {
     //['6',['radio','badge-secondary']],
 
     this.defStatiMezzo = [
-      ['0',['sconosciuto','badge-light']],
+      ['0',['sconosciuto','badge-dark']],
       ['1',['in viaggio','badge-danger']],
       ['2',['sul posto','badge-primary']],
       ['3',['in rientro','badge-success']],
@@ -53,6 +53,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
     this.defIconeFonte = [
       [ 'SERCOM/SO115/MEZZI', 'fa-truck'],
+      [ 'SERCOM/SO115/GAC', 'fa-truck'],
       [ 'TTK', 'fa-truck'],
       [ 'SERCOM/SO115/MEZZIFITTIZI', 'fa-bus'],
       [ 'SERCOM/SO115/RADIO', 'fa-tty']
@@ -121,7 +122,8 @@ export class PosizioneMezzoComponent implements OnInit {
   private toolTipText() {
     var testo : String;
     testo = this.classiMezzoDepurata() + " " + this.posizioneMezzo.codiceMezzo +
-    " (" + this.sedeMezzo() + ") del " + this.posizioneMezzo.istanteAcquisizione + 
+    " (" + this.sedeMezzo() + ") del " + 
+    new Date(this.posizioneMezzo.istanteAcquisizione).toLocaleString()  + 
     " (da " + this.posizioneMezzo.fonte.classeFonte + ":" + this.posizioneMezzo.fonte.codiceFonte + ")";
 
     if (this.posizioneMezzo.infoSO115 != null && 

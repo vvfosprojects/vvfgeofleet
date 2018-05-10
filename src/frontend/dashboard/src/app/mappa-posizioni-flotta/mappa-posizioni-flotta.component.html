@@ -10,7 +10,7 @@
 </span>
 <div class="card">
   <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom">
-      <agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">
+      <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
           <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
             (markerClick)="clickedMarker(m, i)"
             (mouseOver)="overMarker(m, i)"
@@ -30,6 +30,6 @@
             </agm-info-window>
             -->
           </agm-marker>
-      </agm-get-map-objects>
+      <!--</agm-get-map-objects>-->
   </agm-map>
 </div>
