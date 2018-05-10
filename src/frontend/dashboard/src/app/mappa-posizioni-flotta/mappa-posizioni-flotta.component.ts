@@ -6,6 +6,7 @@ import { AgmMarker, MouseEvent } from '@agm/core';
 import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryList } from '@angular/core';
 
 import * as moment from 'moment';
+import { Options } from 'selenium-webdriver/ie';
 
 @Component({
   selector: 'app-mappa-posizioni-flotta',
@@ -111,7 +112,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
        );
     
     // aggiunge alle posizioni Mostrate quelle Nuove     
-    this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove);
+    if (this.elencoPosizioniMostrate.length == 0 ) 
+      { this.elencoPosizioniMostrate = this.elencoPosizioniNuove;}
+    else 
+      { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
 
     // rimuove dalle posizioni da elaborare quelle Nuove
     this.elencoPosizioniNuove.forEach( v => { 
@@ -167,7 +171,23 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     // modifica nelle posizioni Mostrate quelle con variazioni
     this.elencoPosizioniDaElaborare.forEach( item => { 
       var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
-      if ( v != null) {  this.elencoPosizioniMostrate[v] = item; }    
+      //if ( v != null) {  this.elencoPosizioniMostrate[v] = item; }    
+
+      if ( v != null) {  
+        if (item.infoSO115.stato != "0")
+          { this.elencoPosizioniMostrate[v] = item; }
+        else
+          { //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
+            this.elencoPosizioniMostrate[v].fonte = item.fonte;
+            this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
+            this.elencoPosizioniMostrate[v].istanteAcquisizione = item.istanteAcquisizione;
+            this.elencoPosizioniMostrate[v].istanteArchiviazione = item.istanteArchiviazione;
+            this.elencoPosizioniMostrate[v].istanteInvio = item.istanteInvio;
+            this.elencoPosizioniMostrate[v].localizzazione = item.localizzazione;
+            //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
+          }
+      }    
+
     } )
 
     // salva l'elenco delle posizioni Mostrate attualmente
@@ -250,9 +270,13 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
-      var r : boolean = this.filtriStatiMezzo.
-      some(filtro => filtro === p.infoSO115.stato );    
-      return r;
+      if (p.infoSO115 != null) {
+        var r : boolean = this.filtriStatiMezzo.
+        some(filtro => filtro === p.infoSO115.stato );    
+        return r;
+        } 
+      else { console.log(p, moment().toString()); 
+        }
   }
 
   sedeMezzo(p : PosizioneMezzo) {
@@ -281,8 +305,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   toolTipText(item : PosizioneMezzo) {
     var testo : String;
+    var opzioniDataOra = {};
     testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
-    " (" + this.sedeMezzo(item) + ") del " + item.istanteAcquisizione + 
+    " (" + this.sedeMezzo(item) + ") del " + 
+    new Date(item.istanteAcquisizione).toLocaleString() + 
     " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
 
     if (item.infoSO115 != null && 
