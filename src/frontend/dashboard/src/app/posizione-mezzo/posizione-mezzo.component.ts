@@ -30,10 +30,7 @@ export class PosizioneMezzoComponent implements OnInit {
   private istanteAcquisizionePosizioneMezzo: Date;
 
 
-  constructor() { }
-
-  ngOnInit() {
-
+  constructor() { 
     //['4',['rientrato','badge-info']],
     //['5',['istituto','badge-warning']],
     //['6',['radio','badge-secondary']],
@@ -60,17 +57,35 @@ export class PosizioneMezzoComponent implements OnInit {
     ] ;
 
     this.mapIconeFonte = new Map(this.defIconeFonte);        
+    
+  }
 
-    this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
-    /*    
+  ngOnInit() {
+
+    if (this.posizioneMezzo != null )
+      { this.aggiornaDatiMezzoCorrente(); }
+
+  }
+
+  ngOnChanges() {
+    //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
+    if (this.posizioneMezzo != null )
+      { this.aggiornaDatiMezzoCorrente(); }
+  }
+
+  aggiornaDatiMezzoCorrente() {
+    //this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     if (this.posizioneMezzo.infoSO115 != null) {
       this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     } else 
     {
+      console.log(this.posizioneMezzo);
       this.defStatoMezzoCorrente = this.mapAlert.get('0');
     }
-    */
     
+    if (this.defStatoMezzoCorrente == null )
+    { console.log(this.posizioneMezzo); }
+
     this.badgeStatoMezzoCorrente = this.defStatoMezzoCorrente[1];
     this.testoStatoMezzoCorrente = this.defStatoMezzoCorrente[0];
 
@@ -79,11 +94,6 @@ export class PosizioneMezzoComponent implements OnInit {
     this.istanteAcquisizionePosizioneMezzo = new Date(this.posizioneMezzo.istanteAcquisizione);
     //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
-    
-  }
-
-  ngOnChanges() {
-    //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
   }
 
   sedeMezzo() {
