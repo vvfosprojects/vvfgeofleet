@@ -117,6 +117,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     else
       {
 
+        // filtra solo le posizioni su cui sono disponibili le info di SO115
+        this.elencoUltimePosizioni = this.elencoUltimePosizioni.filter(r => r.infoSO115 != null);
+
         // individua le posizioni non ancora elaborate
         var elencoPosizioniNuove: PosizioneMezzo[] = this.elencoUltimePosizioni.
           filter( (item) => {
@@ -166,9 +169,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
     */
-
-    // filtra solo le posizioni su cui sono disponibili le info di SO115
-    this.elencoUltimePosizioni = this.elencoUltimePosizioni.filter(r => r.infoSO115 != null);
 
     // elabora solo le posizioni su cui sono disponibili le info di SO115
     this.elencoPosizioni = this.elencoPosizioni.filter(r => r.infoSO115 != null);

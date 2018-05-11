@@ -62,9 +62,14 @@ export class PosizioneFlottaService {
       return observable.      
       map((r : Response) => r.json().
         map((e : PosizioneMezzo) => 
-          { if (e.infoSO115 == null) 
-            { e.infoSO115 = Object.create( {stato: String}); 
-            e.infoSO115.stato = "0";}
+          { if (e.infoSO115 == null) { 
+              e.infoSO115 = Object.create( {stato: String}); 
+              e.infoSO115.stato = "0";
+            }
+            if (e.infoSO115.stato == null || e.infoSO115.stato == "" )
+            {
+              e.infoSO115.stato = "0";              
+            }
             let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
           return Object.assign(posizioneMezzo, e);
           }
