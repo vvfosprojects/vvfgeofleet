@@ -22,7 +22,8 @@ export class PosizioneFlottaServiceFake {
                  "2018-01-26 13:19:51 ",
                  { codiceFonte: "RM-73534", classeFonte: "SERCOM/SO115"},
                  {stato: "3",codiceIntervento: "5",dataIntervento: "31-MAG-17"},
-                 "2018-01-31 17:11:59")
+                 "2018-01-31 17:11:59",
+                "testo tootTip")
         ];
        
         return Observable.of(elencoPosizioni);

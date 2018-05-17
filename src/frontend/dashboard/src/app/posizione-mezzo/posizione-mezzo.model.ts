@@ -17,7 +17,8 @@ export class PosizioneMezzo {
             codiceIntervento:string,
             dataIntervento: string
         },
-        public istanteArchiviazione: string
+        public istanteArchiviazione: string,
+        public toolTipText: string
     ) {}
     
     }
