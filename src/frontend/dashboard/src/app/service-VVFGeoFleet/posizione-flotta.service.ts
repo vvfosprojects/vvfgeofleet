@@ -45,6 +45,9 @@ export class PosizioneFlottaService {
       
       var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
+      var posizioniMezzo : PosizioneMezzo[];
+      var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
+
       //return this.http.get(API_URL + 'posizioneFlotta').      
       
       /*
@@ -59,7 +62,7 @@ export class PosizioneFlottaService {
         )
         .catch(this.handleError);
       */
-      return observable.      
+     obsPosizioniMezzo = observable.      
       map((r : Response) => r.json().
         map((e : PosizioneMezzo) => 
           { if (e.infoSO115 == null) { 
@@ -70,13 +73,18 @@ export class PosizioneFlottaService {
             {
               e.infoSO115.stato = "0";              
             }
+            //e.tooltipText = Object.create(String.prototype);
+            e.toolTipText = this.toolTipText(e);
             let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
-          return Object.assign(posizioneMezzo, e);
+            return Object.assign(posizioneMezzo, e);
           }
         )
       )
-      .catch(this.handleError);
-      
+      .catch(this.handleError);      
+
+      return obsPosizioniMezzo;
+
+
       /*
         console.log('getPosizioneFlotta');
       
@@ -110,5 +118,34 @@ export class PosizioneFlottaService {
       console.error('ApiService::handleError', error);
       return Observable.throw(error);
     }
+
+
+    sedeMezzo(p : PosizioneMezzo) {
+      return (p.classiMezzo.
+        find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
+    }
   
+  
+    classiMezzoDepurata(p : PosizioneMezzo) {
+      return p.classiMezzo.
+        filter( i =>  (i.substr(0,5) != "PROV:") )
+    }
+      
+    toolTipText(item : PosizioneMezzo) {
+      var testo : string;
+      var opzioniDataOra = {};
+      testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
+      " (" + this.sedeMezzo(item) + ") del " + 
+      new Date(item.istanteAcquisizione).toLocaleString() + 
+      " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
+
+      if (item.infoSO115 != null && 
+        item.infoSO115.codiceIntervento != null &&
+          new Number(item.infoSO115.codiceIntervento) != 0) {
+        testo = testo + " - Intervento " + item.infoSO115.codiceIntervento + " del " +
+        new Date(item.infoSO115.dataIntervento).toLocaleDateString() ;
+      }
+      return testo;
+    }  
+
   }

@@ -11,7 +11,7 @@
 <div class="card">
   <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom">
       <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
-          <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
+        <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
             (markerClick)="clickedMarker(m, i)"
             (mouseOver)="overMarker(m, i)"
             (mouseOut)="outOfMarker(m, i)"
@@ -22,14 +22,29 @@
             [visible]="posizioneMezzoSelezionata(m)"
             [zIndex]="indiceMezzoSelezionato(m)"
             data-toggle="tooltip" data-html="true" 
-            title="{{toolTipText(m)}}">    
+            title="{{m.toolTipText}}">    
             >
+        <!--
+        agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
+            (markerClick)="clickedMarker(m, i)"
+            (mouseOver)="overMarker(m, i)"
+            (mouseOut)="outOfMarker(m, i)"
+            [latitude]="m.localizzazione.lat"
+            [longitude]="m.localizzazione.lon"
+            [openInfoWindow]="false"
+            [iconUrl]="markerIconUrl(m)"
+            [visible]="posizioneMezzoSelezionata(m)"
+            [zIndex]="indiceMezzoSelezionato(m)"
+            >
+        -->        
+
+
             <!--
             <agm-info-window [disableAutoPan]="true">
                 {{m.codiceMezzo}}
             </agm-info-window>
             -->
-          </agm-marker>
+        </agm-marker>
       <!--</agm-get-map-objects>-->
   </agm-map>
 </div>

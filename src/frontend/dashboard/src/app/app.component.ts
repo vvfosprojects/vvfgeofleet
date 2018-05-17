@@ -72,71 +72,79 @@ export class AppComponent {
             diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
             this.trimSec.valueOf() ; }
         
-          //console.log("istanti",this.istanteUltimoAggiornamento,this.maxIstanteAcquisizionePrecedente);
+          //console.log("istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
+          
           this.posizioneFlottaService.getPosizioneFlotta(attSec)
           .subscribe( posizioni => {
-            //console.log("posizioneFlottaService: ", posizioni);
-            this.elencoPosizioniMezzo = posizioni.sort( 
-              function(a,b) 
-              { var bb : Date = new Date(b.istanteAcquisizione);
-                var aa : Date  = new Date(a.istanteAcquisizione);
-                return aa>bb ? -1 : aa<bb ? 1 : 0;
-              }
-            );
-          });
-
-          if (this.elencoPosizioniMezzo.length > 0) {
-            //l'attSec deve essere calcolato in relazione all'istante 
-            //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
-            //eventuali messaggi "futuri", consentiti dagli adapter SO115.
-
-            // imposta maxIstanteAcquisizione filtrando le posizioni precedente all'
-            // istanteUltimoAggiornamento
-            var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
-            elencoPosizioniMezzoDepurate = this.elencoPosizioniMezzo.filter(
-              i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
-            );            
-            if (elencoPosizioniMezzoDepurate.length > 0) {
-              this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
-                reduce( function (a,b) 
+              //console.log("posizioneFlottaService: ", posizioni);
+              //console.log("posizioneFlottaService.length: ", posizioni.length);
+              this.elencoPosizioniMezzo = posizioni.sort( 
+                function(a,b) 
                 { var bb : Date = new Date(b.istanteAcquisizione);
                   var aa : Date  = new Date(a.istanteAcquisizione);
-                  return aa>bb ? a : b ;
-                }).istanteAcquisizione);
-
-              this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
-              }
-
-            //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
-
-            // imposta trimSec calcolando la differenza di tempo tra l'
-            // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
-            // purchè succesive a istanteUltimoAggiornamento
-            this.trimSec = 0;
-            var elencoPosizioniMezzoTrim : PosizioneMezzo[];
-            elencoPosizioniMezzoTrim = this.elencoPosizioniMezzo.filter(
-              i => (new Date(i.istanteAcquisizione) >= new Date(this.istanteUltimoAggiornamento) )
+                  return aa>bb ? -1 : aa<bb ? 1 : 0;
+                }
               );
-            //console.log("elencoPosizioniMezzoTrim", elencoPosizioniMezzoTrim);
-            if (elencoPosizioniMezzoTrim.length > 0) {
-                this.trimSec = moment(
-                  new Date(elencoPosizioniMezzoTrim.
-                      reduce( function (a,b) 
-                      { var bb : Date = new Date(b.istanteAcquisizione);
-                        var aa : Date  = new Date(a.istanteAcquisizione);
-                        return aa>bb ? a : b ;
-                      }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
-              }
-            //console.log("trimSec", this.trimSec);
-            this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
-            //console.log("trimSec adj", this.trimSec);
-          }      
-      
+
+              //console.log("this.elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
+
+              if (this.elencoPosizioniMezzo.length > 0) {
+                //l'attSec deve essere calcolato in relazione all'istante 
+                //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
+                //eventuali messaggi "futuri", consentiti dagli adapter SO115.
+    
+                // imposta maxIstanteAcquisizione filtrando le posizioni precedente all'
+                // istanteUltimoAggiornamento
+                var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
+                elencoPosizioniMezzoDepurate = this.elencoPosizioniMezzo.filter(
+                  i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
+                );            
+                if (elencoPosizioniMezzoDepurate.length > 0) {
+                  this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
+                    reduce( function (a,b) 
+                    { var bb : Date = new Date(b.istanteAcquisizione);
+                      var aa : Date  = new Date(a.istanteAcquisizione);
+                      return aa>bb ? a : b ;
+                    }).istanteAcquisizione);
+    
+                  this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+                  }
+    
+                   
+                //console.log("elencoPosizioniMezzoDepurate.length", elencoPosizioniMezzoDepurate.length);
+                //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
+    
+                // imposta trimSec calcolando la differenza di tempo tra l'
+                // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
+                // purchè succesive a istanteUltimoAggiornamento
+                this.trimSec = 0;
+                var elencoPosizioniMezzoTrim : PosizioneMezzo[];
+                elencoPosizioniMezzoTrim = this.elencoPosizioniMezzo.filter(
+                  i => (new Date(i.istanteAcquisizione) >= new Date(this.istanteUltimoAggiornamento) )
+                  );
+                //console.log("elencoPosizioniMezzoTrim", elencoPosizioniMezzoTrim);
+                if (elencoPosizioniMezzoTrim.length > 0) {
+                    this.trimSec = moment(
+                      new Date(elencoPosizioniMezzoTrim.
+                          reduce( function (a,b) 
+                          { var bb : Date = new Date(b.istanteAcquisizione);
+                            var aa : Date  = new Date(a.istanteAcquisizione);
+                            return aa>bb ? a : b ;
+                          }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
+                  }
+                //console.log("trimSec", this.trimSec);
+                this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
+                //console.log("trimSec adj", this.trimSec);
+              }      
+          
+            });
+
+
 
         }
     
-        ngOnDestroy(){
+        ngOnDestroy() {
           this.timerSubcribe.unsubscribe();
           //console.log("Destroy timer");
       
