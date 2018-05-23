@@ -1,0 +1,138 @@
+publiccode-yaml-version: "http://w3id.org/publiccode/version/0.1"
+
+name: geofleet
+applicationSuite: Fleet Tracking System
+url: "https://github.com/vvfosprojects/vvfgeofleet.git"        # URL of this repository
+landingURL: "https://github.com/vvfosprojects/vvfgeofleet"
+
+isBasedOn: ""   # The original repository, "Otello"
+softwareVersion: "1.0"                                        # Last stable version
+releaseDate: 2018-05-17                               # Date of last stable software release
+logo:
+monochromeLogo:
+
+platforms:                   # or Windows, Mac, Linux, etc.
+  - web browser (client)
+  - asp.net WebApi (server)
+
+api: "https://github.com/vvfosprojects/vvfgeofleet"
+
+tags:
+  - fleet tracking
+  - spatial queries
+  - maps
+
+freeTags:
+  eng:
+    - fleet tracking spatial queries mongodb maps
+  ita:
+    - gestione flotte queri georeferenziate mongodb mappe
+
+usedBy:
+  - Corpo Nazionale dei Vigili del Fuoco
+
+roadmap: "https://github.com/vvfosprojects/vvfgeofleet"
+
+developmentStatus: production
+
+softwareType:
+  type: "node frontend with RESTful backend"
+  isRelatedTo:
+    - ""
+
+intendedAudience:
+  onlyFor:
+    - public administrations
+	- enterprises
+  countries: # FIXME ISO 3166-1 alpha-2 + EU
+    - EU
+  unsupportedCountries:     # Explicitly unsupported countries
+    -
+
+description:
+  eng:
+    localisedName: geofleet
+    shortDescription: "Fleet tracking system"
+    longDescription: >
+          VVFGeoFleet is a system allowing to track a fleet,
+		  where vehicles are equipped with GPS enabled
+		  devices periodically sending their position. The
+		  system is composed of two main modules: (i) a backend
+		  module, based on a RESTful server; (ii) a frontend
+		  module, based on an Angular GUI.
+
+    documentation: "https://github.com/vvfosprojects/vvfgeofleet"
+    featureList:
+       - Message interpolation (keep-alive messages about steady
+	     vehicles are suppressed and summarized by the following
+		 messages, to save space of storage);
+       - Too high velocity warnings (warning notification in
+	     case of too fast vehicles);
+       - Online statistics (real-time computed statistics giving
+	     the taste of how the system is performing);
+	   - IP-based authorization (to prevent unauthorized source
+	     sending position messages).
+    screenshots:
+       - 
+    videos:                             # Demo videos of the software
+       - 
+    awards:
+       - 
+
+legal:
+  license: AGPL-3.0-or-later        # SPDX expression of license
+  mainCopyrightOwner: 2018 Corpo Nazionale dei Vigili del Fuoco
+  repoOwner: Corpo Nazionale dei Vigili del Fuoco
+  authorsFile: AUTHORS              # file listing copyright information
+
+maintenance:
+  type: "up to internal employees"
+
+  contractors:
+    - name: "" # if maintainance is a contract
+      website: ""
+      until: ""
+
+  contacts:
+    - name: Marcello Esposito
+      email: "marcello.esposito@vigilfuoco.it"
+      affiliation: Corpo Nazionale dei Vigili del Fuoco
+      phone:
+
+localisation:
+  # Does the software support, at least by design, multiple languages?
+  localisationReady: no
+  # Languages already available
+  availableLanguages:
+    - ita
+
+dependencies:             # List of dependencies. The only mandatory list is the proprietary one
+  open:                 # List of open dependencies. Optional
+    - name: MongoDB
+      versionMin: "3.6"
+      versionMax: "4.0"
+      optional: no
+  # List of proprietary software which is a dependency for using this product. This includes runtime dependencies
+  proprietary:
+    -
+  hardware:             # List of special hardware required. Optional.
+    - name: 
+      optional:
+
+ita:
+  accessibile: no # Rispetta i requisiti di legge in materia di accessibilità?
+  interoperabile: no # Rispetta i requisiti di legge sull'interoperabilita'
+
+  riuso:
+    # Codice IPA della PA che ha pubblicato questo repo (repo-owner)
+    codiceIPA: 5EDW58
+
+  spid: no
+  pagopa: no
+  cie: no
+  anpr: no
+
+  designKit:
+    - serviceDesign: no
+    - ui: no
+    - webToolkit: no
