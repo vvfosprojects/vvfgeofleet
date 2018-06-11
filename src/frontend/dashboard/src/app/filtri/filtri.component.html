@@ -1,29 +1,21 @@
 <div class="card filtro">
-    <div class="card-block">
-      <h6>{{ titolo }}</h6>
-      <div *ngFor="let v of vociFiltro">
-        <label>
-          <!--<div class="row">-->
-            <div *ngIf= "v.selezionato === true" > 
-              <!--<div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">-->
+    <h6>{{ titolo }}</h6>
+<div *ngFor="let v of vociFiltro">
+    <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <!--<label>-->
+              <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10">
                   <img src="{{v.icona}}" height="20" width="12">
-                  <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
-              <!--</div>-->
-              <!--<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 text-right">-->
+                  <span *ngIf= "v.selezionato === true" >
+                    <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
+                  </span>
+                  <span *ngIf= "v.selezionato === false" >
+                    <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
+                  </span>                    
+              </div>
+              <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
                   <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
-              <!--</div>-->
-            </div>
-            <div *ngIf= "v.selezionato === false"> 
-              <!--<div class="col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">-->
-                  <img src="{{v.icona}}" height="20" width="12">
-                  <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
-              <!--</div>-->
-              <!--<div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 text-right">-->
-                  <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
-              <!--</div>-->
-            </div>
-          <!--</div>-->
-        </label>
-      </div>
+              </div>
+        <!--</label>-->
     </div>
+</div>
 </div>

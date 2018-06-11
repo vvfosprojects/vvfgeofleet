@@ -1,6 +1,7 @@
 <h3>
 
 </h3>
+<!--
 <div class="row h8">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
         <p class="row_text p-1">Evidenzia sulla mappa l'ultima posizione ricevuta
@@ -20,6 +21,57 @@
             [vociFiltro]="vociFiltroStatiMezzo" 
             (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
         </div>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">          
+        <app-mappa-posizioni-flotta
+            [elencoPosizioni]="elencoPosizioni" 
+            [elencoPosizioniDaElaborare]="elencoUltimePosizioni" 
+            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+            [filtriStatiMezzo]="filtriStatiMezzo"
+            [mapLat]="startLat"
+            [mapLon]="startLon"
+            [mapZoom]="startZoom"
+            [mezzoSelezionato]="mezzoSelezionato"
+        >
+        </app-mappa-posizioni-flotta>
+    </div>
+</div>
+-->
+<div class="row h8">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" >
+            <ngb-panel title="Elenco Posizioni">
+            <ng-template ngbPanelContent>
+                    <!--<div class="area-elenco card card-inverse row_text p-1">-->
+                    <div class="area-elenco">
+                            <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                                [posizioneMezzo]="r" 
+                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                                [filtriStatiMezzo]="filtriStatiMezzo"
+                                (mezzoSelezionato)="centraSuMappa($event)"
+                                (mezzoSelezionato)="evidenziaSuMappa($event)"
+                                ></app-posizione-mezzo>
+                    </div>
+            </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Filtri">
+            <ng-template ngbPanelContent>
+                    <div>
+                            <app-filtri [titolo]="titoloFiltroStatiMezzo" 
+                            [vociFiltro]="vociFiltroStatiMezzo" 
+                            (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+                    </div>
+            </ng-template>
+            </ngb-panel>
+            <ngb-panel title="Opzioni">
+                <ng-template ngbPanelContent>
+                        <p class="row_text p-1">Evidenzia sulla mappa l'ultima posizione ricevuta            
+                            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
+                        </p>
+                    </ng-template>
+            </ngb-panel>
+                
+        </ngb-accordion>
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">          
         <app-mappa-posizioni-flotta
