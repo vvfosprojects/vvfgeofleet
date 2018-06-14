@@ -26,6 +26,12 @@ registerLocaleData(localeIt);
 import { LOCALE_ID } from '@angular/core';
 
 import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
+import { FiltroContestualeComponent } from './filtro-contestuale/filtro-contestuale.component';
+import { FiltroMultiSelectDdComponent } from './filtro-multi-select-dd/filtro-multi-select-dd.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+import  {ButtonModule } from 'primeng/button';
+import  { PanelModule} from 'primeng/panel';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -35,7 +41,9 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
     MappaPosizioniFlottaComponent,
     FiltriComponent,
     DistanzaTemporalePipe,
-    AgmGetMapObjectsDirective
+    AgmGetMapObjectsDirective,
+    FiltroContestualeComponent,
+    FiltroMultiSelectDdComponent
   ],
   imports: [
     AgmCoreModule.forRoot({
@@ -45,7 +53,8 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
     HttpModule,
     BrowserModule,
     FormsModule,
-    UiSwitchModule
+    UiSwitchModule,
+    MultiSelectModule 
   ],
   providers: [
     //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},

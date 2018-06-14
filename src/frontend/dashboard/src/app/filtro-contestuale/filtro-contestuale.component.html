@@ -1,0 +1,23 @@
+<div class="card">
+  <h6>{{ titolo }}</h6>
+<div *ngFor="let v of vociFiltro">
+  <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10">
+              <label>
+                  <img src="{{v.icona}}" height="20" width="12">
+                <span *ngIf= "v.selezionato === true" >
+                  <input type="checkbox" (click)="selezione($event, v.codice)" checked/> {{ v.descrizione }}
+                </span>
+                <span *ngIf= "v.selezionato === false" >
+                  <input type="checkbox" (click)="selezione($event, v.codice)"/> {{ v.descrizione }}
+                </span>                    
+              </label>
+          </div>
+          <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
+              <label>
+                  <span class="badge badge-pill {{v.badgeCardinalita}}">{{ v.cardinalita }}</span>
+              </label>
+          </div>
+  </div>
+</div>
+</div>
