@@ -30,37 +30,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   centerOnLast: boolean = true;
 
-  /*
-  vociFiltroStatiMezzo: VoceFiltro[] = [
-      new VoceFiltro(
-        "1", "In viaggio verso l'intervento ", 0, true, "", "badge-success"
-      ),
-      new VoceFiltro(
-        "2", "Arrivato sull'intervento", 0, true, "", "badge-danger"
-      ),
-      new VoceFiltro(
-        "3", "In rientro dall'intervento", 0, true, "", "badge-primary"
-      ),
-      new VoceFiltro(
-        "4", "Mezzi rientrati in Sede", 0, false, "", "badge-secondary"
-      ),
-      new VoceFiltro(
-        "5", "Fuori per motivi di Istituto", 0, true, "", "badge-istituto"
-      ),
-      // posizione inviata da una radio non associata a nessun Mezzo
-      new VoceFiltro(
-        "6", "Posizioni Radio senza Mezzo", 0, false, "", "badge-radio"
-      ),
-      // posizione inviata da un Mezzo fuori servizio  
-      new VoceFiltro(
-        "7", "Mezzi fuori servizio", 0, false, "","badge-fuori-servizio"
-      ),
-      new VoceFiltro(
-        "0", "Stato operativo Sconosciuto", 0, false, "", "badge-light"
-      )
-    ];
-    */
-
+   titoloFiltroStatiMezzo: string = "Stati Mezzo";
    vociFiltroStatiMezzo: VoceFiltro[] = [
     new VoceFiltro(
       "1", "In viaggio verso l'intervento ", 0, true, "", "badge-info", 
@@ -93,11 +63,24 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     )
     ];
 
-    vociFiltroStatiMezzoDefault: VoceFiltro[];
-  
-    titoloFiltroStatiMezzo: string = "Stati Mezzo";
+    //vociFiltroStatiMezzoDefault: VoceFiltro[];  
     filtriStatiMezzo: string[] = [];
-    
+
+    titoloFiltroSedi: string = "Sedi";
+    vociFiltroSedi: VoceFiltro[] = [
+      new VoceFiltro("FR", "LAZIO - Frosinone", 0, true, "", "badge-info", ""),
+      new VoceFiltro("LT", "LAZIO - Latina", 0, true, "", "badge-info", ""),
+      new VoceFiltro("RI", "LAZIO - Rieti", 0, true, "", "badge-info", ""),
+      new VoceFiltro("RM", "LAZIO - Roma", 0, true, "", "badge-info", ""),
+      new VoceFiltro("VT", "LAZIO - Viterbo", 0, true, "", "badge-info", ""),
+      new VoceFiltro("BA", "PUGLIA - Bari", 0, true, "", "badge-info", ""),
+      new VoceFiltro("BR", "PUGLIA - Brindisi", 0, true, "", "badge-info", ""),
+      new VoceFiltro("FG", "PUGLIA - Foggia", 0, true, "", "badge-info", ""),
+      new VoceFiltro("LE", "PUGLIA - Lecce", 0, true, "", "badge-info", ""),
+      new VoceFiltro("TA", "PUGLIA - Taranto", 0, true, "", "badge-info", "")
+    ];
+    filtriSedi: string[] = [];
+
   constructor() { }
 
   ngOnInit() {
@@ -253,8 +236,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       }
 
     }
-        
-
 
   }
 
@@ -263,6 +244,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     //console.log('event: ' + event);
     this.filtriStatiMezzo = event;
+
+
+  }
+  
+  
+  nuovaSelezioneSedi(event) {
+
+    console.log('event: ' + event);
+    //this.filtriSedi = event;
 
 
   }

@@ -30,6 +30,8 @@
     "font-awesome": "^4.7.0",
     "moment": "^2.20.1",
     "ngx-ui-switch": "^1.6.0",
+    "primeicons": "^1.0.0-beta.7",
+    "primeng": "^6.0.0-beta.1",
     "rxjs": "^5.4.2",
     "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.14"

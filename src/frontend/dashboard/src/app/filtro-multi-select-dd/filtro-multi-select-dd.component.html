@@ -1,0 +1,16 @@
+
+<h6>{{titolo}}</h6>
+<p-multiSelect [options]="vociFiltroDD" 
+[(ngModel)]="vociFiltroDDSelezionate"
+[panelStyle]="{minWidth:'20em'}" [defaultLabel]="seleziona"
+(onPanelHide)="selezione($event,vociFiltroDDSelezionate)"
+>
+    <!--<ng-template let-sedi pTemplate="item">
+        <img src="assets/images/car.png" 
+        style="width:24px;display:inline-block;vertical-align:middle"/>
+        <div style="font-size:14px;float:right;margin-top:4px">{{sedi.label}}</div>
+    </ng-template>
+-->
+
+</p-multiSelect>
+<!--<p>{{titolo}}: {{vociFiltroDD}}</p>-->

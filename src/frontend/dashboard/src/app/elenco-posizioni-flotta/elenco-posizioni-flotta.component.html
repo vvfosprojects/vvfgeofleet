@@ -39,7 +39,7 @@
 -->
 <div class="row h8">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
-        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0" >
+        <ngb-accordion [closeOthers]="true" #acc="ngbAccordion" activeIds="ngb-panel-0" >
             <ngb-panel title="Elenco Posizioni">
             <ng-template ngbPanelContent>
                     <!--<div class="area-elenco card card-inverse row_text p-1">-->
@@ -60,6 +60,9 @@
                             <app-filtri [titolo]="titoloFiltroStatiMezzo" 
                             [vociFiltro]="vociFiltroStatiMezzo" 
                             (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+                            <app-filtro-multi-select-dd [titolo]="titoloFiltroSedi" 
+                            [vociFiltro]="vociFiltroSedi" 
+                            (nuovaSelezione)="nuovaSelezioneSedi($event)"></app-filtro-multi-select-dd>
                     </div>
             </ng-template>
             </ngb-panel>
