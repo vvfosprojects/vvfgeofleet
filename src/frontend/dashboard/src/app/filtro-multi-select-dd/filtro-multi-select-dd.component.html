@@ -1,8 +1,10 @@
 
+<h6> </h6>
 <h6>{{titolo}}</h6>
+
 <p-multiSelect [options]="vociFiltroDD" 
 [(ngModel)]="vociFiltroDDSelezionate"
-[panelStyle]="{minWidth:'20em'}" [defaultLabel]="seleziona"
+[panelStyle]="{minWidth:'20em'}" 
 (onPanelHide)="selezione($event,vociFiltroDDSelezionate)"
 >
     <!--<ng-template let-sedi pTemplate="item">

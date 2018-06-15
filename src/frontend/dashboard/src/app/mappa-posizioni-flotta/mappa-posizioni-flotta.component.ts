@@ -27,6 +27,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
+  @Input() filtriGeneriMezzo: string[] = [];
 
   @Input() mapLat: number ;
   @Input() mapLon: number ;
@@ -278,9 +279,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         var r : boolean = this.filtriStatiMezzo.
         some(filtro => filtro === p.infoSO115.stato )
         && this.filtriSedi.
-        some(filtro => filtro === p.sedeMezzo );
-        return r;
-        } 
+        some(filtro => filtro === p.sedeMezzo )
+        return r
+        && this.filtriGeneriMezzo.
+        some(filtro => p.classiMezzo.some( item => item === filtro));
+      } 
       else { console.log(p, moment().toString()); 
         }
   }
