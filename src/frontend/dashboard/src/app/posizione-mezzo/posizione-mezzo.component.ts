@@ -15,6 +15,8 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
+  @Input() filtriGeneriMezzo: string[] = [];
+    
   //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
@@ -113,7 +115,9 @@ export class PosizioneMezzoComponent implements OnInit {
     return this.filtriStatiMezzo.
       some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
       && this.filtriSedi.
-      some(filtro => filtro === this.posizioneMezzo.sedeMezzo);    
+      some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
+      && this.filtriGeneriMezzo.
+      some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
   }
 
   private mouseIn() {
