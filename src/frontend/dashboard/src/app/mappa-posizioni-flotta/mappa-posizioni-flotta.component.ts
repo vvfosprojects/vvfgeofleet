@@ -26,6 +26,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
+  @Input() filtriSedi: string[] = [];
 
   @Input() mapLat: number ;
   @Input() mapLon: number ;
@@ -239,7 +240,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   overMarker(mezzo: PosizioneMezzo, index: number) {
     //console.log('over the marker: ', mezzo, index);
     this.mezzoSelezionato = mezzo;
-    this.sedeMezzo(mezzo);
+
+    //this.sedeMezzo(mezzo);
+    //mezzo.sedeMezzo();
+    
   }
 
   outOfMarker(mezzo: PosizioneMezzo, index: number) {
@@ -272,18 +276,22 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
       if (p.infoSO115 != null) {
         var r : boolean = this.filtriStatiMezzo.
-        some(filtro => filtro === p.infoSO115.stato );    
+        some(filtro => filtro === p.infoSO115.stato )
+        && this.filtriSedi.
+        some(filtro => filtro === p.sedeMezzo );
         return r;
         } 
       else { console.log(p, moment().toString()); 
         }
   }
 
+  
+  /*
   sedeMezzo(p : PosizioneMezzo) {
     return (p.classiMezzo.
       find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
   }
-
+  */
 
   classiMezzoDepurata(p : PosizioneMezzo) {
     return p.classiMezzo.
@@ -306,8 +314,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   toolTipText(item : PosizioneMezzo) {
     var testo : String;
     var opzioniDataOra = {};
+    //" (" + this.sedeMezzo(item) + ") del " + 
     testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
-    " (" + this.sedeMezzo(item) + ") del " + 
+    " (" + item.sedeMezzo + ") del " + 
     new Date(item.istanteAcquisizione).toLocaleString() + 
     " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
 

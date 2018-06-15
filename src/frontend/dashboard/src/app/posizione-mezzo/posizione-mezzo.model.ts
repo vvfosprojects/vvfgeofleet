@@ -18,7 +18,8 @@ export class PosizioneMezzo {
             dataIntervento: string
         },
         public istanteArchiviazione: string,
-        public toolTipText: string
+        public toolTipText: string,
+        public sedeMezzo: string
     ) {}
     
-    }
+}

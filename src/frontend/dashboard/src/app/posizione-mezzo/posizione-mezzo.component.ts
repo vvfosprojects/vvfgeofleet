@@ -14,6 +14,7 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
+  @Input() filtriSedi: string[] = [];
   //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
@@ -96,11 +97,12 @@ export class PosizioneMezzoComponent implements OnInit {
     //console.log(this.badgeStatoMezzoCorrente);
   }
 
+  /*
   sedeMezzo() {
    return (this.posizioneMezzo.classiMezzo.
      find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);
   }
-
+  */
 
   classiMezzoDepurata() {
     return this.posizioneMezzo.classiMezzo.
@@ -109,7 +111,9 @@ export class PosizioneMezzoComponent implements OnInit {
 
   posizioneMezzoSelezionata() { 
     return this.filtriStatiMezzo.
-      some(filtro => filtro === this.posizioneMezzo.infoSO115.stato);    
+      some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
+      && this.filtriSedi.
+      some(filtro => filtro === this.posizioneMezzo.sedeMezzo);    
   }
 
   private mouseIn() {
@@ -132,7 +136,7 @@ export class PosizioneMezzoComponent implements OnInit {
   private toolTipText() {
     var testo : String;
     testo = this.classiMezzoDepurata() + " " + this.posizioneMezzo.codiceMezzo +
-    " (" + this.sedeMezzo() + ") del " + 
+    " (" + this.posizioneMezzo.sedeMezzo + ") del " + 
     new Date(this.posizioneMezzo.istanteAcquisizione).toLocaleString()  + 
     " (da " + this.posizioneMezzo.fonte.classeFonte + ":" + this.posizioneMezzo.fonte.codiceFonte + ")";
 

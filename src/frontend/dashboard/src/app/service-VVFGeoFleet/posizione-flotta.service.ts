@@ -74,6 +74,7 @@ export class PosizioneFlottaService {
               e.infoSO115.stato = "0";              
             }
             //e.tooltipText = Object.create(String.prototype);
+            e.sedeMezzo = this.sedeMezzo(e);
             e.toolTipText = this.toolTipText(e);
             let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
             return Object.assign(posizioneMezzo, e);
@@ -119,12 +120,12 @@ export class PosizioneFlottaService {
       return Observable.throw(error);
     }
 
-
+    
     sedeMezzo(p : PosizioneMezzo) {
       return (p.classiMezzo.
         find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
     }
-  
+    
   
     classiMezzoDepurata(p : PosizioneMezzo) {
       return p.classiMezzo.
@@ -134,8 +135,9 @@ export class PosizioneFlottaService {
     toolTipText(item : PosizioneMezzo) {
       var testo : string;
       var opzioniDataOra = {};
+      //" (" + this.sedeMezzo(item) + ") del " + 
       testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
-      " (" + this.sedeMezzo(item) + ") del " + 
+      " (" + item.sedeMezzo + ") del " + 
       new Date(item.istanteAcquisizione).toLocaleString() + 
       " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
 
