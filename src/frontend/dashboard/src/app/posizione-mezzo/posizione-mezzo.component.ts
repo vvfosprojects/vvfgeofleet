@@ -1,5 +1,5 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { PosizioneMezzo } from './posizione-mezzo.model';
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 //import { EventEmitter } from 'events';
 
 //selector: '[app-posizione-mezzo]',
@@ -16,7 +16,12 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
-    
+  @Input() filtriStatiMezzoCardinalita: number ;
+  @Input() filtriSediCardinalita: number ;
+  @Input() filtriGeneriMezzoCardinalita: number ;
+  @Input() isSeguiMezzo: boolean ;
+
+  
   //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
@@ -82,9 +87,10 @@ export class PosizioneMezzoComponent implements OnInit {
       this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     } else 
     {
-      console.log(this.posizioneMezzo);
+      //console.log(this.posizioneMezzo);
       this.defStatoMezzoCorrente = this.mapAlert.get('0');
     }
+    
     
     if (this.defStatoMezzoCorrente == null )
     { console.log(this.posizioneMezzo); }
@@ -112,12 +118,33 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   posizioneMezzoSelezionata() { 
-    return this.filtriStatiMezzo.
-      some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
-      && this.filtriSedi.
-      some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
-      && this.filtriGeneriMezzo.
-      some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
+    return ( this.isSeguiMezzo ||
+      (this.filtriStatiMezzo.
+          some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
+      && 
+      this.filtriSedi.
+          some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
+      && 
+      this.filtriGeneriMezzo.
+          some(filtro => this.posizioneMezzo.classiMezzo[1] === filtro)
+      )
+      //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
+    );
+      /*
+    return (
+      (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
+        this.filtriStatiMezzo.
+          some(filtro => filtro === this.posizioneMezzo.infoSO115.stato))
+      && 
+      (this.filtriSedi.length === this.filtriSediCardinalita||
+        this.filtriSedi.
+          some(filtro => filtro === this.posizioneMezzo.sedeMezzo))
+      && 
+      (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
+        this.filtriGeneriMezzo.
+          some(filtro => this.posizioneMezzo.classiMezzo[1] === filtro))
+      );
+      */
   }
 
   private mouseIn() {

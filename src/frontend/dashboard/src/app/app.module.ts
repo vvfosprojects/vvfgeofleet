@@ -29,7 +29,8 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
 import { FiltroMultiSelectDdComponent } from './filtro-multi-select-dd/filtro-multi-select-dd.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import {AccordionModule} from 'primeng/accordion';
-
+import {DropdownModule} from 'primeng/dropdown';
+import {SliderModule} from 'primeng/slider';
 
 import  {ButtonModule } from 'primeng/button';
 import  { PanelModule} from 'primeng/panel';
@@ -59,7 +60,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     UiSwitchModule,
     MultiSelectModule ,
     AccordionModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    DropdownModule,
+    SliderModule
   ],
   providers: [
     //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},
