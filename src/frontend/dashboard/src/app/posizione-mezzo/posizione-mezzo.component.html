@@ -1,12 +1,14 @@
 
   <div *ngIf="posizioneMezzoSelezionata()" class="card card-inverse row_text p-1 text-left"
-  [ngClass]="{'highlight' : posizioneMezzo==currentItem, 
-  'not-highlight' : posizioneMezzo!=currentItem }"
+  [ngClass]="{    
+    'evidence' : isSeguiMezzo, 
+    'highlight' : posizioneMezzo==currentItem && !isSeguiMezzo, 
+    'not-highlight' : posizioneMezzo!=currentItem && !isSeguiMezzo }"
   (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()">
     <div 
-        data-toggle="tooltip" data-html="true" 
-        title="{{posizioneMezzo.toolTipText}}">
-        <!--title="{{posizioneMezzo.istanteAcquisizione}}, {{posizioneMezzo.fonte.classeFonte}}, {{posizioneMezzo.fonte.codiceFonte}}, (Int.{{posizioneMezzo.InfoSO115.codiceIntervento}} - {{posizioneMezzo.InfoSO115.dataIntervento}})">-->
+      data-toggle="tooltip" data-html="true" 
+      title="{{posizioneMezzo.toolTipText}}">
+      <!--title="{{posizioneMezzo.istanteAcquisizione}}, {{posizioneMezzo.fonte.classeFonte}}, {{posizioneMezzo.fonte.codiceFonte}}, (Int.{{posizioneMezzo.InfoSO115.codiceIntervento}} - {{posizioneMezzo.InfoSO115.dataIntervento}})">-->
       <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">
                 <span class="fa fa-building-o"> {{posizioneMezzo.sedeMezzo}}</span>

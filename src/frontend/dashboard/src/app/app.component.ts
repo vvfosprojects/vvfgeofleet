@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PosizioneMezzo } from './posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzo } from './shared/model/posizione-mezzo.model';
 import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
 import { Observable } from "rxjs/Rx";
@@ -16,7 +16,8 @@ export class AppComponent {
   title = 'VVFGeoFleet Dashboard';
 
   public elencoPosizioniMezzo : PosizioneMezzo[] = [];
-  //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
+  public elencoPosizioniMezzoTrim : PosizioneMezzo[] = [];
+    //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
   
   private timer;
   private timerSubcribe: PushSubscription;
@@ -27,6 +28,7 @@ export class AppComponent {
   public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
 
   private trimSec: Number = 0;
+  private attSec : Number;
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
           
@@ -58,7 +60,6 @@ export class AppComponent {
         aggiorna(tt) {
           //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
-          var attSec : Number;
 
           this.istanteUltimoAggiornamento = moment().toDate();      
           
@@ -67,15 +68,16 @@ export class AppComponent {
           // l'invio della richiesta dal client e la sua ricezione dal ws
           // Per essere certi, è necessaria un API che restituisca i messaggi
           // acquisiti successivamente ad un certo istante
-          if (this.maxIstanteAcquisizionePrecedente == null) { attSec = null;}
-          else {attSec = moment(this.istanteUltimoAggiornamento).
+          if (this.maxIstanteAcquisizionePrecedente == null) 
+          { this.attSec = null;}
+          else {this.attSec = moment(this.istanteUltimoAggiornamento).
             diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
             this.trimSec.valueOf() ; }
         
           //console.log("istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
           
-          this.posizioneFlottaService.getPosizioneFlotta(attSec)
+          this.posizioneFlottaService.getPosizioneFlotta(this.attSec)
           .subscribe( posizioni => {
               //console.log("posizioneFlottaService: ", posizioni);
               //console.log("posizioneFlottaService.length: ", posizioni.length);
@@ -112,6 +114,7 @@ export class AppComponent {
                   }
     
                    
+                //console.log("elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
                 //console.log("elencoPosizioniMezzoDepurate.length", elencoPosizioniMezzoDepurate.length);
                 //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
     
@@ -119,14 +122,14 @@ export class AppComponent {
                 // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
                 // purchè succesive a istanteUltimoAggiornamento
                 this.trimSec = 0;
-                var elencoPosizioniMezzoTrim : PosizioneMezzo[];
-                elencoPosizioniMezzoTrim = this.elencoPosizioniMezzo.filter(
+                //var elencoPosizioniMezzoTrim : PosizioneMezzo[];
+                this.elencoPosizioniMezzoTrim = this.elencoPosizioniMezzo.filter(
                   i => (new Date(i.istanteAcquisizione) >= new Date(this.istanteUltimoAggiornamento) )
                   );
-                //console.log("elencoPosizioniMezzoTrim", elencoPosizioniMezzoTrim);
-                if (elencoPosizioniMezzoTrim.length > 0) {
+                //console.log("elencoPosizioniMezzoTrim", this.elencoPosizioniMezzoTrim);
+                if (this.elencoPosizioniMezzoTrim.length > 0) {
                     this.trimSec = moment(
-                      new Date(elencoPosizioniMezzoTrim.
+                      new Date(this.elencoPosizioniMezzoTrim.
                           reduce( function (a,b) 
                           { var bb : Date = new Date(b.istanteAcquisizione);
                             var aa : Date  = new Date(a.istanteAcquisizione);
@@ -151,6 +154,11 @@ export class AppComponent {
         }
 
 
-       
+        aggiornaAttSec(evento) {
+          var gg: number = evento.value;
+          this.attSec = gg*24*60*60;
+          console.log("aggiornaAttSec", evento, gg, this.attSec);
+        }
+        
 
 }

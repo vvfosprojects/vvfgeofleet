@@ -1,5 +1,5 @@
 import { ErrorHandler, Component, ElementRef, OnInit, Input } from '@angular/core';
-import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { GoogleMapsAPIWrapper, MarkerManager } from '@agm/core';
 import { AgmMarker, MouseEvent } from '@agm/core';
 
@@ -28,6 +28,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
+  @Input() filtriStatiMezzoCardinalita: number ;
+  @Input() filtriSediCardinalita: number ;
+  @Input() filtriGeneriMezzoCardinalita: number ;
 
   @Input() mapLat: number ;
   @Input() mapLon: number ;
@@ -186,6 +189,20 @@ export class MappaPosizioniFlottaComponent implements OnInit {
             this.elencoPosizioniMostrate[v].istanteArchiviazione = item.istanteArchiviazione;
             this.elencoPosizioniMostrate[v].istanteInvio = item.istanteInvio;
             this.elencoPosizioniMostrate[v].localizzazione = item.localizzazione;
+            /*
+            if ( this.elencoPosizioniMostrate[v].fonte != item.fonte)
+              this.elencoPosizioniMostrate[v].fonte = item.fonte;
+            if (this.elencoPosizioniMostrate[v].classiMezzo != item.classiMezzo)
+              this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
+            if (this.elencoPosizioniMostrate[v].istanteAcquisizione != item.istanteAcquisizione)
+              this.elencoPosizioniMostrate[v].istanteAcquisizione = item.istanteAcquisizione;
+            if (this.elencoPosizioniMostrate[v].istanteArchiviazione != item.istanteArchiviazione)
+              this.elencoPosizioniMostrate[v].istanteArchiviazione = item.istanteArchiviazione;
+            if (this.elencoPosizioniMostrate[v].istanteInvio != item.istanteInvio)
+              this.elencoPosizioniMostrate[v].istanteInvio = item.istanteInvio;
+            if (this.elencoPosizioniMostrate[v].localizzazione != item.localizzazione)
+              this.elencoPosizioniMostrate[v].localizzazione = item.localizzazione;
+            */
             //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
           }
       }    
@@ -276,13 +293,34 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
       if (p.infoSO115 != null) {
+        
         var r : boolean = this.filtriStatiMezzo.
         some(filtro => filtro === p.infoSO115.stato )
         && this.filtriSedi.
         some(filtro => filtro === p.sedeMezzo )
-        return r
         && this.filtriGeneriMezzo.
-        some(filtro => p.classiMezzo.some( item => item === filtro));
+        some(filtro => p.classiMezzo[1] === filtro);
+        //some(filtro => p.classiMezzo.some( item => item === filtro));
+        
+       /*
+        var r : boolean = 
+        (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
+          this.filtriStatiMezzo.
+            some(filtro => filtro === p.infoSO115.stato))
+        && 
+        (this.filtriSedi.length === this.filtriSediCardinalita||
+          this.filtriSedi.
+            some(filtro => filtro === p.sedeMezzo))
+        && 
+        (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
+          this.filtriGeneriMezzo.
+            some(filtro => p.classiMezzo[1] === filtro))
+        ;
+        */
+        return r;
+
+        //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
+
       } 
       else { console.log(p, moment().toString()); 
         }

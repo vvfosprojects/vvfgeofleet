@@ -19,7 +19,9 @@ export class PosizioneMezzo {
         },
         public istanteArchiviazione: string,
         public toolTipText: string,
-        public sedeMezzo: string
+        public sedeMezzo: string,
+        public classiMezzoDepurata: string[],
+        public descrizionePosizione: string
     ) {}
     
 }

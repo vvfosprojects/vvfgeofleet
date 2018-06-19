@@ -37,7 +37,8 @@
     <app-elenco-posizioni-flotta 
       [elencoUltimePosizioni]="elencoPosizioniMezzo"
       [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-      [maxIstanteAcquisizione]="maxIstanteAcquisizione">
+      [maxIstanteAcquisizione]="maxIstanteAcquisizione"
+      (nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)">
     </app-elenco-posizioni-flotta>
   </div>
 </body>

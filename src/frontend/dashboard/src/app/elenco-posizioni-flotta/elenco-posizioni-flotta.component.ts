@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
@@ -7,6 +7,8 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 import { UiSwitchModule } from 'ngx-ui-switch';
 
 import {AccordionModule} from 'primeng/accordion';
+import {DropdownModule} from 'primeng/dropdown';
+import {SliderModule} from 'primeng/slider';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -18,7 +20,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
   @Input() maxIstanteAcquisizione: Date ;
-  
+  @Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
+     
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
@@ -29,8 +32,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   startLon: number = 12.490689;
   startZoom: number = 6;
 
+  private seguiMezzoSelezionato : PosizioneMezzo[] = [] ;
 
   centerOnLast: boolean = true;
+  centerOnMezzo: boolean = false;
+  isSeguiMezzo: boolean = true;
+
+  ggMaxPos: number = 1;
 
    titoloFiltroStatiMezzo: string = "Stati Mezzo";
    vociFiltroStatiMezzo: VoceFiltro[] = [
@@ -440,6 +448,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       { this.elencoPosizioni = this.elencoUltimePosizioni; }
     else
       {
+        //console.log(this.elencoPosizioni.length);
 
         // filtra solo le posizioni su cui sono disponibili le info di SO115
         this.elencoUltimePosizioni = this.elencoUltimePosizioni.filter(r => r.infoSO115 != null);
@@ -582,10 +591,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
-      if (this.mezzoSelezionato == null || this.centerOnLast) {
-        this.mezzoSelezionato = this.elencoPosizioni[0];
+      if (this.centerOnMezzo &&  this.seguiMezzoSelezionato[0] != null) {
+        this.mezzoSelezionato = this.elencoPosizioni.find(item =>
+          item.codiceMezzo == this.seguiMezzoSelezionato[0].codiceMezzo);
+        //console.log(this.mezzoSelezionato);
+        this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
+        this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
+        this.startZoom = 12;
       }
 
+      if (!this.centerOnMezzo && 
+          (this.mezzoSelezionato == null || this.centerOnLast) ) {
+        this.mezzoSelezionato = this.elencoPosizioni[0];
+      }
 
     }
 
@@ -629,4 +647,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
 
+  fineSelezioneGgMaxPos(e) {
+    
+    this.nuovaSelezioneGgMaxPos.emit(e);
+  }
+  
+  
 }

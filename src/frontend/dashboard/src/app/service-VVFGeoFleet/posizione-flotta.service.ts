@@ -12,7 +12,7 @@ import { Http, Response, RequestOptions, Headers, RequestMethod  } from '@angula
 
 //import { HttpClient, HttpHeaders, HttpClientModule, HttpResponse } from '@angular/common/http';
 
-import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { environment } from "../../environments/environment";
 
 const API_URL = environment.apiUrl;
@@ -76,6 +76,8 @@ export class PosizioneFlottaService {
             //e.tooltipText = Object.create(String.prototype);
             e.sedeMezzo = this.sedeMezzo(e);
             e.toolTipText = this.toolTipText(e);
+            e.classiMezzoDepurata = this.classiMezzoDepurata(e);
+            e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
             let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
             return Object.assign(posizioneMezzo, e);
           }

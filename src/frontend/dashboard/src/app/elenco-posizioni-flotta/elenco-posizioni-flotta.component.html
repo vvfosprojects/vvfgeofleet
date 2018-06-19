@@ -67,12 +67,29 @@
         <p-accordion>
             <p-accordionTab header="Elenco Posizioni" [selected]="true">
                     <div class="area-elenco card card-inverse row_text p-1">
+                            <app-posizione-mezzo *ngFor="let r of seguiMezzoSelezionato" 
+                                [posizioneMezzo]="r" 
+                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                                [filtriStatiMezzo]="vociFiltroStatiMezzo"
+                                [filtriSedi]="vociFiltroSedi"
+                                [filtriGeneriMezzo]="vociFiltroGeneriMezzo"
+                                [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
+                                [filtriSediCardinalita]="vociFiltroSedi.length"
+                                [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+                                [isSeguiMezzo]="isSeguiMezzo"
+                                (mezzoSelezionato)="centraSuMappa($event)"
+                                (mezzoSelezionato)="evidenziaSuMappa($event)"
+                                ></app-posizione-mezzo>
                             <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [posizioneMezzo]="r" 
                                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                                 [filtriStatiMezzo]="filtriStatiMezzo"
                                 [filtriSedi]="filtriSedi"
                                 [filtriGeneriMezzo]="filtriGeneriMezzo"
+                                [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
+                                [filtriSediCardinalita]="vociFiltroSedi.length"
+                                [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+                                [isSeguiMezzo]="!isSeguiMezzo"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 ></app-posizione-mezzo>
@@ -92,9 +109,39 @@
                     </div>
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
-                        <p class="row_text p-1">Evidenzia sulla mappa l'ultima posizione ricevuta            
-                            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
-                        </p>
+                <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                                    <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
+                    </div>
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
+                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
+                    </div>
+
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                        <label>Segui un Mezzo sulla mappa</label>
+                    </div>
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
+                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnMezzo"></ui-switch>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <p-dropdown  [options]="elencoPosizioni" 
+                                [style] ="{minWidth:'20em'}"
+                                disabled = "{{!centerOnMezzo}}"
+                                optionLabel="descrizionePosizione"
+                                [(ngModel)]="seguiMezzoSelezionato[0]" filter="true">
+                        </p-dropdown>
+                        
+                    </div>
+                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <label>Estrai le posizioni fino a {{ggMaxPos}} giorni fa</label>
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <p-slider [(ngModel)]="ggMaxPos"
+                                [style]="{'width':'200px'}" [min]="1" [max]="30" [animate]="true"
+                                (onSlideEnd)="fineSelezioneGgMaxPos($event)">
+                        </p-slider>
+                    </div>
+                    </div>
             </p-accordionTab>
         </p-accordion>                
     </div>
@@ -106,6 +153,9 @@
             [filtriStatiMezzo]="filtriStatiMezzo"
             [filtriSedi]="filtriSedi"            
             [filtriGeneriMezzo]="filtriGeneriMezzo"
+            [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
+            [filtriSediCardinalita]="vociFiltroSedi.length"
+            [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
             [mapLat]="startLat"
             [mapLon]="startLon"
             [mapZoom]="startZoom"

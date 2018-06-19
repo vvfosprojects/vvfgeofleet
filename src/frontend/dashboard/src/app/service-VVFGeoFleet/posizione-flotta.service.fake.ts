@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from "rxjs/Observable";
 import 'rxjs/add/observable/of';
 
-import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 
 @Injectable()
 export class PosizioneFlottaServiceFake {
@@ -16,7 +16,7 @@ export class PosizioneFlottaServiceFake {
 
         var elencoPosizioni : PosizioneMezzo[] = [
             new PosizioneMezzo(
-                "2018-01-31 17:11:59", "M#RM:7/A",
+                "2018-01-31 17:11:59", "O.12345",
                 [ "APS" ],
                  { lat: "41.899888", lon: "12.490968"},
                  "2018-01-26 13:19:51 ",
@@ -24,7 +24,8 @@ export class PosizioneFlottaServiceFake {
                  {stato: "3",codiceIntervento: "5",dataIntervento: "31-MAG-17"},
                  "2018-01-31 17:11:59",
                 "testo tootTip",
-                "RM")
+                "RM",
+                ["APS"],"ASP O.12345 (RM)")
         ];
        
         return Observable.of(elencoPosizioni);
