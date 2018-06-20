@@ -37,6 +37,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() mapZoom: number ;
 
   @Input() mezzoSelezionato: PosizioneMezzo ;
+  @Input() reset: Boolean ;  
 
   //lat: number = 51.678418;
   //lon: number = 7.809007;
@@ -106,6 +107,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   ngOnChanges() {
 
+       
+    // aggiunge alle posizioni Mostrate quelle Nuove     
+    //if (this.elencoPosizioniMostrate.length == 0 ) 
+    if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
+      { this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
+        this.elencoPosizioniMostratePrecedenti = [];}
+    else 
+      { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
+
     //console.log("ngOnChanges()-mezzo Selezionato", this.mezzoSelezionato);
     // individua le posizioni non ancora elaborate
     this.elencoPosizioniNuove = this.elencoPosizioniDaElaborare.
@@ -115,13 +125,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           return item}
         else {return null}  }
        );
-    
-    // aggiunge alle posizioni Mostrate quelle Nuove     
-    if (this.elencoPosizioniMostrate.length == 0 ) 
-      { this.elencoPosizioniMostrate = this.elencoPosizioniNuove;}
-    else 
-      { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
-
+      
     // rimuove dalle posizioni da elaborare quelle Nuove
     this.elencoPosizioniNuove.forEach( v => { 
       var k = this.elencoPosizioniDaElaborare.indexOf( v );
@@ -177,12 +181,30 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     this.elencoPosizioniDaElaborare.forEach( item => { 
       var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
       //if ( v != null) {  this.elencoPosizioniMostrate[v] = item; }    
-
-      if ( v != null) {  
+      
+      if ( v != null ) {  
         if (item.infoSO115.stato != "0")
-          { this.elencoPosizioniMostrate[v] = item; }
+          { 
+            //console.log("stato ok", this.elencoPosizioniMostrate[v] );
+            var vePM = Object.values(this.elencoPosizioniMostrate[v]);
+            var vitem = Object.values(item);
+            var trovato : boolean = false;
+            var ii : number = 0;
+            do {
+                if ( vePM[ii] != null && vitem[ii] != null 
+                  && vePM[ii].toString() != vitem[ii].toString() ) 
+                {
+                  //console.log("item cambiato", vePM.length, vePM[ii], vitem[ii], this.elencoPosizioniMostrate[v], item );
+                  this.elencoPosizioniMostrate[v] = item; 
+                  trovato = true;
+                }
+                ii++;
+            } while ( !trovato && ii < vePM.length)
+
+          }
         else
-          { //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
+          { //console.log("stato 0", this.elencoPosizioniMostrate[v] );
+            //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
             this.elencoPosizioniMostrate[v].fonte = item.fonte;
             this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
             this.elencoPosizioniMostrate[v].istanteAcquisizione = item.istanteAcquisizione;
@@ -299,8 +321,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         && this.filtriSedi.
         some(filtro => filtro === p.sedeMezzo )
         && this.filtriGeneriMezzo.
-        some(filtro => p.classiMezzo[1] === filtro);
-        //some(filtro => p.classiMezzo.some( item => item === filtro));
+        some(filtro => p.classiMezzo.some( item => item === filtro));
+        //some(filtro => p.classiMezzo[1] === filtro);
         
        /*
         var r : boolean = 

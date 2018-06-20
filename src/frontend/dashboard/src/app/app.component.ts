@@ -28,7 +28,9 @@ export class AppComponent {
   public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
 
   private trimSec: Number = 0;
-  private attSec : Number;
+  private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
+
+  public reset : Boolean = false;
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
           
@@ -52,12 +54,16 @@ export class AppComponent {
         */
   
         ngOnInit() { 
-          this.aggiorna('-');
+          this.aggiorna(this.attSec, true);
           this.timer = Observable.timer(9000,9000).timeout(120000);
-          this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(t));
+          this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(this.attSec,false));
         }   
 
-        aggiorna(tt) {
+        ngOnChanges() { 
+          console.log(this.elencoPosizioniMezzo.length);
+        }
+
+        aggiorna(val : Number, all: boolean) {
           //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
 
@@ -68,14 +74,20 @@ export class AppComponent {
           // l'invio della richiesta dal client e la sua ricezione dal ws
           // Per essere certi, è necessaria un API che restituisca i messaggi
           // acquisiti successivamente ad un certo istante
+          /*
           if (this.maxIstanteAcquisizionePrecedente == null) 
-          { this.attSec = null;}
-          else {this.attSec = moment(this.istanteUltimoAggiornamento).
+            { this.attSec = null;}
+          else 
+          */
+          
+          if (!all && this.maxIstanteAcquisizionePrecedente != null) 
+           {this.attSec = moment(this.istanteUltimoAggiornamento).
             diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
             this.trimSec.valueOf() ; }
         
           //console.log("istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
+          if (all) { this.maxIstanteAcquisizionePrecedente = null;}
           
           this.posizioneFlottaService.getPosizioneFlotta(this.attSec)
           .subscribe( posizioni => {
@@ -141,10 +153,11 @@ export class AppComponent {
                 //console.log("trimSec adj", this.trimSec);
               }      
           
+              
             });
 
 
-
+            //console.log(this.elencoPosizioniMezzo.length);
         }
     
         ngOnDestroy() {
@@ -157,7 +170,17 @@ export class AppComponent {
         aggiornaAttSec(evento) {
           var gg: number = evento.value;
           this.attSec = gg*24*60*60;
-          console.log("aggiornaAttSec", evento, gg, this.attSec);
+          // console.log("aggiornaAttSec", evento, gg, this.attSec);
+          this.timerSubcribe.unsubscribe();
+          this.reset = true;
+          this.aggiorna(this.attSec, true);
+          this.timer = Observable.timer(9000,9000).timeout(120000);
+          this.timerSubcribe = this.timer.subscribe(t => 
+            {this.aggiorna(this.attSec,false);
+              this.reset = false;
+            });
+          
+
         }
         
 

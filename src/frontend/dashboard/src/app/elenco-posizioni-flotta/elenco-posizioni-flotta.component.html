@@ -79,6 +79,7 @@
                                 [isSeguiMezzo]="isSeguiMezzo"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
+                                (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
                                 ></app-posizione-mezzo>
                             <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [posizioneMezzo]="r" 
@@ -92,6 +93,7 @@
                                 [isSeguiMezzo]="!isSeguiMezzo"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
+                                (mezzoDaSeguire)="seguiMezzo($event)"
                                 ></app-posizione-mezzo>
                     </div>
             </p-accordionTab>
@@ -160,6 +162,7 @@
             [mapLon]="startLon"
             [mapZoom]="startZoom"
             [mezzoSelezionato]="mezzoSelezionato"
+            [reset]="reset"            
         >
         </app-mappa-posizioni-flotta>
     </div>

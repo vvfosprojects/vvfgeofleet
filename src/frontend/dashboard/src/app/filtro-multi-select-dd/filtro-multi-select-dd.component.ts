@@ -54,6 +54,24 @@ export class FiltroMultiSelectDdComponent implements OnInit {
     }
 
 
+  ngOnChanges() {
+      this.vociFiltroDD = this.vociFiltro.map( 
+        (item: VoceFiltro) => 
+          { return Object.assign({}, {label: item.descrizione, value: item.codice.toString() }) 
+        });    
+        
+        /*
+        this.vociFiltroDDSelezionate = this.vociFiltro.map( 
+          (item: VoceFiltro) => 
+            { return item.codice.toString() } ) ;    
+        */
+       this.vociFiltroDDSelezionate = this.vociFiltro.filter(v => v.selezionato).map( 
+        (item: VoceFiltro) => 
+          { return item.codice.toString() } ) ;
+  
+      }
+      
+
   public selezione(event, elenco) {
     //console.log('event: ', event, elenco);
 
