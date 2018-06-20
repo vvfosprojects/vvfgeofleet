@@ -4,8 +4,9 @@
     'evidence' : isSeguiMezzo, 
     'highlight' : posizioneMezzo==currentItem && !isSeguiMezzo, 
     'not-highlight' : posizioneMezzo!=currentItem && !isSeguiMezzo }"
-  (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()">
-    <div 
+    (dblclick)="seguiMezzo()" (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()"
+    >
+   <div 
       data-toggle="tooltip" data-html="true" 
       title="{{posizioneMezzo.toolTipText}}">
       <!--title="{{posizioneMezzo.istanteAcquisizione}}, {{posizioneMezzo.fonte.classeFonte}}, {{posizioneMezzo.fonte.codiceFonte}}, (Int.{{posizioneMezzo.InfoSO115.codiceIntervento}} - {{posizioneMezzo.InfoSO115.dataIntervento}})">-->

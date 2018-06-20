@@ -20,6 +20,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
   @Input() maxIstanteAcquisizione: Date ;
+  @Input() reset: Boolean ;  
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
      
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
@@ -38,10 +39,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   centerOnMezzo: boolean = false;
   isSeguiMezzo: boolean = true;
 
-  ggMaxPos: number = 1;
+  ggMaxPos: number = 7;
 
-   titoloFiltroStatiMezzo: string = "Stati Mezzo";
-   vociFiltroStatiMezzo: VoceFiltro[] = [
+  public titoloFiltroStatiMezzo: string = "Stati Mezzo";
+  public vociFiltroStatiMezzo: VoceFiltro[] = [
     new VoceFiltro(
       "1", "In viaggio verso l'intervento ", 0, true, "", "badge-info", 
       "assets/images/mm_20_red.png"
@@ -74,10 +75,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     ];
 
     //vociFiltroStatiMezzoDefault: VoceFiltro[];  
-    filtriStatiMezzo: string[] = [];
+    public filtriStatiMezzo: string[] = [];
 
-    titoloFiltroSedi: string = "Sedi";
-    vociFiltroSedi: VoceFiltro[] = [
+    public titoloFiltroSedi: string = "Sedi";
+    public vociFiltroSedi: VoceFiltro[] = [];
+    public vociFiltroSediALL: VoceFiltro[] = [
       new VoceFiltro("CH", "ABRUZZO - Chieti", 0, true, "", "badge-info", ""),
       new VoceFiltro("AQ", "ABRUZZO - L'Aquila", 0, true, "", "badge-info", ""),
       new VoceFiltro("PE", "ABRUZZO - Pescara", 0, true, "", "badge-info", ""),
@@ -181,8 +183,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     ];
     filtriSedi: string[] = [];
 
-    titoloFiltroGeneriMezzo: string = "Generi Mezzo";
-    vociFiltroGeneriMezzo: VoceFiltro[] = [
+    public titoloFiltroGeneriMezzo: string = "Generi Mezzo";
+    public vociFiltroGeneriMezzo: VoceFiltro[] = [];
+    public vociFiltroGeneriMezzoALL: VoceFiltro[] = [
       new VoceFiltro("", "sconosciuto", 0, true, "", "badge-info", ""),
       new VoceFiltro("*****", "non definito", 0, true, "", "badge-info", ""),
       new VoceFiltro("ATOM", "ATOMIZZATORE", 0, true, "", "badge-info", ""),
@@ -443,8 +446,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
   inizializzaFiltri() {
-
-    if (this.elencoPosizioni.length == 0 ) 
+    
+    //if (this.elencoPosizioni.length == 0 ) 
+    if (this.reset || this.elencoPosizioni.length == 0 ) 
       { this.elencoPosizioni = this.elencoUltimePosizioni; }
     else
       {
@@ -496,7 +500,42 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
             var aa : Date  = new Date(a.istanteAcquisizione);
             return aa>bb ? -1 : aa<bb ? 1 : 0;
           });
-      }
+
+
+            
+    }
+
+
+    this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
+      this.elencoPosizioni.find( iii => 
+        {if ( iii.classiMezzo.find( cm  => cm === i.codice)) 
+          return true; 
+          else 
+          return false;
+        } 
+      ));
+
+    if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "sconosciuto"))
+    {
+      this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
+        new VoceFiltro("", "sconosciuto", 0, true, "", "badge-info", "") );
+    }
+
+    if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "non definito"))
+    {
+      this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
+        new VoceFiltro("*****", "non definito", 0, true, "", "badge-info", "") );
+    }
+
+    this.vociFiltroSedi = this.vociFiltroSediALL.filter( i =>
+        this.elencoPosizioni.find( iii => 
+          {if ( iii.sedeMezzo === i.codice ) 
+            return true;
+            else 
+            return false;
+          }
+        ));
+
     /*
     var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
 
@@ -647,6 +686,22 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
 
+  seguiMezzo(evento) {
+    var tipoevento: string = evento[1];
+    if (tipoevento == "dblclick") {
+      this.seguiMezzoSelezionato[0] = evento[0];
+    }
+    //console.log("seguiMezzo", evento);
+  }
+
+  rimuoviSeguiMezzo(evento) {
+    var tipoevento: string = evento[1];
+    if (tipoevento == "dblclick") {
+      this.seguiMezzoSelezionato = [];
+    }
+    //console.log("rimuoviSeguiMezzo", evento);
+  }
+  
   fineSelezioneGgMaxPos(e) {
     
     this.nuovaSelezioneGgMaxPos.emit(e);

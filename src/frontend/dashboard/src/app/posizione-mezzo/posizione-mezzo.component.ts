@@ -24,6 +24,7 @@ export class PosizioneMezzoComponent implements OnInit {
   
   //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
+  @Output() mezzoDaSeguire = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
     
   private iconaMezzoCorrente: string;
@@ -126,7 +127,7 @@ export class PosizioneMezzoComponent implements OnInit {
           some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
       && 
       this.filtriGeneriMezzo.
-          some(filtro => this.posizioneMezzo.classiMezzo[1] === filtro)
+          some(filtro => this.posizioneMezzo.classiMezzo.some( gm => gm === filtro))      
       )
       //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
     );
@@ -162,6 +163,11 @@ export class PosizioneMezzoComponent implements OnInit {
   private centerOnMap() {
     this.mezzoSelezionato.emit([this.posizioneMezzo, "click"] );
     //console.log('centerOnMap', $event);
+  }
+
+
+  private seguiMezzo() { 
+    this.mezzoDaSeguire.emit([this.posizioneMezzo, "dblclick"] );
   }
 
   private toolTipText() {
