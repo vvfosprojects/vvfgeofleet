@@ -24,6 +24,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+  @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
+  
   @Input() istanteUltimoAggiornamento: Date;
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
@@ -316,12 +318,16 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
       if (p.infoSO115 != null) {
         
-        var r : boolean = this.filtriStatiMezzo.
+        var r : boolean ;
+        r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
+
+        r = (r? true: this.filtriStatiMezzo.
         some(filtro => filtro === p.infoSO115.stato )
         && this.filtriSedi.
         some(filtro => filtro === p.sedeMezzo )
         && this.filtriGeneriMezzo.
-        some(filtro => p.classiMezzo.some( item => item === filtro));
+        some(filtro => p.classiMezzo.some( item => item === filtro))
+        );
         //some(filtro => p.classiMezzo[1] === filtro);
         
        /*

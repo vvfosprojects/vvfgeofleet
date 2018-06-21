@@ -33,7 +33,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   startLon: number = 12.490689;
   startZoom: number = 6;
 
-  private seguiMezzoSelezionato : PosizioneMezzo[] = [] ;
+  public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
 
   centerOnLast: boolean = true;
   centerOnMezzo: boolean = false;
@@ -630,13 +630,17 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
-      if (this.centerOnMezzo &&  this.seguiMezzoSelezionato[0] != null) {
+      if (this.centerOnMezzo &&  this.seguiMezziSelezionati[0] != null) {
         this.mezzoSelezionato = this.elencoPosizioni.find(item =>
-          item.codiceMezzo == this.seguiMezzoSelezionato[0].codiceMezzo);
+          item.codiceMezzo == this.seguiMezziSelezionati[0].codiceMezzo);
         //console.log(this.mezzoSelezionato);
-        this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
-        this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
-        this.startZoom = 12;
+        if (this.elencoUltimePosizioni.find(item => 
+          item.codiceMezzo == this.mezzoSelezionato.codiceMezzo )) 
+        {
+          this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
+          this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
+          this.startZoom = 12;
+        }
       }
 
       if (!this.centerOnMezzo && 
@@ -689,7 +693,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   seguiMezzo(evento) {
     var tipoevento: string = evento[1];
     if (tipoevento == "dblclick") {
-      this.seguiMezzoSelezionato[0] = evento[0];
+      this.seguiMezziSelezionati[0] = evento[0];
+      this.centerOnMezzo = true;
     }
     //console.log("seguiMezzo", evento);
   }
@@ -697,11 +702,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   rimuoviSeguiMezzo(evento) {
     var tipoevento: string = evento[1];
     if (tipoevento == "dblclick") {
-      this.seguiMezzoSelezionato = [];
+      this.seguiMezziSelezionati = [];
+      this.centerOnMezzo = false;
     }
     //console.log("rimuoviSeguiMezzo", evento);
   }
-  
+
+  changeOptSeguiMezzo() {
+    if (!this.centerOnMezzo) {
+      this.seguiMezziSelezionati[0] = this.elencoPosizioni [0];}
+    else {
+      this.seguiMezziSelezionati = []; }
+  }
+
   fineSelezioneGgMaxPos(e) {
     
     this.nuovaSelezioneGgMaxPos.emit(e);
