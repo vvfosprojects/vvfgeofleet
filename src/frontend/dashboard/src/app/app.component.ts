@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { ParametriGeoFleetWS } from './shared/model/parametri-geofleet-ws.model';
 import { PosizioneMezzo } from './shared/model/posizione-mezzo.model';
 import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
 import { Observable } from "rxjs/Rx";
 import * as moment from 'moment';
+
 
 
 @Component({
@@ -15,6 +17,7 @@ import * as moment from 'moment';
 export class AppComponent {
   title = 'VVFGeoFleet Dashboard';
 
+  public parametriGeoFleetWS : ParametriGeoFleetWS;
   public elencoPosizioniMezzo : PosizioneMezzo[] = [];
   public elencoPosizioniMezzoTrim : PosizioneMezzo[] = [];
     //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
@@ -28,12 +31,15 @@ export class AppComponent {
   public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
 
   private trimSec: Number = 0;
-  private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
+  private defaultAttSec: Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
+  //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
 
   public reset : Boolean = false;
 
         constructor(private posizioneFlottaService: PosizioneFlottaService) { 
-          
+
+          this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+          this.parametriGeoFleetWS.attSec = this.defaultAttSec;
         }
         
         /*
@@ -54,17 +60,18 @@ export class AppComponent {
         */
   
         ngOnInit() { 
-          this.aggiorna(this.attSec, true);
+          this.aggiorna(this.parametriGeoFleetWS, true);
           this.timer = Observable.timer(9000,9000).timeout(120000);
-          this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(this.attSec,false));
+          this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(this.parametriGeoFleetWS,false));
         }   
 
         ngOnChanges() { 
           console.log(this.elencoPosizioniMezzo.length);
         }
 
-        aggiorna(val : Number, all: boolean) {
-          //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
+        //aggiorna(val : Number, all: boolean) {
+        aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
+            //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
 
           this.istanteUltimoAggiornamento = moment().toDate();      
@@ -81,7 +88,7 @@ export class AppComponent {
           */
           
           if (!all && this.maxIstanteAcquisizionePrecedente != null) 
-           {this.attSec = moment(this.istanteUltimoAggiornamento).
+           {parm.attSec = moment(this.istanteUltimoAggiornamento).
             diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
             this.trimSec.valueOf() ; }
         
@@ -89,7 +96,8 @@ export class AppComponent {
 
           if (all) { this.maxIstanteAcquisizionePrecedente = null;}
           
-          this.posizioneFlottaService.getPosizioneFlotta(this.attSec)
+          //this.posizioneFlottaService.getPosizioneFlotta(this.attSec)
+          this.posizioneFlottaService.getPosizioneFlotta(parm)
           .subscribe( posizioni => {
               //console.log("posizioneFlottaService: ", posizioni);
               //console.log("posizioneFlottaService.length: ", posizioni.length);
@@ -168,20 +176,46 @@ export class AppComponent {
 
 
         aggiornaAttSec(evento) {
-          var gg: number = evento.value;
-          this.attSec = gg*24*60*60;
-          // console.log("aggiornaAttSec", evento, gg, this.attSec);
-          this.timerSubcribe.unsubscribe();
-          this.reset = true;
-          this.aggiorna(this.attSec, true);
-          this.timer = Observable.timer(9000,9000).timeout(120000);
-          this.timerSubcribe = this.timer.subscribe(t => 
-            {this.aggiorna(this.attSec,false);
-              this.reset = false;
-            });
-          
+          if (evento != null) {
+            var gg: number = evento.value;
+            this.parametriGeoFleetWS.attSec = gg*24*60*60;
+            this.defaultAttSec = this.parametriGeoFleetWS.attSec ;
+            // console.log("aggiornaAttSec", evento, gg, this.attSec);
+            this.timerSubcribe.unsubscribe();
+            this.reset = true;
+            this.aggiorna(this.parametriGeoFleetWS, true);
+            this.timer = Observable.timer(9000,9000).timeout(120000);
+            this.timerSubcribe = this.timer.subscribe(t => 
+              {this.aggiorna(this.parametriGeoFleetWS,false);
+                this.reset = false;
+              });
+          }
 
         }
         
+        aggiornaArea(evento) {
+          console.log("aggiornaArea", evento);
+          if (evento != null) {
+            
+            var vv = Object.values(evento);
+            var vv1 = Object.values(vv[0]);
+            var vv2 = Object.values(vv[1]);
+            console.log("aggiornaArea  vv",vv);
+            this.parametriGeoFleetWS.attSec = this.defaultAttSec ;
+            this.parametriGeoFleetWS.lat1= vv1[1];
+            this.parametriGeoFleetWS.lon1= vv2[1];
+            this.parametriGeoFleetWS.lat2= vv1[0];
+            this.parametriGeoFleetWS.lon2= vv2[0];
+
+            this.timerSubcribe.unsubscribe();
+            this.reset = true;
+            this.aggiorna(this.parametriGeoFleetWS, true);
+            this.timer = Observable.timer(9000,9000).timeout(120000);
+            this.timerSubcribe = this.timer.subscribe(t => 
+              {this.aggiorna(this.parametriGeoFleetWS,false);
+                this.reset = false;
+              });
+          }
+        }
 
 }

@@ -12,6 +12,7 @@ import { Http, Response, RequestOptions, Headers, RequestMethod  } from '@angula
 
 //import { HttpClient, HttpHeaders, HttpClientModule, HttpResponse } from '@angular/common/http';
 
+import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { environment } from "../../environments/environment";
 
@@ -35,14 +36,33 @@ export class PosizioneFlottaService {
     constructor(private http: Http) { }
     //constructor(private http: HttpClient) { }
     
-    public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
-      // this.http.get(API_URL + 'posizioneFlotta', options )
+    //public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
+    public getPosizioneFlotta(parm: ParametriGeoFleetWS ): Observable<PosizioneMezzo[]> {
+        // this.http.get(API_URL + 'posizioneFlotta', options )
       var richiestaAPI :string;
 
+      /*
+      if (parm.attSec == null) { richiestaAPI = 'posizioneFlotta'; }
+      else {  richiestaAPI = 'posizioneFlotta?attSec='+ String(parm.attSec);}
+      */
+      ///api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={class1}&classiMezzo={class2}&attSec={seconds}
+      richiestaAPI = 'posizioneFlotta';
+      var parametri : string = '';
+      if (parm.attSec != null) { parametri = parametri+ 
+        (parametri == '' ? '?': '&') + 'attSec='+ String(parm.attSec); }
+      if (parm.lat1 != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lat1='+ String(parm.lat1); }
+      if (parm.lon1 != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lon1='+ String(parm.lon1); }
+      if (parm.lat2 != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lat2='+ String(parm.lat2); }
+      if (parm.lon2 != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lon2='+ String(parm.lon2); }
+
+      if (parametri != '' ) { richiestaAPI = richiestaAPI + parametri};
       
-      if (attSec == null) { richiestaAPI = 'posizioneFlotta'; }
-      else {  richiestaAPI = 'posizioneFlotta?attSec='+ String(attSec);}
-      
+      console.log(API_URL + richiestaAPI);
+
       var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
       var posizioniMezzo : PosizioneMezzo[];
