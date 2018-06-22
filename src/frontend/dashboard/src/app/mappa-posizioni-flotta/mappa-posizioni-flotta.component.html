@@ -9,7 +9,9 @@
   {{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}} 
 </span>
 <div class="card">
-  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom">
+  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
+  (boundsChange)="areaChanged($event)"            
+  >
       <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
         <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
             (markerClick)="clickedMarker(m, i)"
@@ -20,7 +22,7 @@
             [openInfoWindow]="false"
             [iconUrl]="markerIconUrl(m)"
             [visible]="posizioneMezzoSelezionata(m)"
-            [zIndex]="indiceMezzoSelezionato(m)"
+            [zIndex]="indiceMezzoSelezionato(m)"            
             data-toggle="tooltip" data-html="true" 
             title="{{m.toolTipText}}">    
             >

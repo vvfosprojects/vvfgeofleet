@@ -22,12 +22,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() maxIstanteAcquisizione: Date ;
   @Input() reset: Boolean ;  
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
+  @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
      
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
  // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
-  public mezzoSelezionato: PosizioneMezzo;
+  public mezzoSelezionato: PosizioneMezzo ;
 
   startLat: number = 41.889777;
   startLon: number = 12.490689;
@@ -38,6 +39,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   centerOnLast: boolean = true;
   centerOnMezzo: boolean = false;
   isSeguiMezzo: boolean = true;
+  onlyMap: boolean = false;
 
   ggMaxPos: number = 7;
 
@@ -588,7 +590,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       (posizioneMezzo) => 
         { return Object.assign({}, {posizioneMezzo, "visible": true }) });
     */
-    
+
+    this.mezzoSelezionato = this.elencoPosizioni[0];
+
     if (this.vociFiltroStatiMezzo.length > 0) {
     /*
       l'ipotesi di creare un altro vettore con i soli elementi filtrari 
@@ -630,6 +634,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
+      
       if (this.centerOnMezzo &&  this.seguiMezziSelezionati[0] != null) {
         this.mezzoSelezionato = this.elencoPosizioni.find(item =>
           item.codiceMezzo == this.seguiMezziSelezionati[0].codiceMezzo);
@@ -715,10 +720,18 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.seguiMezziSelezionati = []; }
   }
 
-  fineSelezioneGgMaxPos(e) {
-    
+  changeOptOnlyMap(e) {
+    if (!this.onlyMap) 
+      this.nuovaSelezioneAreaPos.emit(e)
+    else
+      this.nuovaSelezioneGgMaxPos.emit(e);
+  }
+
+  fineSelezioneGgMaxPos(e) {    
     this.nuovaSelezioneGgMaxPos.emit(e);
   }
   
-  
+  selezioneArea(e) {    
+    this.nuovaSelezioneAreaPos.emit(e)
+  }
 }

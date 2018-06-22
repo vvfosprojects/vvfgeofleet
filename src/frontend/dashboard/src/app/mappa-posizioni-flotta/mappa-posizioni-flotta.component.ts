@@ -1,6 +1,6 @@
 import { ErrorHandler, Component, ElementRef, OnInit, Input } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-import { GoogleMapsAPIWrapper, MarkerManager } from '@agm/core';
+import { GoogleMapsAPIWrapper, MarkerManager, LatLngLiteral } from '@agm/core';
 import { AgmMarker, MouseEvent } from '@agm/core';
 
 import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryList } from '@angular/core';
@@ -40,10 +40,13 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   @Input() mezzoSelezionato: PosizioneMezzo ;
   @Input() reset: Boolean ;  
+  @Input() onlyMap: Boolean ;  
 
+  @Output() nuovaSelezioneArea: EventEmitter<LatLngLiteral> = new EventEmitter();
+   
   //lat: number = 51.678418;
   //lon: number = 7.809007;
-  
+  timeout : number;
   start_lat: number = 41.889777;
   start_lon: number = 12.490689;
   start_zoom: number = 6;
@@ -188,6 +191,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         if (item.infoSO115.stato != "0")
           { 
             //console.log("stato ok", this.elencoPosizioniMostrate[v] );
+            //this.elencoPosizioniMostrate[v] = item; 
             var vePM = Object.values(this.elencoPosizioniMostrate[v]);
             var vitem = Object.values(item);
             var trovato : boolean = false;
@@ -248,7 +252,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     {
     */ 
     if (m.infoSO115 != null) {
-      if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
+      if ( this.mezzoSelezionato != null && m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
           this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get(m.infoSO115.stato);
         }
       else
@@ -257,7 +261,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         }
       }
     else {
-      if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
+      if (this.mezzoSelezionato != null &&  m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) {
       this.iconaStatoMezzoCorrente = this.mapIconeSelezionato.get('0');
         }
       else
@@ -376,10 +380,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     else
     {
     */ 
-   if (m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
+   if (this.mezzoSelezionato != null && m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
       { return 2; } else {return 1; }
   }
 
+  /*
   toolTipText(item : PosizioneMezzo) {
     var testo : String;
     var opzioniDataOra = {};
@@ -397,4 +402,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     }
     return testo;
   }  
+  */
+
+  areaChanged(e) {
+    //this.timeout = setTimeout("areaChanged();",1000);
+    if (this.onlyMap) {
+      this.nuovaSelezioneArea.emit(e);
+      //console.log("areaChanged",e);
+    }
+  }
+  
 }

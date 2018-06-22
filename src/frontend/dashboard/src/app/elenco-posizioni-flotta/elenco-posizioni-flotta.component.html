@@ -119,7 +119,14 @@
             <p-accordionTab header="Opzioni">
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                     <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
-                                    <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
+                        <label>Estrai solo le posizioni presenti sul riquadro della mappa</label>
+                    </div> 
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
+                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="onlyMap"
+                        (change)="changeOptOnlyMap()"></ui-switch>            
+                    </div>                 
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                        <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
                     </div>
                     <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
                         <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
@@ -150,7 +157,7 @@
                                 (onSlideEnd)="fineSelezioneGgMaxPos($event)">
                         </p-slider>
                     </div>
-                    </div>
+                </div>
             </p-accordionTab>
         </p-accordion>                
     </div>
@@ -170,7 +177,9 @@
             [mapLon]="startLon"
             [mapZoom]="startZoom"
             [mezzoSelezionato]="mezzoSelezionato"
-            [reset]="reset"            
+            [reset]="reset"  
+            [onlyMap]="onlyMap"
+            (nuovaSelezioneArea)="selezioneArea($event)"
         >
         </app-mappa-posizioni-flotta>
     </div>
