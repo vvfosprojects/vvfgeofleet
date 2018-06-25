@@ -9,6 +9,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import {AccordionModule} from 'primeng/accordion';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
+import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -21,9 +22,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() istanteUltimoAggiornamento: Date;
   @Input() maxIstanteAcquisizione: Date ;
   @Input() reset: Boolean ;  
-  @Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
+  //@Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
+  @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
   @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
-     
+  
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
@@ -724,11 +726,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     if (!this.onlyMap) 
       this.nuovaSelezioneAreaPos.emit(e)
     else
-      this.nuovaSelezioneGgMaxPos.emit(e);
+      //this.nuovaSelezioneGgMaxPos.emit(e);
+      //this.nuovaSelezioneGgMaxPos.emit(new Object(this.ggMaxPos)[0]);
+      this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
+        //("aa", this.ggMaxPos));
   }
 
   fineSelezioneGgMaxPos(e) {    
-    this.nuovaSelezioneGgMaxPos.emit(e);
+    //this.nuovaSelezioneGgMaxPos.emit(e);
+    this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
   }
   
   selezioneArea(e) {    

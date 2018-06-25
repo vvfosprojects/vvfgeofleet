@@ -65,9 +65,11 @@ export class AppComponent {
           this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(this.parametriGeoFleetWS,false));
         }   
 
+        /*
         ngOnChanges() { 
           console.log(this.elencoPosizioniMezzo.length);
         }
+        */
 
         //aggiorna(val : Number, all: boolean) {
         aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
@@ -176,10 +178,18 @@ export class AppComponent {
 
 
         aggiornaAttSec(evento) {
+          console.log("aggiornaAttSec", evento);
+
           if (evento != null) {
-            var gg: number = evento.value;
+            //var gg: number = evento.value;
+            var gg: number = evento;
             this.parametriGeoFleetWS.attSec = gg*24*60*60;
             this.defaultAttSec = this.parametriGeoFleetWS.attSec ;
+            this.parametriGeoFleetWS.lat1= null;
+            this.parametriGeoFleetWS.lon1= null;
+            this.parametriGeoFleetWS.lat2= null;
+            this.parametriGeoFleetWS.lon2= null;
+            
             // console.log("aggiornaAttSec", evento, gg, this.attSec);
             this.timerSubcribe.unsubscribe();
             this.reset = true;
@@ -200,12 +210,12 @@ export class AppComponent {
             var vv = Object.values(evento);
             var vv1 = Object.values(vv[0]);
             var vv2 = Object.values(vv[1]);
-            console.log("aggiornaArea  vv",vv);
+            //console.log("aggiornaArea  vv",vv);
             this.parametriGeoFleetWS.attSec = this.defaultAttSec ;
             this.parametriGeoFleetWS.lat1= vv1[1];
-            this.parametriGeoFleetWS.lon1= vv2[1];
+            this.parametriGeoFleetWS.lon1= vv2[0];
             this.parametriGeoFleetWS.lat2= vv1[0];
-            this.parametriGeoFleetWS.lon2= vv2[0];
+            this.parametriGeoFleetWS.lon2= vv2[1];
 
             this.timerSubcribe.unsubscribe();
             this.reset = true;
