@@ -46,7 +46,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
    
   //lat: number = 51.678418;
   //lon: number = 7.809007;
-  timeout : number;
+  timeout : any;
   start_lat: number = 41.889777;
   start_lon: number = 12.490689;
   start_zoom: number = 6;
@@ -407,7 +407,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   areaChanged(e) {
     //this.timeout = setTimeout("areaChanged();",1000);
     if (this.onlyMap) {
-      this.nuovaSelezioneArea.emit(e);
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.nuovaSelezioneArea.emit(e);
+      }, 3000);      
+      //this.nuovaSelezioneArea.emit(e);
       //console.log("areaChanged",e);
     }
   }
