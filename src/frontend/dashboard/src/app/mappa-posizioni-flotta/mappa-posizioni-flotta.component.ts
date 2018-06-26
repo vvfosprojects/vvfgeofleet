@@ -116,7 +116,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
     if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
-      { this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
+      { 
+        //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
+        this.elencoPosizioniMostrate = this.elencoPosizioni;        
         this.elencoPosizioniMostratePrecedenti = [];}
     else 
       { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
@@ -407,11 +409,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   areaChanged(e) {
     //this.timeout = setTimeout("areaChanged();",1000);
     if (this.onlyMap) {
+      /*
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.nuovaSelezioneArea.emit(e);
+        clearTimeout(this.timeout);
       }, 3000);      
-      //this.nuovaSelezioneArea.emit(e);
+      */
+      this.nuovaSelezioneArea.emit(e);
       //console.log("areaChanged",e);
     }
   }

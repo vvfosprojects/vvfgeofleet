@@ -1,5 +1,6 @@
 export class ParametriGeoFleetWS {
 
+    public richiestaAPI: string;
     public attSec:  Number;
     public lat1:    Number;
     public lon1:    Number;

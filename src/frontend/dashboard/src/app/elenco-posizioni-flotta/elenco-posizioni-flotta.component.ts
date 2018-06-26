@@ -183,7 +183,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       new VoceFiltro("TV", "VENETO - Treviso", 0, true, "", "badge-info", ""),
       new VoceFiltro("VE", "VENETO - Venezia", 0, true, "", "badge-info", ""),
       new VoceFiltro("VR", "VENETO - Verona", 0, true, "", "badge-info", ""),
-      new VoceFiltro("VI", "VENETO - Vicenza", 0, true, "", "badge-info", "")            
+      new VoceFiltro("VI", "VENETO - Vicenza", 0, true, "", "badge-info", ""),
+      new VoceFiltro("..", "sconosciuta", 0, true, "", "badge-info", "")
     ];
     filtriSedi: string[] = [];
 
@@ -723,7 +724,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
   changeOptOnlyMap(e) {
-    if (!this.onlyMap) 
+    if (!this.onlyMap && e != '-') 
       this.nuovaSelezioneAreaPos.emit(e)
     else
       //this.nuovaSelezioneGgMaxPos.emit(e);

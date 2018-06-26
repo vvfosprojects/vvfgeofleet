@@ -14,24 +14,26 @@ import { Http, Response, RequestOptions, Headers, RequestMethod  } from '@angula
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-import { environment } from "../../environments/environment";
 import { RispostaMezziInRettangolo } from '../shared/model/risultati-mezzi-in-rettangolo.model';
+import { environment } from "../../environments/environment";
 
 const API_URL = environment.apiUrl;
 
 let headers = new Headers();
 headers.append( 'Access-Control-Allow-Origin', '*' ); 
-//headers.append( 'Access-Control-Allow-Origin', '*' ); 
+headers.append( 'Access-Control-Allow-Origin', '*' ); 
 //let options = new RequestOptions( { headers:  headers },  method: RequestMethod.Get);
 let options = new RequestOptions( { headers:  headers , method: RequestMethod.Get });
 
 
 
 @Injectable()
-export class PosizioneFlottaService {
+export class PosizioneFlottaInRettangoloService {
 
   
+  private risposta: RispostaMezziInRettangolo;
   private elencoPosizioni: PosizioneMezzo[];
+  
 
     constructor(private http: Http) { 
     }
@@ -39,9 +41,16 @@ export class PosizioneFlottaService {
     
     //public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
     public getPosizioneFlotta(parm: ParametriGeoFleetWS ): Observable<PosizioneMezzo[]> {
+        // this.http.get(API_URL + 'posizioneFlotta', options )
 
+
+      /*
+      if (parm.attSec == null) { richiestaAPI = 'posizioneFlotta'; }
+      else {  richiestaAPI = 'posizioneFlotta?attSec='+ String(parm.attSec);}
+      */
+      ///api/inRettangolo?lat1={lat1}&lon1={lon1}&lat2={lat2}&lon2={lon2}&classiMezzo={class1}&classiMezzo={class2}&attSec={seconds}
+      var richiestaAPI : string = 'inRettangolo';
       var parametri : string = '';
-      var richiestaWS : string = '';
       if (parm.attSec != null) { parametri = parametri+ 
         (parametri == '' ? '?': '&') + 'attSec='+ String(parm.attSec); }
       if (parm.lat1 != null) { parametri = parametri+
@@ -53,59 +62,23 @@ export class PosizioneFlottaService {
       if (parm.lon2 != null) { parametri = parametri+
         (parametri == '' ? '?': '&') + 'lon2='+ String(parm.lon2); }
 
-      if (parametri != '' ) 
-        { richiestaWS = parm.richiestaAPI + parametri; }
-      else 
-        { richiestaWS = parm.richiestaAPI; }
-
+      if (parametri != '' ) { richiestaAPI = richiestaAPI + parametri};
       
-      //console.log(API_URL + richiestaWS);
+      console.log(API_URL + richiestaAPI);
 
-      var observable: Observable<Response> = this.http.get(API_URL + richiestaWS) ;
+      var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
       var posizioniMezzo : PosizioneMezzo[];
       var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
-
-      //return this.http.get(API_URL + 'posizioneFlotta').      
-      if ( parm.richiestaAPI == 'posizioneFlotta')
-      {
-      obsPosizioniMezzo = observable.      
-      map((r : Response) => 
-        {  
-        return r.json().
-        map((e : PosizioneMezzo) => 
-          { if (e.infoSO115 == null) { 
-              e.infoSO115 = Object.create( {stato: String}); 
-              e.infoSO115.stato = "0";
-            }
-            if (e.infoSO115.stato == null || e.infoSO115.stato == "" )
-            {
-              e.infoSO115.stato = "0";              
-            }
-            //e.tooltipText = Object.create(String.prototype);
-            e.sedeMezzo = this.sedeMezzo(e);
-            e.toolTipText = this.toolTipText(e);
-            e.classiMezzoDepurata = this.classiMezzoDepurata(e);
-            e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
-            let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
-            return Object.assign(posizioneMezzo, e);
-          }
-        )
-        })
-      .catch(this.handleError);    
-      };
-
-      if ( parm.richiestaAPI == 'inRettangolo')
-      {
+      //var obsRisposta : Observable<RispostaMezziInRettangolo>;
 
 
       //obsPosizioniMezzo = observable.      
       obsPosizioniMezzo = observable.      
       map((r : Response) => 
         {
-          //var risp : RispostaMezziInRettangolo = r.json();
-          //var posizioniMezzo = risp.risultati.forEach( 
-          return r.json().risultati.map( 
+          var risp : RispostaMezziInRettangolo = r.json();
+          var posizioniMezzo = risp.risultati.forEach( 
           (e : PosizioneMezzo) => 
 
             { if (e.infoSO115 == null) { 
@@ -125,18 +98,13 @@ export class PosizioneFlottaService {
               return Object.assign(posizioneMezzo, e);
 
             });
-            //return Observable.of(posizioniMezzo);
+            return Observable.of(posizioniMezzo);
         })
       .catch(this.handleError);      
 
-      };
-
-
       return obsPosizioniMezzo;
-
-
     };
-  
+    //Observable.of(
     private handleError(error: Response | any) {
       if (error != null)
       { console.error('ApiService::handleError', error);
