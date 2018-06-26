@@ -9,8 +9,8 @@ export const environment = {
   apiUrl: 'http://vvfgeofleetdev:23032/api/'
 
 };
-*/
 
+*/
 
 // utilizzare questa URL
 // se è necessario effettuare dei test sull'ambiente di produzione

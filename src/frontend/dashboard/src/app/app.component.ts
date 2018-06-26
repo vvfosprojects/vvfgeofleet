@@ -32,13 +32,17 @@ export class AppComponent {
 
   private trimSec: Number = 0;
   private defaultAttSec: Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
+  private defaultrichiestaAPI: string = 'posizioneFlotta';
   //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
 
   public reset : Boolean = false;
 
-        constructor(private posizioneFlottaService: PosizioneFlottaService) { 
+        constructor(
+          private posizioneFlottaService: PosizioneFlottaService
+        ) { 
 
           this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+          this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
           this.parametriGeoFleetWS.attSec = this.defaultAttSec;
         }
         
@@ -178,11 +182,12 @@ export class AppComponent {
 
 
         aggiornaAttSec(evento) {
-          console.log("aggiornaAttSec", evento);
+          //console.log("aggiornaAttSec", evento);
 
           if (evento != null) {
             //var gg: number = evento.value;
             var gg: number = evento;
+            this.parametriGeoFleetWS.richiestaAPI = 'posizioneFlotta';            
             this.parametriGeoFleetWS.attSec = gg*24*60*60;
             this.defaultAttSec = this.parametriGeoFleetWS.attSec ;
             this.parametriGeoFleetWS.lat1= null;
@@ -204,13 +209,14 @@ export class AppComponent {
         }
         
         aggiornaArea(evento) {
-          console.log("aggiornaArea", evento);
+          //console.log("aggiornaArea", evento);
           if (evento != null) {
             
             var vv = Object.values(evento);
             var vv1 = Object.values(vv[0]);
             var vv2 = Object.values(vv[1]);
             //console.log("aggiornaArea  vv",vv);
+            this.parametriGeoFleetWS.richiestaAPI = 'inRettangolo';
             this.parametriGeoFleetWS.attSec = this.defaultAttSec ;
             this.parametriGeoFleetWS.lat1= vv1[1];
             this.parametriGeoFleetWS.lon1= vv2[0];
