@@ -7,13 +7,13 @@ POST http://localhost:23032/api/messaggiPosizione HTTP/1.1
 Content-Type: application/json
 
 {
-    "codiceMezzo": "APS.12345",
+    "codiceMezzo": "APS.54321",
     "classiMezzo": [ "APS", "benzina" ],
     "localizzazione": {
-        "lat": 14.3345,
+        "lat": 14.3347,
         "lon": 43.4321
     },
-    "istanteAcquisizione": "2018-05-07T22:15:00.1234Z",
+    "istanteAcquisizione": "2018-06-25T20:16:00.1234Z",
     "fonte": {
         "codiceFonte": "AH222",
         "classeFonte": "gpsTracker"
@@ -22,3 +22,6 @@ Content-Type: application/json
     
     }
 }
+
+### InRettangolo
+GET http://localhost:23032/api/inRettangolo?lat1=14.30&lon1=43.42&lat2=14.3346&lon2=43.44 HTTP/1.1
