@@ -320,7 +320,7 @@ VVFGeoFleet frontend depends (also) on the following libraries.
 * **moment.js**: date and time handling routines;
 * **typescript**: dev library enhancing javascript to be OOP.
 
-# Licence
+# License
 Source code is released under the terms of AGPL-3.0 license.
 
 # Disclaimer
