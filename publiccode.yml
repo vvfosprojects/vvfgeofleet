@@ -1,138 +1,189 @@
 publiccode-yaml-version: "http://w3id.org/publiccode/version/0.1"
 
-name: geofleet
+name: geofleet 
 applicationSuite: Fleet Tracking System
 url: "https://github.com/vvfosprojects/vvfgeofleet.git"        # URL of this repository
 landingURL: "https://github.com/vvfosprojects/vvfgeofleet"
 
-isBasedOn: ""   # The original repository, "Otello"
-softwareVersion: "1.0"                                        # Last stable version
-releaseDate: 2018-05-17                               # Date of last stable software release
-logo:
-monochromeLogo:
+# isBasedOn: ""
+softwareVersion: "0.1"
+releaseDate: "2018-05-17"
+# logo:
+# monochromeLogo:
 
-platforms:                   # or Windows, Mac, Linux, etc.
+inputTypes:
+  - text/plain
+outputTypes:
+  - text/plain
+
+platforms: # or Windows, Mac, Linux, etc.
   - web browser (client)
-  - asp.net WebApi (server)
-
-api: "https://github.com/vvfosprojects/vvfgeofleet"
+  - asp.net WebApi written in C# .net 4.6 (server)
 
 tags:
-  - fleet tracking
-  - spatial queries
-  - maps
-
+  - monitor
+  - archiving
+  
 freeTags:
   eng:
     - fleet tracking spatial queries mongodb maps
   ita:
-    - gestione flotte queri georeferenziate mongodb mappe
+    - gestione flotte queries georeferenziate mongodb mappe
 
 usedBy:
   - Corpo Nazionale dei Vigili del Fuoco
 
 roadmap: "https://github.com/vvfosprojects/vvfgeofleet"
 
-developmentStatus: production
+developmentStatus: stable
 
-softwareType:
-  type: "node frontend with RESTful backend"
-  isRelatedTo:
-    - ""
+softwareType: "standalone"
 
 intendedAudience:
   onlyFor:
-    - public administrations
-	- enterprises
-  countries: # FIXME ISO 3166-1 alpha-2 + EU
-    - EU
-  unsupportedCountries:     # Explicitly unsupported countries
-    -
+    - cities
+    - health-services
+    - police-forces
+    - it-ag-sanita
+    - it-altrilocali
+    - it-aci
+    - it-au-portuale
+    - hospital
+    - it-az-servizi
+    - it-metro
+    - city
+    - it-regione
+    - university
+  countries:
+    - IT
 
 description:
   eng:
     localisedName: geofleet
-    shortDescription: "Fleet tracking system"
+    genericName: geofleet
+    shortDescription: >
+      VVFGeoFleet is a system allowing to track a fleet,
+      where vehicles are equipped with GPS enabled
+      devices periodically sending their position. The
+      system is composed of two main modules: (i) a backend
+      module, based on a RESTful server; (ii) a frontend
+      module, based on an Angular GUI.
+        
     longDescription: >
-          VVFGeoFleet is a system allowing to track a fleet,
-		  where vehicles are equipped with GPS enabled
-		  devices periodically sending their position. The
-		  system is composed of two main modules: (i) a backend
-		  module, based on a RESTful server; (ii) a frontend
-		  module, based on an Angular GUI.
+      VVFGeoFleet is a system allowing to track a fleet, where 
+      vehicles are equipped with GPS enabled devices periodically 
+      sending their position. The system is composed of two main 
+      modules: (i) a backend module, based on a RESTful server; (ii) a 
+      frontend module, based on an Angular GUI. The backend is written 
+      in C# Asp.Net WebApi, using Visual Studio 2017 Community 
+      Edition, with a persistence layer based on MongoDB document 
+      database. It collects position messages coming from GPS enabled 
+      devices installed on board the vehicles; publishes REST actions 
+      to efficiently query the collected data. Queries allow, for 
+      instance, to: (i) getting the current fleet position (also by 
+      vehicle class); (ii) getting a vehicle position; (iii) getting a 
+      vehicle tracked path, within a given time interval; (iv) getting 
+      vehicles near to a given point (also by vehicle class); (v) 
+      getting vehicles within a given rectangle; (vi) getting vehicles 
+      inactive since too much time. The backend is optimized to 
+      collect data and hold them forever, without the need for purging 
+      old data periodically. The RESTful API leverages the MongoDB 
+      database and its spatial features. All database queries are 
+      carefully optimized to exploit indexes; thus, the response time 
+      is extremely low even in case of millions messages stored. 
+      The RESTful API enables the frontend to graphically display 
+      data, but it is especially conceived to be queried by other 
+      applications (B2B) in order to act as a decision support system 
+      (DSS). The frontend is based on Angular6 and uses Google maps 
+      javascript API to show information. Currently the source code 
+      and the RESTful interface is a mix of English and Italian words. 
+      During the implementation, the Italian words will be translated 
+      as much as possible. VVFGeoFleet can receive keep-alive messages 
+      (e.g. every minute or so) from vehicles, in order to promptly 
+      know whether a vehicle is out-of-field or the GPS device is 
+      faulty. In presence of many vehicles (i.e. more than 10.000) 
+      those messages might be heavy to be stored. To cope with this 
+      issue, VVFGeoFleet holds only messages carrying position deltas, 
+      while interpolating messages received by the same vehicle in the 
+      same position. Interpolation information is saved together with 
+      the interpolating messages, so to prevent such inforation to get 
+      lost. On each position message reception, VVFGeoFleet computes 
+      the vehicle velocity comparing the received message with the 
+      latest stored one. In case such velocity exceeds a given 
+      threshold, a warning is traced in the application log (based on 
+      log4net). Too high velocities might be due to bad GPS device 
+      configuration of faulty GPS device. The system publishes 
+      statistics about message arrival per day, total number of stored 
+      messages, messages arrival rate, etc. Statistics can be read to 
+      check correct system operation, and can be processed through 
+      automated systems in order to raise alarms in case of anomalous 
+      indicators. Posting position messages can be subject to client 
+      authorization, based on IP source address. The web.config allows 
+      to enable/disable IP-based authorization through a flag and to 
+      specify the list of allowed IP and/or networks (e.g. 127.0.0.1, 
+      8.8.8.8, 10.0.0.0/24, 172.16.0.0/16). 
 
     documentation: "https://github.com/vvfosprojects/vvfgeofleet"
+    apiDocumentation: "https://github.com/vvfosprojects/vvfgeofleet"
+
     featureList:
-       - Message interpolation (keep-alive messages about steady
-	     vehicles are suppressed and summarized by the following
-		 messages, to save space of storage);
-       - Too high velocity warnings (warning notification in
-	     case of too fast vehicles);
-       - Online statistics (real-time computed statistics giving
-	     the taste of how the system is performing);
-	   - IP-based authorization (to prevent unauthorized source
-	     sending position messages).
-    screenshots:
-       - 
-    videos:                             # Demo videos of the software
-       - 
-    awards:
-       - 
+       - Web based frontend for public applicants.
+       - Web based backoffice frontend to check, navigate submitted
+         applications.
+       - RESTful backend
+       - Publishes real-time statistics on the system usage.
 
 legal:
   license: AGPL-3.0-or-later        # SPDX expression of license
   mainCopyrightOwner: 2018 Corpo Nazionale dei Vigili del Fuoco
   repoOwner: Corpo Nazionale dei Vigili del Fuoco
-  authorsFile: AUTHORS              # file listing copyright information
+  authorsFile: AUTHORS
 
 maintenance:
   type: "up to internal employees"
-
-  contractors:
-    - name: "" # if maintainance is a contract
-      website: ""
-      until: ""
 
   contacts:
     - name: Marcello Esposito
       email: "marcello.esposito@vigilfuoco.it"
       affiliation: Corpo Nazionale dei Vigili del Fuoco
-      phone:
 
 localisation:
-  # Does the software support, at least by design, multiple languages?
   localisationReady: no
-  # Languages already available
   availableLanguages:
     - ita
 
-dependencies:             # List of dependencies. The only mandatory list is the proprietary one
-  open:                 # List of open dependencies. Optional
+dependsOn:
+  open:
     - name: MongoDB
-      versionMin: "3.6"
+      versionMin: "3.2"
       versionMax: "4.0"
       optional: no
-  # List of proprietary software which is a dependency for using this product. This includes runtime dependencies
   proprietary:
-    -
-  hardware:             # List of special hardware required. Optional.
-    - name: 
-      optional:
+    - name: MS Internet Information Services
 
-ita:
-  accessibile: no # Rispetta i requisiti di legge in materia di accessibilità?
-  interoperabile: no # Rispetta i requisiti di legge sull'interoperabilita'
+it:
+
+  conforme:
+    accessibile: no
+    interoperabile: no
+    sicuro: yes
+    privacy: yes
 
   riuso:
-    # Codice IPA della PA che ha pubblicato questo repo (repo-owner)
     codiceIPA: 5EDW58
 
   spid: no
   pagopa: no
   cie: no
   anpr: no
+  ecosistemi:
+    - sanita
+    - welfare
+    - difesa-sicurezza-soccorso-legalita
+    - infrastruttura-logistica
 
   designKit:
-    - serviceDesign: no
-    - ui: no
-    - webToolkit: no
+    seo: no
+    ui: no
+    web: no
+    content: no
