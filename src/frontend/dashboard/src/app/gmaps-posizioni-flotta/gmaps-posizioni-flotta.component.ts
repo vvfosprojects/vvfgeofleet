@@ -1,31 +1,30 @@
-import { ErrorHandler, Component, ElementRef, OnInit, Input } from '@angular/core';
+import { ErrorHandler, Component, ElementRef, OnInit, Input, ViewChild } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-import { GoogleMapsAPIWrapper, MarkerManager, LatLngLiteral } from '@agm/core';
-import { AgmMarker, MouseEvent } from '@agm/core';
-import { AgmCoreModule, MapsAPILoader } from '@agm/core';
-import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+
+import {  } from '@types/googlemaps';
+import '@google/markerclusterer/src/markerclusterer.js';
+
+//import { google } from '@agm/core/services/google-maps-types';
+//import { LatLngLiteral } from '@agm/core';
 
 import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryList } from '@angular/core';
 
 import * as moment from 'moment';
 import { Options } from 'selenium-webdriver/ie';
-import { Subject, observable } from 'rxjs';
 
-import { Observable } from "rxjs/Rx";
+//declare var google: any;
 
 @Component({
-  selector: 'app-mappa-posizioni-flotta',
-  templateUrl: './mappa-posizioni-flotta.component.html',
-  styleUrls: ['./mappa-posizioni-flotta.component.css'],
-  providers: [{ provide: MarkerManager, useClass:MarkerManager}, 
-    { provide: GoogleMapsAPIWrapper, useClass:GoogleMapsAPIWrapper}    ,
-    { provide: AgmMarker, useClass:AgmMarker}    
-    
-  ]
+  selector: 'app-gmaps-posizioni-flotta',
+  templateUrl: './gmaps-posizioni-flotta.component.html',
+  styleUrls: ['./gmaps-posizioni-flotta.component.css']
 })
+export class GmapsPosizioniFlottaComponent implements OnInit {
 
-
-export class MappaPosizioniFlottaComponent implements OnInit {
+  @ViewChild('gmap') gmapElement: any;
+  public map: google.maps.Map;
+  public markers: google.maps.Marker[] = [];
+  public markersAggiunti: google.maps.Marker[] = [];
 
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
@@ -45,9 +44,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   @Input() mezzoSelezionato: PosizioneMezzo ;
   @Input() reset: Boolean ;  
-  @Input() optOnlyMap: Boolean ;  
+  @Input() onlyMap: Boolean ;  
 
-  @Output() nuovaSelezioneArea: EventEmitter<LatLngLiteral> = new EventEmitter();
+  // da definire 'LatLngLiteral'
+  //@Output() nuovaSelezioneArea: EventEmitter<LatLngLiteral> = new EventEmitter();
    
   //lat: number = 51.678418;
   //lon: number = 7.809007;
@@ -65,11 +65,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private iconeStatiSelezionato: any ;
   private mapIconeSelezionato: any ;
   
-  private markerManager: MarkerManager ;
-  private markerArrays: AgmMarker[];
-
-  //private markers: AgmMarker;
-
   public elencoPosizioniMostrate : PosizioneMezzo[] = [];
   private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
@@ -78,55 +73,50 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private elencoPosizioniRientrate : PosizioneMezzo[] = [];
   private elencoPosizioniModificate : PosizioneMezzo[] = [];
   private sedeMezzoCorrente : string;
+  
+  constructor() { 
+  } 
+  
+  ngOnInit() { 
 
-  private areaChangedDebounceTime = new Subject();
-
-  constructor() { }    
-
-  ngOnInit() {
 
 
-       this.iconeStati = [
-      ['0','assets/images/mm_20_black.png'],
-      ['1','assets/images/mm_20_red.png'],
-      ['2','assets/images/mm_20_blue.png'],
-      ['3','assets/images/mm_20_green.png'],
-      ['4','assets/images/mm_20_gray.png'],
-      ['5','assets/images/mm_20_yellow.png'],
-      ['6','assets/images/mm_20_orange.png'],
-      ['7','assets/images/mm_20_cyan.png']
-    ]    ;    
-    this.mapIcone = new Map(this.iconeStati);    
+  this.iconeStati = [
+    ['0','assets/images/mm_20_black.png'],
+    ['1','assets/images/mm_20_red.png'],
+    ['2','assets/images/mm_20_blue.png'],
+    ['3','assets/images/mm_20_green.png'],
+    ['4','assets/images/mm_20_gray.png'],
+    ['5','assets/images/mm_20_yellow.png'],
+    ['6','assets/images/mm_20_orange.png'],
+    ['7','assets/images/mm_20_cyan.png']
+  ]    ;    
+  this.mapIcone = new Map(this.iconeStati);    
 
-    this.iconeStatiSelezionato = [
-      ['0','assets/images/mm_30_black.png'],
-      ['1','assets/images/mm_30_red.png'],
-      ['2','assets/images/mm_30_blue.png'],
-      ['3','assets/images/mm_30_green.png'],
-      ['4','assets/images/mm_30_gray.png'],
-      ['5','assets/images/mm_30_yellow.png'],
-      ['6','assets/images/mm_30_orange.png'],
-      ['7','assets/images/mm_30_cyan.png']
-    ]    ;    
-    this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
-    
-    if ( this.mapLat == null ) { this.mapLat = this.start_lat; }
-    if ( this.mapLon == null ) { this.mapLon = this.start_lon; }
-    if ( this.mapZoom == null ) { this.mapZoom = this.start_zoom; }
+  this.iconeStatiSelezionato = [
+    ['0','assets/images/mm_30_black.png'],
+    ['1','assets/images/mm_30_red.png'],
+    ['2','assets/images/mm_30_blue.png'],
+    ['3','assets/images/mm_30_green.png'],
+    ['4','assets/images/mm_30_gray.png'],
+    ['5','assets/images/mm_30_yellow.png'],
+    ['6','assets/images/mm_30_orange.png'],
+    ['7','assets/images/mm_30_cyan.png']
+  ]    ;    
+  this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
+  
+  if ( this.mapLat == null ) { this.mapLat = this.start_lat; }
+  if ( this.mapLon == null ) { this.mapLon = this.start_lon; }
+  if ( this.mapZoom == null ) { this.mapZoom = this.start_zoom; }
 
-    /*
-    Observable.fromEvent(document, 'boundsChange')
-    .debounceTime(3000)
-    .subscribe(this.areaChanged);
-    */
-    /*
-    var clicks = Observable.fromEvent(document, 'boundsChange');
-    var result = clicks.debounceTime(1000);
-    result.subscribe(x => console.log(x));
-    */
+  const mapProp = {
+    center: new google.maps.LatLng(this.mapLat, this.mapLon),
+    zoom: this.mapZoom,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
 
-    this.areaChangedDebounceTime.debounceTime(2000).
-      subscribe( evento => this.areaChanged(evento));
+  this.map = new google.maps.Map(this.gmapElement.nativeElement, mapProp);
+
   }
 
 
@@ -166,43 +156,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     console.log('ngOnChanges - elencoPosizioni: ', this.elencoPosizioni );
     console.log('ngOnChanges - elencoPosizioniNuove: ', this.elencoPosizioniNuove );
     */
-
-    //this.gmapsApi.getNativeMap().then(map => {
-    //  this.markerManager.getNativeMarker(this.agmMarker).then(marker => { console.log(marker);
-    //  });
-    //});  
-    
-    /*
-    // individua le posizioni eliminate estraendo quello non più presenti 
-    // nell'elenco aggiornato rispetto a quello precedente
-    this.elencoPosizioniEliminate = this.elencoPosizioniMostratePrecedenti.
-    filter( (item) => {
-      var v = this.elencoPosizioniDaElaborare.find( x => item.codiceMezzo == x.codiceMezzo );
-      if ( v == null) {return item}
-      else {return null}  }
-    );
-    */
-     /*
-    // estra le posizioni dei Mezzi rientrati
-    this.elencoPosizioniRientrate = this.elencoPosizioniMostratePrecedenti.
-     filter( (item) => {
-       var v = this.elencoPosizioniDaElaborare.find( x => item.infoSO115.stato == '4' );
-       if ( v != null) {return item}
-       else {return null}  }
-    );
-       
-    // aggiunge alle posizioni da eliminare quelle dei Mezzi rientrati
-    this.elencoPosizioniEliminate = this.elencoPosizioniEliminate.concat(this.elencoPosizioniRientrate);
-    */
-    /*
-    // rimuove dalle posizioni Mostrate quelle Eliminate
-    this.elencoPosizioniEliminate.forEach( v => { 
-       var k = this.elencoPosizioniMostrate.indexOf( v );
-       if (k != -1) { this.elencoPosizioniMostrate.splice(k,1); 
-      }
-     })
-     */
-
 
     // modifica nelle posizioni Mostrate quelle con variazioni
     this.elencoPosizioniDaElaborare.forEach( item => { 
@@ -262,8 +215,47 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     // salva l'elenco delle posizioni Mostrate attualmente
     this.elencoPosizioniMostratePrecedenti = this.elencoPosizioniMostrate;
     
+    this.disegnaMarker(this);
   }
     
+  disegnaMarker(tt: GmapsPosizioniFlottaComponent) {
+      // The marker, positioned at Uluru
+  //var marker = new google.maps.Marker({position: uluru, map: map});
+
+  this.markersAggiunti = this.elencoPosizioniNuove.map(function(Mezzo, i) {
+    var latLon = {lat: Number(Mezzo.localizzazione.lat), lng:  Number(Mezzo.localizzazione.lon)};
+    var iconaMezzo = tt.markerIconUrl(Mezzo);
+    //var vis = tt.posizioneMezzoSelezionata(Mezzo);
+    var vis = true;
+    var marker : google.maps.Marker = new google.maps.Marker( {
+      map: tt.map,
+      position: latLon,
+      icon: iconaMezzo,
+      visible: vis
+      });
+    Mezzo.marker = marker;
+    return marker ;
+  });
+
+  if (this.markers.length == 0 ) 
+    { this.markers = this.markersAggiunti; }
+  else 
+    { this.markers = this.markers.concat(this.markersAggiunti); }
+
+  /*
+    this.elencoPosizioniMostrate.forEach( item => item.marker.setVisible( 
+    tt.posizioneMezzoSelezionata(item)
+    ))
+  */
+
+/*
+  var markerCluster : MarkerClusterer = new MarkerClusterer(this.map, this.markers,
+    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+*/
+  }
+
+
   markerIconUrl(m: PosizioneMezzo) {
     //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
 
@@ -318,32 +310,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     //console.log('out of the marker: ', mezzo, index);
   }
 
-  setMarkerManager(markerManager: MarkerManager){
-    this.markerManager = markerManager;
-    //console.log("setMarkerManager: ", markerManager);
-   }
-
-  /**
-   * Imposta l'array dei markers presenti sulla mappa
-   */
-  setMarkers(markers: AgmMarker[]){
-    //console.log("AgmMarkers: ", markers);
-    this.markerArrays = markers;
-    /*
-    console.log("NativeMarkers: ");
-    for(let marker of markers){
-      this.markerManager.getNativeMarker(marker).then(marker => {
-        console.log(marker);
-      });
-    }
-    */
-
-
-  }
-
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
       if (p.infoSO115 != null) {
-       
+        
         var r : boolean ;
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
 
@@ -377,17 +346,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
       } 
       else { console.log(p, moment().toString()); 
-        return false;      
+        return false;
         }
   }
 
-  
-  /*
-  sedeMezzo(p : PosizioneMezzo) {
-    return (p.classiMezzo.
-      find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
-  }
-  */
 
   classiMezzoDepurata(p : PosizioneMezzo) {
     return p.classiMezzo.
@@ -397,55 +359,19 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   indiceMezzoSelezionato(m: PosizioneMezzo) {
     //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
 
-    /*
-    if (m == this.mezzoSelezionato) {
-      this.iconaStatoMezzoCorrente = 'assets/images/car.png'; }
-    else
-    {
-    */ 
    if (this.mezzoSelezionato != null && m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
       { return 2; } else {return 1; }
   }
 
+
   /*
-  toolTipText(item : PosizioneMezzo) {
-    var testo : String;
-    var opzioniDataOra = {};
-    //" (" + this.sedeMezzo(item) + ") del " + 
-    testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
-    " (" + item.sedeMezzo + ") del " + 
-    new Date(item.istanteAcquisizione).toLocaleString() + 
-    " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
-
-    if (item.infoSO115 != null && 
-      item.infoSO115.codiceIntervento != null &&
-        new Number(item.infoSO115.codiceIntervento) != 0) {
-      testo = testo + " - Intervento " + item.infoSO115.codiceIntervento + " del " +
-      new Date(item.infoSO115.dataIntervento).toLocaleDateString() ;
-    }
-    return testo;
-  }  
-  */
-
-  areaChangedOnMap(e) {
-    this.areaChangedDebounceTime.next(e);
-  }
-
   areaChanged(e) {
     //this.timeout = setTimeout("areaChanged();",1000);
-    if (this.optOnlyMap) {
-      /*
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.nuovaSelezioneArea.emit(e);
-        clearTimeout(this.timeout);
-      }, 3000);      
-      */
-    
+    if (this.onlyMap) {
       this.nuovaSelezioneArea.emit(e);
-      console.log("areaChanged",e);
-
+      //console.log("areaChanged",e);
     }
   }
+  */
   
 }

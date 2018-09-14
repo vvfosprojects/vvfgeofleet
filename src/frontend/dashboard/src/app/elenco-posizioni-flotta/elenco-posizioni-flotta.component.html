@@ -63,14 +63,12 @@
 -->
 
 <div class="row h8">
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 p-1">
         <p-accordion>
-            <p-accordionTab header="Elenco Posizioni" [selected]="true"
-            data-toggle="tooltip" 
-            title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
-                <div class="card card-inverse row_text p-1"
+            <p-accordionTab header="Elenco Posizioni" [selected]="true">
+                <div class="card card-inverse p-1"
                 data-toggle="tooltip" 
-                title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
+                title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
                 <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
                         [posizioneMezzo]="r" 
                         [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
@@ -86,8 +84,10 @@
                         (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
                         ></app-posizione-mezzo>
                 </div>
-                <div class="area-elenco card card-inverse row_text p-1">
-                            <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                <div class="area-elenco card card-inverse"
+                data-toggle="tooltip" 
+                title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
+                <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [posizioneMezzo]="r" 
                                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                                 [filtriStatiMezzo]="filtriStatiMezzo"
@@ -117,29 +117,29 @@
                     </div>
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
-                <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11">
                         <label>Estrai solo le posizioni presenti sul riquadro della mappa</label>
                     </div> 
-                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
                         <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="onlyMap"
                         (change)="changeOptOnlyMap('-')"></ui-switch>            
                     </div>                 
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-1">
                         <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
                     </div>
-                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
+                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
                         <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
                     </div>
 
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11 col-11">
+                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11">
                         <label>Segui un Mezzo sulla mappa</label>
                     </div>
                     <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
                         <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnMezzo"
                         (change)="changeOptSeguiMezzo()"></ui-switch>
                     </div>
-                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <p-dropdown  [options]="elencoPosizioni" 
                                 [style] ="{minWidth:'20em'}"
                                 disabled = "{{!centerOnMezzo}}"
@@ -148,7 +148,7 @@
                         </p-dropdown>
                         
                     </div>
-                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12">
                         <label>Estrai le posizioni fino a {{ggMaxPos}} giorni fa</label>
                     </div>
                     <div class="p-2">
@@ -161,8 +161,29 @@
             </p-accordionTab>
         </p-accordion>                
     </div>
-    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8">          
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
         <app-mappa-posizioni-flotta
+            [elencoPosizioniDaElaborare]="elencoUltimePosizioni" 
+            [elencoPosizioni]="elencoPosizioni" 
+            [elencoMezziDaSeguire]="seguiMezziSelezionati"
+            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+            [filtriStatiMezzo]="filtriStatiMezzo"
+            [filtriSedi]="filtriSedi"            
+            [filtriGeneriMezzo]="filtriGeneriMezzo"
+            [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
+            [filtriSediCardinalita]="vociFiltroSedi.length"
+            [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+            [mapLat]="startLat"
+            [mapLon]="startLon"
+            [mapZoom]="startZoom"
+            [mezzoSelezionato]="mezzoSelezionato"
+            [reset]="reset"
+            [optOnlyMap]="onlyMap"
+            (nuovaSelezioneArea)="selezioneArea($event)"
+        >
+        </app-mappa-posizioni-flotta>
+        <!--
+        <app-gmaps-posizioni-flotta
             [elencoPosizioni]="elencoPosizioni" 
             [elencoPosizioniDaElaborare]="elencoUltimePosizioni" 
             [elencoMezziDaSeguire]="seguiMezziSelezionati"
@@ -178,10 +199,9 @@
             [mapZoom]="startZoom"
             [mezzoSelezionato]="mezzoSelezionato"
             [reset]="reset"  
-            [onlyMap]="onlyMap"
-            (nuovaSelezioneArea)="selezioneArea($event)"
-        >
-        </app-mappa-posizioni-flotta>
+            [onlyMap]="onlyMap">    
+        </app-gmaps-posizioni-flotta>
+        -->
     </div>
 </div>
 

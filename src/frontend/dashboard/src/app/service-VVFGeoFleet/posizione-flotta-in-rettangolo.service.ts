@@ -69,12 +69,13 @@ export class PosizioneFlottaInRettangoloService {
       var observable: Observable<Response> = this.http.get(API_URL + richiestaAPI) ;
       
       var posizioniMezzo : PosizioneMezzo[];
+      var obsVoid : Observable<void>;
       var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
       //var obsRisposta : Observable<RispostaMezziInRettangolo>;
 
 
-      //obsPosizioniMezzo = observable.      
-      obsPosizioniMezzo = observable.      
+    
+      obsVoid = observable.      
       map((r : Response) => 
         {
           var risp : RispostaMezziInRettangolo = r.json();
@@ -94,16 +95,21 @@ export class PosizioneFlottaInRettangoloService {
               e.toolTipText = this.toolTipText(e);
               e.classiMezzoDepurata = this.classiMezzoDepurata(e);
               e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
-              let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
-              return Object.assign(posizioneMezzo, e);
-
-            });
-            return Observable.of(posizioniMezzo);
+              let posizioneMezzo : PosizioneMezzo = Object.create(PosizioneMezzo.prototype);
+               Object.assign(posizioneMezzo, e);
+               return posizioneMezzo;
+            }
+          )
+            return posizioniMezzo;
+            //return Observable.of(posizioniMezzo);
         })
-      .catch(this.handleError);      
+      .catch(this.handleError);    
 
+      
+      obsPosizioniMezzo = Observable.of(posizioniMezzo);
       return obsPosizioniMezzo;
     };
+
     //Observable.of(
     private handleError(error: Response | any) {
       if (error != null)

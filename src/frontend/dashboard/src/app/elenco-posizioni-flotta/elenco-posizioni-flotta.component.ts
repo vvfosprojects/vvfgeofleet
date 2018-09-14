@@ -22,28 +22,40 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() istanteUltimoAggiornamento: Date;
   @Input() maxIstanteAcquisizione: Date ;
   @Input() reset: Boolean ;  
+
+  @Input() startLat: number ;
+  @Input() startLon: number ;
+  @Input() startZoom: number ;
+  @Input() modalita: number ;
+  
   //@Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
   @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
   
+  private geolocationPosition : Position;
+  private modalitaPrecedente: number = 0;
   private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
  // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
   public mezzoSelezionato: PosizioneMezzo ;
 
+
+  public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
+
+  /*
   startLat: number = 41.889777;
   startLon: number = 12.490689;
   startZoom: number = 6;
-
-  public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
+  */
 
   centerOnLast: boolean = true;
   centerOnMezzo: boolean = false;
   isSeguiMezzo: boolean = true;
   onlyMap: boolean = false;
 
-  ggMaxPos: number = 7;
+  //ggMaxPos: number = 7;
+  ggMaxPos: number = 3;
 
   public titoloFiltroStatiMezzo: string = "Stati Mezzo";
   public vociFiltroStatiMezzo: VoceFiltro[] = [
@@ -60,10 +72,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       "assets/images/mm_20_green.png"
     ),
     new VoceFiltro(
-      "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
+      "5", "Fuori per motivi di Istituto", 0, false, "", "badge-info", "assets/images/mm_20_yellow.png"
     ),
     new VoceFiltro(
-      "5", "Fuori per motivi di Istituto", 0, false, "", "badge-info", "assets/images/mm_20_yellow.png"
+      "0", "Stato operativo Sconosciuto", 0, false, "", "badge-info", "assets/images/mm_20_black.png"
     ),
     // posizione inviata da una radio non associata a nessun Mezzo
     new VoceFiltro(
@@ -74,7 +86,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       "7", "Mezzi fuori servizio", 0, false, "","badge-info", "assets/images/mm_20_cyan.png"
     ),
     new VoceFiltro(
-      "0", "Stato operativo Sconosciuto", 0, false, "", "badge-info", "assets/images/mm_20_black.png"
+      "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
     )
     ];
 
@@ -443,15 +455,104 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   ngOnInit() {
 
     this.inizializzaFiltri();  
+    //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
+
   }
 
   ngOnChanges(changes: any) {
   
     this.inizializzaFiltri();  
+    //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
+
+  }
+
+  cambiaModalita () {
+    //console.log(this.modalita, this.modalitaPrecedente);
+    if (this.modalita != this.modalitaPrecedente) {
+      this.modalitaPrecedente = this.modalita;
+      if (window.navigator && window.navigator.geolocation) {
+        window.navigator.geolocation.getCurrentPosition(
+            position => {
+                this.geolocationPosition = position;
+                //console.log(position);                
+                this.startLat = this.geolocationPosition.coords.latitude;
+                this.startLon = this.geolocationPosition.coords.longitude;
+            },
+            error => {
+                switch (error.code) {
+                    case 1:
+                        console.log('Permission Denied');
+                        break;
+                    case 2:
+                        console.log('Position Unavailable');
+                        break;
+                    case 3:
+                        console.log('Timeout');
+                        break;
+                }
+            }
+        );
+      };
+  
+      switch (this.modalita ) {
+        // Modalità Comando
+        case 1:
+        {
+          this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
+          this.startZoom = 10;        
+          this.onlyMap = true;   
+          this.reset = true;
+          //this.nuovaSelezioneAreaPos.emit(e);
+          break;     
+        }
+        // Modalità Direzione Regionale
+        case 2:
+        {
+          this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
+          this.startZoom = 8;                
+          this.onlyMap = true;  
+          this.reset = true;
+          //this.nuovaSelezioneAreaPos.emit(e);
+          break;                     
+        }
+        // Modalità CON
+        case 3:
+        {
+          this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
+          this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
+          this.startZoom = 6;                
+          this.onlyMap = false;        
+          this.reset = true;
+          this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);            
+          break;               
+        }
+      }
+    }
   }
 
   inizializzaFiltri() {
     
+    this.cambiaModalita();
     //if (this.elencoPosizioni.length == 0 ) 
     if (this.reset || this.elencoPosizioni.length == 0 ) 
       { this.elencoPosizioni = this.elencoUltimePosizioni; }
@@ -506,10 +607,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
             return aa>bb ? -1 : aa<bb ? 1 : 0;
           });
 
-
-            
     }
-
 
     this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
       this.elencoPosizioni.find( iii => 
@@ -663,20 +761,21 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   nuovaSelezioneStatiMezzo(event) {
     //console.log('event: ', event);
     this.filtriStatiMezzo = event;
+    //this.impostaPosizioneMezzoVisibile(this.elencoPosizioni);
 
   } 
   
   nuovaSelezioneSedi(event) {
     //console.log('event: ', event);
     this.filtriSedi = event;
+    //this.impostaPosizioneMezzoVisibile(this.elencoPosizioni);
 
   }
 
-    
   nuovaSelezioneGeneriMezzo(event) {
     //console.log('event: ', event);
     this.filtriGeneriMezzo = event;
-
+    //this.impostaPosizioneMezzoVisibile(this.elencoPosizioni);
   }
   
   centraSuMappa(evento) {
@@ -740,5 +839,51 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   
   selezioneArea(e) {    
     this.nuovaSelezioneAreaPos.emit(e)
+  }
+
+
+  impostaPosizioneMezzoVisibile( elenco: PosizioneMezzo[]) { 
+    elenco.forEach( p  => {
+    
+        if (p.infoSO115 != null) {
+        
+          var r : boolean ;
+          r = (this.seguiMezziSelezionati.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
+          /*
+          r = (r? true: this.filtriStatiMezzo.
+          some(filtro => filtro === p.infoSO115.stato )
+          && this.filtriSedi.
+          some(filtro => filtro === p.sedeMezzo )
+          && this.filtriGeneriMezzo.
+          some(filtro => p.classiMezzo.some( item => item === filtro))
+          );
+          //some(filtro => p.classiMezzo[1] === filtro);
+          */
+          
+          
+          r = (r? true: 
+          (this.filtriStatiMezzo.length === this.vociFiltroSediALL.length||
+            this.filtriStatiMezzo.
+              some(filtro => filtro === p.infoSO115.stato))
+          && 
+          (this.filtriSedi.length === this.vociFiltroSediALL.length||
+            this.filtriSedi.
+              some(filtro => filtro === p.sedeMezzo))
+          && 
+          (this.filtriGeneriMezzo.length === this.vociFiltroGeneriMezzoALL.length||
+            this.filtriGeneriMezzo.
+              some(filtro => p.classiMezzo[1] === filtro))
+          );
+          
+          p.visibile = r;
+
+          //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
+
+        } 
+        else { console.log(p, moment().toString()); 
+          p.visibile = false;      
+        }
+      }
+    );
   }
 }

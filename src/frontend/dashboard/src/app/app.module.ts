@@ -9,8 +9,6 @@ import { PosizioneMezzoComponent } from './posizione-mezzo/posizione-mezzo.compo
 import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
 
-import { AgmCoreModule } from '@agm/core';
-import { MappaPosizioniFlottaComponent } from './mappa-posizioni-flotta/mappa-posizioni-flotta.component';
 import { FiltriComponent } from './filtri/filtri.component';
 //import { UiSwitchModule } from 'angular2-ui-switch';
 import { UiSwitchModule } from 'ngx-ui-switch';
@@ -21,11 +19,19 @@ import { DistanzaTemporalePipe } from "./shared/pipes/distanza-temporale.pipe";
 import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
 
+
+import { MappaPosizioniFlottaComponent } from './mappa-posizioni-flotta/mappa-posizioni-flotta.component';
+import { AgmCoreModule } from '@agm/core';
+import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
+import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+import {  } from '@types/googlemaps';
+
+//import { GmapsPosizioniFlottaComponent } from './gmaps-posizioni-flotta/gmaps-posizioni-flotta.component';
+
 registerLocaleData(localeIt);
 
 import { LOCALE_ID } from '@angular/core';
 
-import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
 import { FiltroMultiSelectDdComponent } from './filtro-multi-select-dd/filtro-multi-select-dd.component';
 import { MultiSelectModule } from 'primeng/multiselect';
 import {AccordionModule} from 'primeng/accordion';
@@ -47,12 +53,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FiltriComponent,
     DistanzaTemporalePipe,
     AgmGetMapObjectsDirective,
-    FiltroMultiSelectDdComponent
+    FiltroMultiSelectDdComponent,
+    //GmapsPosizioniFlottaComponent
   ],
   imports: [
+    
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAX1J39E6WesXRiptR9arJPtMzE-2ddQPU'
-    }),
+    }),    
+    AgmJsMarkerClustererModule,
     NgbModule.forRoot(),
     HttpModule,
     BrowserModule,

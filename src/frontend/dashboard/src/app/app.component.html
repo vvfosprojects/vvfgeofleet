@@ -28,17 +28,68 @@
   <base href="/">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 
 <body>
   <!-- Enable bootstrap 4 theme -->
   <script>window.__theme = 'bs4';</script>
   <div class="container-fluid">
+      <div class="row">
+        <div class="rounded-top bg-primary col-xl-12 col-lg-12 col-md-12 col-sm-12 p-0">
+          <div class="row px-0 mx-0">            
+            <div class="h4 col-xl-8 col-lg-8 col-md-8 col-sm-8">        
+              <div class="row">
+                <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
+                  <img src="assets/images/Fire-Truck.png" style="width:60px;height:60px;"/>
+                </div>
+                <div class="col-xl-11 col-lg-11 col-md-11 col-sm-11">
+                  <h4 class="text-white font-weight-bold pl-3 mt-3" >GeoFleet Dashboard</h4>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+              <div class="row">
+                <div class="h8 col-xl-12 col-lg-12 col-md-12 col-sm-12 text-right">
+                    <span class="h8 text-white text-left pt-2 pr-1" style="font-size:80%;">
+                    Modalità di visualizzazione:</span> 
+                    <div class="btn-group btn-group-toggle text-right " ngbRadioGroup name="radioBasic" 
+                    [(ngModel)]="modalita">
+                      <label ngbButtonLabel class="btn-primary btn-sm">
+                        <input ngbButton type="radio" [value]="1"> Comando
+                      </label>
+                      <label ngbButtonLabel class="btn-primary btn-sm">
+                        <input ngbButton type="radio" [value]="2"> Direzione
+                      </label>
+                      <label ngbButtonLabel class="btn-primary btn-sm">
+                        <input ngbButton type="radio" [value]="3"> CON
+                      </label>
+                    </div>
+                </div>
+              </div>                
+              <div class="row">
+                <div class="h8 col-xl-12 col-lg-12 col-md-12 col-sm-12 text-white text-right pt-2 m-0">
+                        <span class="pr-1" style="font-size:80%;">Situazione Flotta aggiornata al</span>
+                        <div class="text-white badge badge-secondary">
+                            <span>{{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}}</span> 
+                        </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
     <app-elenco-posizioni-flotta 
       [elencoUltimePosizioni]="elencoPosizioniMezzo"
       [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
       [maxIstanteAcquisizione]="maxIstanteAcquisizione"
       [reset]="reset"
+      [startLat]="startLat"
+      [startLon]="startLon" 
+      [startZoom]="startZoom"   
+      [modalita]="modalita"
       (nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)"
       (nuovaSelezioneAreaPos)="aggiornaArea($event)">
     </app-elenco-posizioni-flotta>
