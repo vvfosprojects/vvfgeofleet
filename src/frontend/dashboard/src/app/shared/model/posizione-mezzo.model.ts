@@ -1,3 +1,4 @@
+
 export class PosizioneMezzo {
     constructor (
         public istanteInvio:string,
@@ -21,7 +22,9 @@ export class PosizioneMezzo {
         public toolTipText: string,
         public sedeMezzo: string,
         public classiMezzoDepurata: string[],
-        public descrizionePosizione: string
+        public descrizionePosizione: string,
+        public marker: google.maps.Marker,
+        public visibile: boolean 
     ) {}
     
 }

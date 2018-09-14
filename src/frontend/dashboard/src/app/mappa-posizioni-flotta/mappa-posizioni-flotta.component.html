@@ -1,17 +1,13 @@
-<span class="h3">
-    Situazione Flotta 
-    <!--
-    <i class="fa fa-truck"></i>
-    <img src="assets/images/Fire-Truck.png"/>
-    -->
-</span>
-<span class="h6 badge badge-secondary">
-  {{istanteUltimoAggiornamento | date:'shortDate'}} {{istanteUltimoAggiornamento | date:"mediumTime"}} 
-</span>
 <div class="card">
-  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
+  <!--<agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
   (boundsChange)="areaChanged($event)"            
+  -->
+  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
+  (boundsChange)="areaChangedOnMap($event)"            
   >
+  <!--agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
+  -->
+    <!--agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">-->
       <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
         <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
             (markerClick)="clickedMarker(m, i)"
@@ -26,21 +22,8 @@
             data-toggle="tooltip" data-html="true" 
             title="{{m.toolTipText}}">    
             >
-        <!--
-        agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
-            (markerClick)="clickedMarker(m, i)"
-            (mouseOver)="overMarker(m, i)"
-            (mouseOut)="outOfMarker(m, i)"
-            [latitude]="m.localizzazione.lat"
-            [longitude]="m.localizzazione.lon"
-            [openInfoWindow]="false"
-            [iconUrl]="markerIconUrl(m)"
-            [visible]="posizioneMezzoSelezionata(m)"
-            [zIndex]="indiceMezzoSelezionato(m)"
-            >
-        -->        
-
-
+            <!--            [visible]="m.visibile"
+            -->
             <!--
             <agm-info-window [disableAutoPan]="true">
                 {{m.codiceMezzo}}
@@ -48,5 +31,6 @@
             -->
         </agm-marker>
       <!--</agm-get-map-objects>-->
+    <!--</agm-marker-cluster>-->
   </agm-map>
 </div>

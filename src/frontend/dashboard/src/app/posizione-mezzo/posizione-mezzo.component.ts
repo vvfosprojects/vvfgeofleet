@@ -91,8 +91,7 @@ export class PosizioneMezzoComponent implements OnInit {
       //console.log(this.posizioneMezzo);
       this.defStatoMezzoCorrente = this.mapAlert.get('0');
     }
-    
-    
+
     if (this.defStatoMezzoCorrente == null )
     { console.log(this.posizioneMezzo); }
 
@@ -118,6 +117,7 @@ export class PosizioneMezzoComponent implements OnInit {
       filter( i =>  (i.substr(0,5) != "PROV:") )
   }
 
+  
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||
       (this.filtriStatiMezzo.
@@ -131,7 +131,11 @@ export class PosizioneMezzoComponent implements OnInit {
       )
       //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
     );
-      /*
+  }
+  
+ 
+  /*
+  posizioneMezzoSelezionata() { 
     return (
       (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
         this.filtriStatiMezzo.
@@ -145,9 +149,10 @@ export class PosizioneMezzoComponent implements OnInit {
         this.filtriGeneriMezzo.
           some(filtro => this.posizioneMezzo.classiMezzo[1] === filtro))
       );
-      */
-  }
 
+  }
+  */
+  
   private mouseIn() {
     this.currentItem = this.posizioneMezzo;
     this.mezzoSelezionato.emit([this.posizioneMezzo, "mouseover"] );
