@@ -16,9 +16,13 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
+  @Input() filtriDestinazioneUso: string[] = [];
+  
   @Input() filtriStatiMezzoCardinalita: number ;
   @Input() filtriSediCardinalita: number ;
   @Input() filtriGeneriMezzoCardinalita: number ;
+  @Input() filtriDestinazioneUsoCardinalita: number;
+
   @Input() isSeguiMezzo: boolean ;
 
   
@@ -127,7 +131,9 @@ export class PosizioneMezzoComponent implements OnInit {
           some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
       && 
       this.filtriGeneriMezzo.
-          some(filtro => this.posizioneMezzo.classiMezzo.some( gm => gm === filtro))      
+          some(filtro => this.posizioneMezzo.classiMezzo.some( gm => gm === filtro))  
+      && this.filtriDestinazioneUso.
+          some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
       )
       //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
     );

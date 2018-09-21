@@ -3,7 +3,7 @@ import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { GoogleMapsAPIWrapper, MarkerManager, LatLngLiteral } from '@agm/core';
 import { AgmMarker, MouseEvent } from '@agm/core';
 import { AgmCoreModule, MapsAPILoader } from '@agm/core';
-import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+import { AgmJsMarkerClustererModule, ClusterManager } from '@agm/js-marker-clusterer';
 
 import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryList } from '@angular/core';
 
@@ -13,13 +13,21 @@ import { Subject, observable } from 'rxjs';
 
 import { Observable } from "rxjs/Rx";
 
+import {  } from '@types/googlemaps';
+import { MapType } from '@angular/compiler';
+
+import { GoogleMap } from '@agm/core/services/google-maps-types';
+
+declare var google :any;
+
 @Component({
   selector: 'app-mappa-posizioni-flotta',
   templateUrl: './mappa-posizioni-flotta.component.html',
   styleUrls: ['./mappa-posizioni-flotta.component.css'],
   providers: [{ provide: MarkerManager, useClass:MarkerManager}, 
-    { provide: GoogleMapsAPIWrapper, useClass:GoogleMapsAPIWrapper}    ,
-    { provide: AgmMarker, useClass:AgmMarker}    
+    { provide: GoogleMapsAPIWrapper, useClass:GoogleMapsAPIWrapper},
+    { provide: AgmMarker, useClass:AgmMarker},
+    { provide: ClusterManager, useClass:ClusterManager}    
     
   ]
 })
@@ -35,9 +43,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
+  @Input() filtriDestinazioneUso: string[] = [];
+
   @Input() filtriStatiMezzoCardinalita: number ;
   @Input() filtriSediCardinalita: number ;
   @Input() filtriGeneriMezzoCardinalita: number ;
+  @Input() filtriDestinazioneUsoCardinalita: number;
 
   @Input() mapLat: number ;
   @Input() mapLon: number ;
@@ -66,8 +77,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private mapIconeSelezionato: any ;
   
   private markerManager: MarkerManager ;
-  private markerArrays: AgmMarker[];
-
+  private markerArrays: AgmMarker[] = [];
+  private clusterManager: ClusterManager;
   //private markers: AgmMarker;
 
   public elencoPosizioniMostrate : PosizioneMezzo[] = [];
@@ -81,12 +92,13 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private areaChangedDebounceTime = new Subject();
 
-  constructor() { }    
+  
+  constructor( ) {  }    
 
   ngOnInit() {
 
 
-       this.iconeStati = [
+    this.iconeStati = [
       ['0','assets/images/mm_20_black.png'],
       ['1','assets/images/mm_20_red.png'],
       ['2','assets/images/mm_20_blue.png'],
@@ -127,19 +139,40 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     this.areaChangedDebounceTime.debounceTime(2000).
       subscribe( evento => this.areaChanged(evento));
+
+    //this.markerManager.addMarker( new AgmMarker())
   }
 
+  mapReady(map) {
+    
+    null;
+    /*
+    let position = new google.maps.LatLng( 41.889777, 12.490689);
 
+    var cityCircle = new google.maps.Circle({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      map: map,
+      center: position,
+      radius: 10000
+    });
+    */
+}
   ngOnChanges() {
 
-       
-    // aggiunge alle posizioni Mostrate quelle Nuove     
+
+      // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
     if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
       { 
         //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
         this.elencoPosizioniMostrate = this.elencoPosizioni;        
-        this.elencoPosizioniMostratePrecedenti = [];}
+        this.elencoPosizioniMostratePrecedenti = [];
+      }
+
     else 
       { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
 
@@ -318,6 +351,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     //console.log('out of the marker: ', mezzo, index);
   }
 
+  setClusterManager(clusterManager: ClusterManager){
+    this.clusterManager = clusterManager;
+    //console.log("setMarkerManager: ", markerManager);
+   }
+
   setMarkerManager(markerManager: MarkerManager){
     this.markerManager = markerManager;
     //console.log("setMarkerManager: ", markerManager);
@@ -342,21 +380,25 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
+
       if (p.infoSO115 != null) {
        
+
         var r : boolean ;
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
 
-        r = (r? true: this.filtriStatiMezzo.
-        some(filtro => filtro === p.infoSO115.stato )
-        && this.filtriSedi.
-        some(filtro => filtro === p.sedeMezzo )
-        && this.filtriGeneriMezzo.
-        some(filtro => p.classiMezzo.some( item => item === filtro))
-        );
-        //some(filtro => p.classiMezzo[1] === filtro);
         
-       /*
+        r = (r? true: this.filtriStatiMezzo.
+          some(filtro => filtro === p.infoSO115.stato )
+          && this.filtriSedi.
+          some(filtro => filtro === p.sedeMezzo )
+          && this.filtriGeneriMezzo.
+          some(filtro => p.classiMezzo.some( item => item === filtro))
+          && this.filtriDestinazioneUso.
+          some(filtro =>filtro === p.destinazioneUso )
+          );
+
+        /*
         var r : boolean = 
         (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
           this.filtriStatiMezzo.

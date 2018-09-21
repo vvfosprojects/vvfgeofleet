@@ -1,14 +1,9 @@
 <div class="card">
-  <!--<agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
-  (boundsChange)="areaChanged($event)"            
-  -->
   <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
-  (boundsChange)="areaChangedOnMap($event)"            
+  (boundsChange)="areaChangedOnMap($event)"    (mapReady)="mapReady($event)"         
   >
-  <!--agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
-  -->
-    <!--agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">-->
-      <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)">-->
+    <!--<agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">-->
+      <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)" (clusterManager)="setClusterManager($event)">-->
         <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "
             (markerClick)="clickedMarker(m, i)"
             (mouseOver)="overMarker(m, i)"
@@ -32,5 +27,5 @@
         </agm-marker>
       <!--</agm-get-map-objects>-->
     <!--</agm-marker-cluster>-->
-  </agm-map>
+</agm-map>
 </div>

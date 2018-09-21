@@ -84,6 +84,7 @@ export class PosizioneFlottaService {
             }
             //e.tooltipText = Object.create(String.prototype);
             e.sedeMezzo = this.sedeMezzo(e);
+            e.destinazioneUso = this.destinazioneUso(e);
             e.toolTipText = this.toolTipText(e);
             e.classiMezzoDepurata = this.classiMezzoDepurata(e);
             e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
@@ -118,6 +119,7 @@ export class PosizioneFlottaService {
               }
               //e.tooltipText = Object.create(String.prototype);
               e.sedeMezzo = this.sedeMezzo(e);
+              e.destinazioneUso = this.destinazioneUso(e);
               e.toolTipText = this.toolTipText(e);
               e.classiMezzoDepurata = this.classiMezzoDepurata(e);
               e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
@@ -156,10 +158,23 @@ export class PosizioneFlottaService {
       return ( r != null ? r: "..");    
     }
     
+
+    destinazioneUso(p : PosizioneMezzo) {
+      //return p.classiMezzo.find( i =>  i.substr(0,5) == "PROV:".substr(5,2));
+      
+      var r : string;
+      if (p.classiMezzo != null) {
+        r = p.classiMezzo.find( i =>  (i.substr(0,5) == "USO:"));
+        //r = (r != null) ?  r.substr(5,2) : ".."; } 
+        r = (r != null) ?  r.substr(5,2) : "CORP"; } 
+      return ( r != null ? r: "..");
+    }
+    
   
     classiMezzoDepurata(p : PosizioneMezzo) {
       return p.classiMezzo.
-        filter( i =>  (i.substr(0,5) != "PROV:") )
+        filter( i =>  (i.substr(0,5) != "PROV:") ).
+        filter( i =>  (i.substr(0,5) != "USO:") )
     }
       
     toolTipText(item : PosizioneMezzo) {

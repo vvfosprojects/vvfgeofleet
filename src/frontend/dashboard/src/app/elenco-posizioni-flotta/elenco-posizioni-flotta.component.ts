@@ -450,6 +450,16 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     ];
     filtriGeneriMezzo: string[] = [];
 
+    public titoloFiltroDestinazioneUso: string = "Destinazione d'uso";
+    public vociFiltroDestinazioneUso: VoceFiltro[] = [];
+    public vociFiltroDestinazioneUsoALL: VoceFiltro[] = [
+     new VoceFiltro("..", "sconosciuta", 0, true, "", "badge-info", ""),
+     new VoceFiltro("CORP", "Comando", 0, true, "", "badge-info", ""),
+     new VoceFiltro("CMOB", "Colonna Mobile", 0, true, "", "badge-info", ""),
+     new VoceFiltro("GOS", "Gruppo Operativo Speciale", 0, true, "", "badge-info", "")
+    ];
+    filtriDestinazioneUso: string[] = [];
+
   constructor() { }
 
   ngOnInit() {
@@ -639,6 +649,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           }
         ));
 
+    this.vociFiltroDestinazioneUso = this.vociFiltroDestinazioneUsoALL.filter( i =>
+      this.elencoPosizioni.find( iii => 
+        {if ( iii.destinazioneUso === i.codice)
+          return true; 
+          else 
+          return false;
+        } 
+      ));
+            
     /*
     var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
 
@@ -735,6 +754,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
+      this.filtriDestinazioneUso = this.vociFiltroDestinazioneUso
+      .filter(v => v.selezionato)
+      .map(v => (v.codice).toString())
+      ;
+
       
       if (this.centerOnMezzo &&  this.seguiMezziSelezionati[0] != null) {
         this.mezzoSelezionato = this.elencoPosizioni.find(item =>
@@ -775,6 +799,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   nuovaSelezioneGeneriMezzo(event) {
     //console.log('event: ', event);
     this.filtriGeneriMezzo = event;
+    //this.impostaPosizioneMezzoVisibile(this.elencoPosizioni);
+  }
+  
+  nuovaSelezioneDestinazioneUso(event) {
+    //console.log('event: ', event);
+    this.filtriDestinazioneUso = event;
     //this.impostaPosizioneMezzoVisibile(this.elencoPosizioni);
   }
   
@@ -872,9 +902,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           && 
           (this.filtriGeneriMezzo.length === this.vociFiltroGeneriMezzoALL.length||
             this.filtriGeneriMezzo.
-              some(filtro => p.classiMezzo[1] === filtro))
+              some(filtro => p.classiMezzo[1] === filtro))          
+          && 
+          (this.filtriDestinazioneUso.length === this.vociFiltroDestinazioneUsoALL.length||
+            this.filtriDestinazioneUso.
+              some(filtro => p.destinazioneUso === filtro))
           );
-          
+                    
           p.visibile = r;
 
           //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));

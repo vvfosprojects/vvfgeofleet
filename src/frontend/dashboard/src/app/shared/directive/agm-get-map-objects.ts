@@ -1,5 +1,6 @@
 import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryList } from '@angular/core';
 import { GoogleMapsAPIWrapper, MarkerManager, AgmMarker } from '@agm/core';
+import { AgmJsMarkerClustererModule, ClusterManager } from '@agm/js-marker-clusterer';
 
 @Directive({
   selector: 'agm-get-map-objects',
@@ -46,11 +47,25 @@ export class AgmGetMapObjectsDirective implements AfterViewInit {
     return this._markers;
   }
   
+  /**
+   * Get cluster manager
+   */
+  private _clusterManager: any = null;
+  @Output('clusterManager') clusterManagerChanged: EventEmitter<ClusterManager> = new EventEmitter<ClusterManager>();
+  set clusterManager(val){
+    this._clusterManager = val;
+    this.clusterManagerChanged.emit(val);
+  }
+  get clusterManager(){
+    return this._clusterManager;
+  }
+
   @ContentChildren(AgmMarker) markerChildren: QueryList<AgmMarker>;
 
   constructor(
     private googleMapsWrapper: GoogleMapsAPIWrapper,
-    private googleMarkerManager: MarkerManager
+    private googleMarkerManager: MarkerManager,
+    private googleClusterManager: ClusterManager,
   ) { }
 
   ngAfterViewInit() {
@@ -69,5 +84,10 @@ export class AgmGetMapObjectsDirective implements AfterViewInit {
     this.markerChildren.changes.subscribe(markers => {
       this.markers = markers._results;
     })
+
+    // get cluster manager
+    this.clusterManager = this.googleClusterManager
+    //console.log("ngAfterViewInit: ", this.markerManager);
+    
   }
 }
