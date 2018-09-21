@@ -28,7 +28,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Input() startZoom: number ;
   @Input() modalita: number ;
   
-  //@Output() nuovaSelezioneGgMaxPos: EventEmitter<Object[]> = new EventEmitter();
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
   @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
   
@@ -829,8 +828,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   seguiMezzo(evento) {
     var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+
     if (tipoevento == "dblclick") {
-      this.seguiMezziSelezionati[0] = evento[0];
+      //this.seguiMezziSelezionati[0] = evento[0];
+      pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
+      if (pos == null) {
+        this.seguiMezziSelezionati = this.seguiMezziSelezionati.concat(evento[0]);
+      }
+
       this.centerOnMezzo = true;
     }
     //console.log("seguiMezzo", evento);
@@ -838,9 +844,17 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   rimuoviSeguiMezzo(evento) {
     var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+    
     if (tipoevento == "dblclick") {
-      this.seguiMezziSelezionati = [];
-      this.centerOnMezzo = false;
+      //this.seguiMezziSelezionati = [];
+      //pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
+      let i = this.seguiMezziSelezionati.indexOf( evento[0]);
+      this.seguiMezziSelezionati.splice(i,1);
+
+      if (this.seguiMezziSelezionati.length == 0 ) {
+        this.centerOnMezzo = false;
+      }
     }
     //console.log("rimuoviSeguiMezzo", evento);
   }
