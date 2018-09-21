@@ -93,9 +93,11 @@
                                 [filtriStatiMezzo]="filtriStatiMezzo"
                                 [filtriSedi]="filtriSedi"
                                 [filtriGeneriMezzo]="filtriGeneriMezzo"
+                                [filtriDestinazioneUso]="filtriDestinazioneUso"
                                 [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
                                 [filtriSediCardinalita]="vociFiltroSedi.length"
                                 [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+                                [filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"
                                 [isSeguiMezzo]="!isSeguiMezzo"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
@@ -114,6 +116,9 @@
                             <app-filtro-multi-select-dd [titolo]="titoloFiltroGeneriMezzo" 
                             [vociFiltro]="vociFiltroGeneriMezzo" 
                             (nuovaSelezione)="nuovaSelezioneGeneriMezzo($event)"></app-filtro-multi-select-dd>
+                            <app-filtro-multi-select-dd [titolo]="titoloFiltroDestinazioneUso" 
+                            [vociFiltro]="vociFiltroDestinazioneUso" 
+                            (nuovaSelezione)="nuovaSelezioneDestinazioneUso($event)"></app-filtro-multi-select-dd>
                     </div>
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
@@ -170,9 +175,11 @@
             [filtriStatiMezzo]="filtriStatiMezzo"
             [filtriSedi]="filtriSedi"            
             [filtriGeneriMezzo]="filtriGeneriMezzo"
+            [filtriDestinazioneUso]="filtriDestinazioneUso"            
             [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
             [filtriSediCardinalita]="vociFiltroSedi.length"
             [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+            [filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"
             [mapLat]="startLat"
             [mapLon]="startLon"
             [mapZoom]="startZoom"

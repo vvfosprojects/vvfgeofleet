@@ -26,7 +26,7 @@ import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-object
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
 import {  } from '@types/googlemaps';
 
-//import { GmapsPosizioniFlottaComponent } from './gmaps-posizioni-flotta/gmaps-posizioni-flotta.component';
+import { GmapsPosizioniFlottaComponent } from './gmaps-posizioni-flotta/gmaps-posizioni-flotta.component';
 
 registerLocaleData(localeIt);
 
@@ -54,7 +54,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DistanzaTemporalePipe,
     AgmGetMapObjectsDirective,
     FiltroMultiSelectDdComponent,
-    //GmapsPosizioniFlottaComponent
+    GmapsPosizioniFlottaComponent
   ],
   imports: [
     

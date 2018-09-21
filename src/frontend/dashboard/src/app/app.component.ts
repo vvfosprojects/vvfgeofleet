@@ -142,7 +142,7 @@ export class AppComponent {
           this.posizioneFlottaService.getPosizioneFlotta(parm).debounceTime(3000)
           .subscribe( posizioni => {
               //console.log("posizioneFlottaService: ", posizioni);
-              console.log("posizioneFlottaService.length: ", posizioni.length);
+              //console.log("posizioneFlottaService.length: ", posizioni.length);
               this.elencoPosizioniMezzo = posizioni.sort( 
                 function(a,b) 
                 { var bb : Date = new Date(b.istanteAcquisizione);

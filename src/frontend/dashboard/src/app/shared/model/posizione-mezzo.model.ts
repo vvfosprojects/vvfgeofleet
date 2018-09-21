@@ -21,6 +21,7 @@ export class PosizioneMezzo {
         public istanteArchiviazione: string,
         public toolTipText: string,
         public sedeMezzo: string,
+        public destinazioneUso: string,
         public classiMezzoDepurata: string[],
         public descrizionePosizione: string,
         public marker: google.maps.Marker,
