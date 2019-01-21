@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Web.Http;
+using Microsoft.AspNet.SignalR;
 using Modello.Classi;
 using Modello.Servizi.Persistence;
 
@@ -63,7 +64,10 @@ namespace VVFGeoFleet.Controllers
         /// <returns>L'oggetto inserito con la sua location</returns>
         public IHttpActionResult Post([FromBody]MessaggioPosizione messaggio)
         {
+      
             this.storeMessaggioPosizione.Store(messaggio);
+
+            DatiPosizioneLive.InviaPosLive(messaggio);
 
             return CreatedAtRoute("DefaultApi", new { id = messaggio.Id }, messaggio);
         }
