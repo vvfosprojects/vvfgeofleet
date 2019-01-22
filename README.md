@@ -302,6 +302,9 @@ Returns the path tracked for vehicle having the code specified as parameter, wit
 
 Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
+## /PosizioneLive
+
+
 
 # Dependencies
 VVFGeoFleet backend depends (also) on the following libraries.
