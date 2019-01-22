@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="IGetClassiMezzo.cs" company="CNVVF">
+// <copyright file="IGetClassimezzo.cs" company="CNVVF">
 // Copyright (C) 2017 - CNVVF
 //
 // This file is part of VVFGeoFleet.
@@ -17,6 +17,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System.Collections.Generic;
 
 namespace Modello.Servizi.Persistence

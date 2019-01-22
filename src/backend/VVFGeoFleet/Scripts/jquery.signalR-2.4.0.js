@@ -1,14 +1,3 @@
-/* jquery.signalR.core.js */
-/*global window:false */
-/*!
- * ASP.NET SignalR JavaScript Library 2.4.0
- * http://signalr.net/
- *
- * Copyright (c) .NET Foundation. All rights reserved.
- * Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
- *
- */
-
 /// <reference path="Scripts/jquery-1.6.4.js" />
 /// <reference path="jquery.signalR.version.js" />
 (function ($, window, undefined) {
