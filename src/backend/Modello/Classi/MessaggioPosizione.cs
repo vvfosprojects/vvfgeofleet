@@ -32,10 +32,10 @@ namespace Modello.Classi
         public Fonte Fonte { get; set; }
         public InfoFonte InfoFonte { get; set; }
         public InfoSO115 InfoSO115 { get; set; }
-
         public DateTime IstanteArchiviazione { get; set; }
         public bool Ultimo { get; set; }
-
         public InterpolationData InterpolationData { get; set; }
+        public short velocity { get; set; }
+        public short direction { get; set; }
     }
 }
