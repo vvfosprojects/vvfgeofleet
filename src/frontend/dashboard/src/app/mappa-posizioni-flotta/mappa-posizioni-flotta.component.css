@@ -1,4 +1,8 @@
 agm-map {
     height:600px;
   }
-  
+
+.map-sticky {
+    position: sticky;
+    top: 11% ;
+}

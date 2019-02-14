@@ -1,7 +1,10 @@
 import { ErrorHandler, Component, ElementRef, OnInit, Input, ViewChild } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 
-import {  } from '@types/googlemaps';
+//import {  } from '@types/google-maps';
+import {  } from 'google-maps';
+
+
 import '@google/markerclusterer/src/markerclusterer.js';
 
 //import { google } from '@agm/core/services/google-maps-types';

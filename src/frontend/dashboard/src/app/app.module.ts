@@ -24,7 +24,9 @@ import { MappaPosizioniFlottaComponent } from './mappa-posizioni-flotta/mappa-po
 import { AgmCoreModule } from '@agm/core';
 import { AgmGetMapObjectsDirective } from "./shared/directive/agm-get-map-objects";
 import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
-import {  } from '@types/googlemaps';
+//import {  } from '@types/google-maps';
+import {  } from 'google-maps';
+
 
 import { GmapsPosizioniFlottaComponent } from './gmaps-posizioni-flotta/gmaps-posizioni-flotta.component';
 
@@ -40,6 +42,8 @@ import {SliderModule} from 'primeng/slider';
 
 import  {ButtonModule } from 'primeng/button';
 import  { PanelModule} from 'primeng/panel';
+import {DragDropModule} from 'primeng/dragdrop';
+import {SidebarModule} from 'primeng/sidebar';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -71,7 +75,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AccordionModule,
     BrowserAnimationsModule,
     DropdownModule,
-    SliderModule
+    SliderModule,
+    DragDropModule,
+    SidebarModule    
   ],
   providers: [
     //{ provide: PosizioneFlottaService, useClass:PosizioneFlottaServiceFake},

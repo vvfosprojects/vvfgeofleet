@@ -13,12 +13,16 @@ import { Subject, observable } from 'rxjs';
 
 import { Observable } from "rxjs/Rx";
 
-import {  } from '@types/googlemaps';
+//import {  } from '@types/google-maps';
+import {  } from 'google-maps';
 import { MapType } from '@angular/compiler';
 
 import { GoogleMap } from '@agm/core/services/google-maps-types';
 
 declare var google :any;
+
+import { Inject, HostListener } from "@angular/core";
+import { DOCUMENT } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-mappa-posizioni-flotta',
@@ -33,7 +37,12 @@ declare var google :any;
 })
 
 
+
+
 export class MappaPosizioniFlottaComponent implements OnInit {
+
+  private filtriSediObj : Object;
+  private filtriGeneriMezzoObj : Object ;
 
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
@@ -92,8 +101,21 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private areaChangedDebounceTime = new Subject();
 
+  constructor( ) { 
+
+   }    
+
   
-  constructor( ) {  }    
+  //public fixed: boolean = false; 
+  /*
+  constructor(@Inject(DOCUMENT) private doc: Document) {}
+
+  @HostListener("window:scroll", [])
+  onWindowScroll() {
+     let num = this.doc.body.scrollTop;
+     console.log('num: ',num);
+  }
+  */
 
   ngOnInit() {
 
@@ -161,8 +183,26 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     });
     */
 }
+
   ngOnChanges() {
 
+    this.filtriSediObj = undefined;  
+    this.filtriGeneriMezzoObj = undefined;
+
+    this.filtriSediObj = new Object();  
+    this.filtriGeneriMezzoObj = new Object( );
+
+    this.filtriSedi.forEach( item => 
+      {
+       this.filtriSediObj[item] = item; 
+      }
+      );      
+    
+    this.filtriGeneriMezzo.forEach( item => 
+      {       
+         this.filtriGeneriMezzoObj[item]=item; 
+      }
+      );
 
       // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
@@ -379,6 +419,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   }
 
+
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
 
       if (p.infoSO115 != null) {
@@ -390,14 +431,21 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         
         r = (r? true: this.filtriStatiMezzo.
           some(filtro => filtro === p.infoSO115.stato )
-          && this.filtriSedi.
-          some(filtro => filtro === p.sedeMezzo )
-          && this.filtriGeneriMezzo.
-          some(filtro => p.classiMezzo.some( item => item === filtro))
+          && 
+          p.classiMezzo.
+          some( gm => this.filtriGeneriMezzoObj[gm] === gm )
+          &&
+          ( this.filtriSediObj[p.sedeMezzo] === p.sedeMezzo)
           && this.filtriDestinazioneUso.
           some(filtro =>filtro === p.destinazioneUso )
           );
 
+          /*
+          this.filtriSedi.
+          some(filtro => filtro === p.sedeMezzo )
+          && this.filtriGeneriMezzo.
+          some(filtro => p.classiMezzo.some( item => item === filtro))
+          */
         /*
         var r : boolean = 
         (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
@@ -413,6 +461,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
             some(filtro => p.classiMezzo[1] === filtro))
         ;
         */
+
+
         return r;
 
         //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));

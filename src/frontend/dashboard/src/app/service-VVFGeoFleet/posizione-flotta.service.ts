@@ -85,9 +85,10 @@ export class PosizioneFlottaService {
             //e.tooltipText = Object.create(String.prototype);
             e.sedeMezzo = this.sedeMezzo(e);
             e.destinazioneUso = this.destinazioneUso(e);
+            e.selezionato = false;
             e.toolTipText = this.toolTipText(e);
             e.classiMezzoDepurata = this.classiMezzoDepurata(e);
-            e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
+            e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";            
             let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
             return Object.assign(posizioneMezzo, e);
           }
@@ -120,6 +121,7 @@ export class PosizioneFlottaService {
               //e.tooltipText = Object.create(String.prototype);
               e.sedeMezzo = this.sedeMezzo(e);
               e.destinazioneUso = this.destinazioneUso(e);
+              e.selezionato = false;
               e.toolTipText = this.toolTipText(e);
               e.classiMezzoDepurata = this.classiMezzoDepurata(e);
               e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";

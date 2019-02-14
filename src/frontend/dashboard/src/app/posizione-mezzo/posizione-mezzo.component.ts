@@ -1,5 +1,11 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
+
+import { Inject, HostListener } from "@angular/core";
+import { DOCUMENT } from "@angular/platform-browser";
+import { MapType } from '@angular/compiler';
+
+
 //import { EventEmitter } from 'events';
 
 //selector: '[app-posizione-mezzo]',
@@ -10,6 +16,10 @@ import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
   styleUrls: ['./posizione-mezzo.component.css']
 })
 export class PosizioneMezzoComponent implements OnInit {
+
+  
+  private filtriSediObj : Object;
+  private filtriGeneriMezzoObj : Object ;
 
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
@@ -42,11 +52,37 @@ export class PosizioneMezzoComponent implements OnInit {
 
   private istanteAcquisizionePosizioneMezzo: Date;
 
-
   constructor() { 
-    //['4',['rientrato','badge-info']],
-    //['5',['istituto','badge-warning']],
-    //['6',['radio','badge-secondary']],
+
+    /*
+    var arr = [{a:{b:1}},{c:{d:2}}] 
+    var newObj = arr.reduce((a, b) => Object.assign(a, b), {})
+
+    console.log(newObj)
+    */    
+
+    /*
+    const filtriGeneriMezzo = [ "aa", "bb" ];
+    const filtriGeneriMezzoObj = { key: String, value: String};
+
+    filtriGeneriMezzo.forEach( item => filtriGeneriMezzoObj[item] = item );
+    console.log(filtriGeneriMezzoObj["aa"]);
+    */
+
+    /*
+    const filtriGeneriMezzo = [ "aa", "bb" ];
+    this.filtriGeneriMezzoObj = Object.setPrototypeOf(this.filtriGeneriMezzo, this.filtriGeneriMezzoObj);
+    console.log(filtriGeneriMezzoObj[0]);
+    */
+
+    //this.filtriGeneriMezzoObj = Object.setPrototypeOf(this.filtriGeneriMezzo, this.filtriGeneriMezzoObj);
+
+
+
+    //constructor(@Inject(DOCUMENT) private doc: Document) {
+      //['4',['rientrato','badge-info']],
+      //['5',['istituto','badge-warning']],
+      //['6',['radio','badge-secondary']],
 
     this.defStatiMezzo = [
       ['0',['sconosciuto','badge-dark']],
@@ -72,7 +108,12 @@ export class PosizioneMezzoComponent implements OnInit {
     this.mapIconeFonte = new Map(this.defIconeFonte);        
     
   }
-
+  /*
+  @HostListener("window:resize", [])
+  onWindowZoom() {
+      console.log("zoom");
+  }
+  */
   ngOnInit() {
 
     if (this.posizioneMezzo != null )
@@ -81,9 +122,30 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   ngOnChanges() {
+
+    this.filtriSediObj = undefined;  
+    this.filtriGeneriMezzoObj = undefined;
+
+    this.filtriSediObj = new Object();  
+    this.filtriGeneriMezzoObj = new Object( );
+
+    this.filtriSedi.forEach( item => 
+      {
+       this.filtriSediObj[item] = item; 
+      }
+      );      
+    
+    this.filtriGeneriMezzo.forEach( item => 
+      {       
+         this.filtriGeneriMezzoObj[item]=item; 
+      }
+      );
+    
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
+    if (this.posizioneMezzo.selezionato) 
+      { this.seguiMezzo(); }
   }
 
   aggiornaDatiMezzoCorrente() {
@@ -121,25 +183,35 @@ export class PosizioneMezzoComponent implements OnInit {
       filter( i =>  (i.substr(0,5) != "PROV:") )
   }
 
-  
+
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||
       (this.filtriStatiMezzo.
           some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
       && 
+      /*
       this.filtriSedi.
           some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
+      &&
+      */
+      ( this.filtriSediObj[this.posizioneMezzo.sedeMezzo] == this.posizioneMezzo.sedeMezzo)
       && 
+      /*
       this.filtriGeneriMezzo.
-          some(filtro => this.posizioneMezzo.classiMezzo.some( gm => gm === filtro))  
+          some(filtro => this.posizioneMezzo.classiMezzo.
+            some( gm => gm === filtro))  
+      */
+      this.posizioneMezzo.classiMezzo.
+      some( gm =>   this.filtriGeneriMezzoObj[gm] == gm )
       && this.filtriDestinazioneUso.
           some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
       )
       //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
     );
   }
-  
- 
+
+
+
   /*
   posizioneMezzoSelezionata() { 
     return (

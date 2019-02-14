@@ -10,6 +10,7 @@ import {AccordionModule} from 'primeng/accordion';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import {DragDropModule} from 'primeng/dragdrop';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -39,15 +40,16 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
  // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
   public mezzoSelezionato: PosizioneMezzo ;
 
-
   public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
 
+  private draggedPosizioneMezzo: PosizioneMezzo;
   /*
   startLat: number = 41.889777;
   startLon: number = 12.490689;
   startZoom: number = 6;
   */
 
+  
   centerOnLast: boolean = true;
   centerOnMezzo: boolean = false;
   isSeguiMezzo: boolean = true;
@@ -459,20 +461,101 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     ];
     filtriDestinazioneUso: string[] = [];
 
-  constructor() { }
+  constructor() { 
+    this.seguiMezziSelezionati = [];
+  }
 
   ngOnInit() {
 
     this.inizializzaFiltri();  
+    
     //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
 
   }
 
   ngOnChanges(changes: any) {
-  
+    
     this.inizializzaFiltri();  
     //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
 
+  }
+
+  
+  dragStart(event, pos: PosizioneMezzo) {
+    this.draggedPosizioneMezzo = pos;
+  }  
+
+  dragEnd(event ) {
+    this.draggedPosizioneMezzo = null;
+  }  
+
+  seguiMezzoDrop(evento) {
+    var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+
+    if ( this.draggedPosizioneMezzo ) {
+      //this.seguiMezziSelezionati[0] = evento[0];
+      pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo ===  
+        this.draggedPosizioneMezzo.codiceMezzo);
+      if (pos == null) {
+        this.seguiMezziSelezionati = this.seguiMezziSelezionati.
+          concat(this.draggedPosizioneMezzo);
+        this.draggedPosizioneMezzo = null;
+      }
+
+      this.centerOnMezzo = true;
+    }
+    //console.log("seguiMezzo", evento);
+  }
+
+  seguiMezzo(evento) {
+    var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+
+    if (tipoevento == "dblclick") {
+      //this.seguiMezziSelezionati[0] = evento[0];
+      pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
+      if (pos == null) {
+        this.seguiMezziSelezionati = this.seguiMezziSelezionati.concat(evento[0]);        
+      }
+
+      this.centerOnMezzo = true;
+    }
+    //console.log("seguiMezzo", evento);
+  }
+
+  rimuoviSeguiMezzo(evento) {
+    var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+    
+    if (tipoevento == "dblclick") {
+      //this.seguiMezziSelezionati = [];
+      //pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
+      let i = this.seguiMezziSelezionati.indexOf( evento[0]);
+      this.seguiMezziSelezionati.splice(i,1);
+
+      if (this.seguiMezziSelezionati.length == 0 ) {
+        this.centerOnMezzo = false;
+      }
+    }
+    //console.log("rimuoviSeguiMezzo", evento);
+  }
+
+  rimuoviSeguiMezzoDrop(evento) {
+    var tipoevento: string = evento[1];
+    var pos : PosizioneMezzo ;
+    
+    if ( this.draggedPosizioneMezzo ) {
+      //this.seguiMezziSelezionati = [];
+      //pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
+      let i = this.seguiMezziSelezionati.indexOf( this.draggedPosizioneMezzo);
+      this.seguiMezziSelezionati.splice(i,1);
+
+      if (this.seguiMezziSelezionati.length == 0 ) {
+        this.centerOnMezzo = false;
+      }
+    }
+    //console.log("rimuoviSeguiMezzo", evento);
   }
 
   cambiaModalita () {
@@ -608,8 +691,35 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           }    
         } )
 
-        // riordina l'array
+       
+        // riordina l'array elencoPosizioni
         this.elencoPosizioni = this.elencoPosizioni.sort( 
+          function(a,b) 
+          { var bb : Date = new Date(b.istanteAcquisizione);
+            var aa : Date  = new Date(a.istanteAcquisizione);
+            return aa>bb ? -1 : aa<bb ? 1 : 0;
+          });
+
+        // modifica nelle posizioni dei Mezzi da seguire quelle con variazioni
+        this.elencoUltimePosizioni.forEach( item => { 
+          var v = this.seguiMezziSelezionati.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+          //if ( v != null) {  
+          if ( v != -1) {  
+            if (item.infoSO115.stato != "0")
+              { this.seguiMezziSelezionati[v] = item; }
+            else
+              { this.seguiMezziSelezionati[v].fonte = item.fonte;
+                this.seguiMezziSelezionati[v].classiMezzo = item.classiMezzo;
+                this.seguiMezziSelezionati[v].istanteAcquisizione = item.istanteAcquisizione;
+                this.seguiMezziSelezionati[v].istanteArchiviazione = item.istanteArchiviazione;
+                this.seguiMezziSelezionati[v].istanteInvio = item.istanteInvio;
+                this.seguiMezziSelezionati[v].localizzazione = item.localizzazione;
+              }
+          }    
+        } )
+        
+        // riordina l'array seguiMezziSelezionati
+        this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
           function(a,b) 
           { var bb : Date = new Date(b.istanteAcquisizione);
             var aa : Date  = new Date(a.istanteAcquisizione);
@@ -618,6 +728,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     }
 
+    /*
     this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
       this.elencoPosizioni.find( iii => 
         {if ( iii.classiMezzo.find( cm  => cm === i.codice)) 
@@ -626,19 +737,27 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           return false;
         } 
       ));
+    */
+    this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
+      this.elencoPosizioni.some( iii => 
+        ( iii.classiMezzo.some( cm  => cm === i.codice)) 
+      ));
 
+    // aggiungo sempre il genere Mezzo "sconosciuto"
     if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "sconosciuto"))
     {
       this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
         new VoceFiltro("", "sconosciuto", 0, true, "", "badge-info", "") );
     }
 
+    // aggiungo sempre il genere Mezzo "non definito"
     if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "non definito"))
     {
       this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
         new VoceFiltro("*****", "non definito", 0, true, "", "badge-info", "") );
     }
 
+    /*
     this.vociFiltroSedi = this.vociFiltroSediALL.filter( i =>
         this.elencoPosizioni.find( iii => 
           {if ( iii.sedeMezzo === i.codice ) 
@@ -647,7 +766,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
             return false;
           }
         ));
+    */
 
+    this.vociFiltroSedi = this.vociFiltroSediALL.filter( i =>
+      this.elencoPosizioni.some( iii => 
+        ( iii.sedeMezzo === i.codice ) 
+      ));
+  
     this.vociFiltroDestinazioneUso = this.vociFiltroDestinazioneUsoALL.filter( i =>
       this.elencoPosizioni.find( iii => 
         {if ( iii.destinazioneUso === i.codice)
@@ -758,7 +883,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .map(v => (v.codice).toString())
       ;
 
-      
+      /*
       if (this.centerOnMezzo &&  this.seguiMezziSelezionati[0] != null) {
         this.mezzoSelezionato = this.elencoPosizioni.find(item =>
           item.codiceMezzo == this.seguiMezziSelezionati[0].codiceMezzo);
@@ -770,6 +895,27 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
           this.startZoom = 12;
         }
+      }
+      */
+
+      if (this.centerOnMezzo &&  this.seguiMezziSelezionati.length != 0) {
+        /*
+        this.mezzoSelezionato = this.elencoPosizioni.find(item =>
+          item.codiceMezzo == this.seguiMezziSelezionati[0].codiceMezzo);
+        */
+        //console.log(this.mezzoSelezionato);
+        this.seguiMezziSelezionati.forEach( i => {
+          let p: PosizioneMezzo = this.elencoUltimePosizioni.
+            find(item => item.codiceMezzo == i.codiceMezzo);
+          if (p) 
+          {
+            this.mezzoSelezionato = p;
+            this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
+            this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
+            this.startZoom = 12;
+            
+          }
+         });
       }
 
       if (!this.centerOnMezzo && 
@@ -824,39 +970,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.mezzoSelezionato = evento[0];
     }
     //console.log("centraSuMappa", this.mezzoSelezionato);
-  }
-
-  seguiMezzo(evento) {
-    var tipoevento: string = evento[1];
-    var pos : PosizioneMezzo ;
-
-    if (tipoevento == "dblclick") {
-      //this.seguiMezziSelezionati[0] = evento[0];
-      pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
-      if (pos == null) {
-        this.seguiMezziSelezionati = this.seguiMezziSelezionati.concat(evento[0]);
-      }
-
-      this.centerOnMezzo = true;
-    }
-    //console.log("seguiMezzo", evento);
-  }
-
-  rimuoviSeguiMezzo(evento) {
-    var tipoevento: string = evento[1];
-    var pos : PosizioneMezzo ;
-    
-    if (tipoevento == "dblclick") {
-      //this.seguiMezziSelezionati = [];
-      //pos = this.seguiMezziSelezionati.find( i => i.codiceMezzo === evento[0].codiceMezzo);
-      let i = this.seguiMezziSelezionati.indexOf( evento[0]);
-      this.seguiMezziSelezionati.splice(i,1);
-
-      if (this.seguiMezziSelezionati.length == 0 ) {
-        this.centerOnMezzo = false;
-      }
-    }
-    //console.log("rimuoviSeguiMezzo", evento);
   }
 
   changeOptSeguiMezzo() {

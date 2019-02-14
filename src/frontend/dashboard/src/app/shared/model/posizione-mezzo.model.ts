@@ -25,7 +25,8 @@ export class PosizioneMezzo {
         public classiMezzoDepurata: string[],
         public descrizionePosizione: string,
         public marker: google.maps.Marker,
-        public visibile: boolean 
+        public visibile: boolean,
+        public selezionato?: boolean
     ) {}
     
 }
