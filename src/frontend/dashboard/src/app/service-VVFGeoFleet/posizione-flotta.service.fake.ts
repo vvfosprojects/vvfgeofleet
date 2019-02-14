@@ -25,8 +25,8 @@ export class PosizioneFlottaServiceFake {
                  "2018-01-31 17:11:59",
                 "testo tootTip",
                 "RM",
-                "Comando",
-                ["APS"],"ASP O.12345 (RM)", null, true)
+                "CORP",
+                ["APS"],"ASP O.12345 (RM)", null, true, false)
         ];
        
         return Observable.of(elencoPosizioni);

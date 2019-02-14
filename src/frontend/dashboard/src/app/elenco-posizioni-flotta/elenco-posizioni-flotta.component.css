@@ -1,8 +1,17 @@
+
 .area-elenco  {
     overflow-x: hidden;
     overflow-y: auto;
     height: 300px;
 }
+
+
+.area-elenco-mezzi-da-seguire-sticky {
+    position: sticky;
+    top: 11% ;
+    z-index: 2000;
+}
+
 
 /*
 .header-fixed  {
