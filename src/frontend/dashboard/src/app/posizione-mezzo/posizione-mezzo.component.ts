@@ -18,15 +18,22 @@ import { MapType } from '@angular/compiler';
 export class PosizioneMezzoComponent implements OnInit {
 
   
-  private filtriSediObj : Object;
-  private filtriGeneriMezzoObj : Object ;
+  //private filtriSediObj : Object;
+  //private filtriGeneriMezzoObj : Object ;
 
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() istanteUltimoAggiornamento: Date;
+  /*
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
   @Input() filtriDestinazioneUso: string[] = [];
+  */
+ 
+  @Input() filtriStatiMezzoObj: Object;
+  @Input() filtriSediObj: Object;
+  @Input() filtriGeneriMezzoObj : Object ;
+  @Input() filtriDestinazioneUsoObj: Object;
   
   @Input() filtriStatiMezzoCardinalita: number ;
   @Input() filtriSediCardinalita: number ;
@@ -122,7 +129,7 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   ngOnChanges() {
-
+/*
     this.filtriSediObj = undefined;  
     this.filtriGeneriMezzoObj = undefined;
 
@@ -140,7 +147,7 @@ export class PosizioneMezzoComponent implements OnInit {
          this.filtriGeneriMezzoObj[item]=item; 
       }
       );
-    
+*/    
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
@@ -186,28 +193,28 @@ export class PosizioneMezzoComponent implements OnInit {
 
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||
+      /*
       (this.filtriStatiMezzo.
           some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
-      && 
-      /*
+      &&       
       this.filtriSedi.
           some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
       &&
-      */
-      ( this.filtriSediObj[this.posizioneMezzo.sedeMezzo] == this.posizioneMezzo.sedeMezzo)
-      && 
-      /*
       this.filtriGeneriMezzo.
           some(filtro => this.posizioneMezzo.classiMezzo.
             some( gm => gm === filtro))  
-      */
-      this.posizioneMezzo.classiMezzo.
-      some( gm =>   this.filtriGeneriMezzoObj[gm] == gm )
       && this.filtriDestinazioneUso.
           some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
-      )
-      //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
-    );
+      */
+      ( (this.filtriStatiMezzoObj[this.posizioneMezzo.infoSO115.stato] == this.posizioneMezzo.infoSO115.stato)
+        && 
+        (this.filtriSediObj[this.posizioneMezzo.sedeMezzo] == this.posizioneMezzo.sedeMezzo)
+        && 
+        this.posizioneMezzo.classiMezzoDepurata.
+          some( gm => this.filtriGeneriMezzoObj[gm] == gm )
+        && 
+        this.filtriDestinazioneUsoObj[this.posizioneMezzo.destinazioneUso] == this.posizioneMezzo.destinazioneUso)       
+      );
   }
 
 

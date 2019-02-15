@@ -11,6 +11,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import {DragDropModule} from 'primeng/dragdrop';
+import { Timestamp } from 'rxjs/Rx';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -93,6 +94,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     //vociFiltroStatiMezzoDefault: VoceFiltro[];  
     public filtriStatiMezzo: string[] = [];
+    public filtriStatiMezzoObj: Object;
 
     public titoloFiltroSedi: string = "Sedi";
     public vociFiltroSedi: VoceFiltro[] = [];
@@ -200,6 +202,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       new VoceFiltro("..", "sconosciuta", 0, true, "", "badge-info", "")
     ];
     filtriSedi: string[] = [];
+    filtriSediObj: Object;
 
     public titoloFiltroGeneriMezzo: string = "Generi Mezzo";
     public vociFiltroGeneriMezzo: VoceFiltro[] = [];
@@ -450,6 +453,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       new VoceFiltro("ZA", "ZATTERA", 0, true, "", "badge-info", "")
     ];
     filtriGeneriMezzo: string[] = [];
+    filtriGeneriMezzoObj: Object;
 
     public titoloFiltroDestinazioneUso: string = "Destinazione d'uso";
     public vociFiltroDestinazioneUso: VoceFiltro[] = [];
@@ -460,6 +464,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
      new VoceFiltro("GOS", "Gruppo Operativo Speciale", 0, true, "", "badge-info", "")
     ];
     filtriDestinazioneUso: string[] = [];
+    filtriDestinazioneUsoObj: Object;
 
   constructor() { 
     this.seguiMezziSelezionati = [];
@@ -644,6 +649,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   inizializzaFiltri() {
     
+    
+    //console.log( 'inizializzaFiltri-start', new Date().getMilliseconds() );
+
     this.cambiaModalita();
     //if (this.elencoPosizioni.length == 0 ) 
     if (this.reset || this.elencoPosizioni.length == 0 ) 
@@ -861,6 +869,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       //console.log(this.elencoPosizioniMezzoFiltrate);
       
      */
+      this.filtriStatiMezzoObj = undefined;  
+      this.filtriSediObj = undefined;  
+      this.filtriGeneriMezzoObj = undefined;
+      this.filtriDestinazioneUsoObj = undefined;
+      
+      this.filtriStatiMezzoObj = new Object();  
+      this.filtriSediObj = new Object();  
+      this.filtriGeneriMezzoObj = new Object();
+      this.filtriDestinazioneUsoObj = new Object();  
 
      // soluzione utilizzando una funzione valutata durante l'aggiornamento della view
       this.filtriStatiMezzo = this.vociFiltroStatiMezzo
@@ -882,6 +899,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       .filter(v => v.selezionato)
       .map(v => (v.codice).toString())
       ;
+
+      this.filtriStatiMezzo.forEach( item => { this.filtriStatiMezzoObj[item] = item; } );      
+      this.filtriSedi.forEach( item => { this.filtriSediObj[item] = item; } );      
+      this.filtriGeneriMezzo.forEach( item => { this.filtriGeneriMezzoObj[item]=item; } );      
+      this.filtriDestinazioneUso.forEach( item => { this.filtriDestinazioneUsoObj[item]=item; } );      
 
       /*
       if (this.centerOnMezzo &&  this.seguiMezziSelezionati[0] != null) {
@@ -924,6 +946,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       }
 
     }
+    //console.log( 'inizializzaFiltri-end', new Date().getMilliseconds() );
 
   }
   
