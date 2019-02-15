@@ -41,19 +41,24 @@ import { DOCUMENT } from "@angular/platform-browser";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  private filtriSediObj : Object;
-  private filtriGeneriMezzoObj : Object ;
-
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
   @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   
   @Input() istanteUltimoAggiornamento: Date;
+
+  /*
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
   @Input() filtriDestinazioneUso: string[] = [];
+  */
 
+  @Input() filtriStatiMezzoObj: Object;
+  @Input() filtriSediObj: Object;
+  @Input() filtriGeneriMezzoObj : Object ;
+  @Input() filtriDestinazioneUsoObj: Object;
+ 
   @Input() filtriStatiMezzoCardinalita: number ;
   @Input() filtriSediCardinalita: number ;
   @Input() filtriGeneriMezzoCardinalita: number ;
@@ -186,25 +191,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   ngOnChanges() {
 
-    this.filtriSediObj = undefined;  
-    this.filtriGeneriMezzoObj = undefined;
-
-    this.filtriSediObj = new Object();  
-    this.filtriGeneriMezzoObj = new Object( );
-
-    this.filtriSedi.forEach( item => 
-      {
-       this.filtriSediObj[item] = item; 
-      }
-      );      
-    
-    this.filtriGeneriMezzo.forEach( item => 
-      {       
-         this.filtriGeneriMezzoObj[item]=item; 
-      }
-      );
-
-      // aggiunge alle posizioni Mostrate quelle Nuove     
+    // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
     if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
       { 
@@ -212,7 +199,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         this.elencoPosizioniMostrate = this.elencoPosizioni;        
         this.elencoPosizioniMostratePrecedenti = [];
       }
-
     else 
       { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
 
@@ -421,31 +407,37 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
-
+    
       if (p.infoSO115 != null) {
        
 
         var r : boolean ;
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
 
-        
+        /*
         r = (r? true: this.filtriStatiMezzo.
           some(filtro => filtro === p.infoSO115.stato )
           && 
-          p.classiMezzo.
-          some( gm => this.filtriGeneriMezzoObj[gm] === gm )
-          &&
-          ( this.filtriSediObj[p.sedeMezzo] === p.sedeMezzo)
-          && this.filtriDestinazioneUso.
-          some(filtro =>filtro === p.destinazioneUso )
-          );
-
-          /*
           this.filtriSedi.
           some(filtro => filtro === p.sedeMezzo )
           && this.filtriGeneriMezzo.
           some(filtro => p.classiMezzo.some( item => item === filtro))
-          */
+          && this.filtriDestinazioneUso.
+          some(filtro =>filtro === p.destinazioneUso )
+          );        
+        */
+        
+        r = (r? true: 
+              ( (this.filtriStatiMezzoObj[p.infoSO115.stato] == p.infoSO115.stato)
+              && 
+              (this.filtriSediObj[p.sedeMezzo] == p.sedeMezzo)
+              && 
+              p.classiMezzoDepurata.
+                some( gm => this.filtriGeneriMezzoObj[gm] == gm )
+              && 
+              this.filtriDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
+            );
+  
         /*
         var r : boolean = 
         (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
@@ -469,8 +461,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
       } 
       else { console.log(p, moment().toString()); 
+
         return false;      
-        }
+      }
+      
   }
 
   
