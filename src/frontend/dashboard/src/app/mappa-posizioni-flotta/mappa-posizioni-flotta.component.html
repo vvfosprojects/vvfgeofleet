@@ -1,7 +1,8 @@
-<div class="card">
-  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom"
+<div class="card map-sticky" >
+  <agm-map [latitude]="mapLat" [longitude]="mapLon" [zoom]="mapZoom" 
   (boundsChange)="areaChangedOnMap($event)"    (mapReady)="mapReady($event)"         
   >
+  <!--            [visible]="true"-->
     <!--<agm-marker-cluster imagePath="https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m">-->
       <!--<agm-get-map-objects (markerManager)="setMarkerManager($event)" (markers)="setMarkers($event)" (clusterManager)="setClusterManager($event)">-->
         <agm-marker *ngFor="let m of elencoPosizioniMostrate; let i = index; "

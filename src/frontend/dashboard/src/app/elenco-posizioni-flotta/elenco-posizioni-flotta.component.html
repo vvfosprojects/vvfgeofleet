@@ -2,38 +2,52 @@
 
 </h3>
 
-<div class="row h8">
+<div class="row h8 mt-0">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 p-1">
         <p-accordion>
-            <p-accordionTab header="Elenco Posizioni" [selected]="true">
-                <div class="card card-inverse p-1"
-                data-toggle="tooltip" 
-                title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
-                <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
-                        [posizioneMezzo]="r" 
-                        [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                        [filtriStatiMezzo]="vociFiltroStatiMezzo"
-                        [filtriSedi]="vociFiltroSedi"
-                        [filtriGeneriMezzo]="vociFiltroGeneriMezzo"
-                        [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
-                        [filtriSediCardinalita]="vociFiltroSedi.length"
-                        [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
-                        [isSeguiMezzo]="isSeguiMezzo"
-                        (mezzoSelezionato)="centraSuMappa($event)"
-                        (mezzoSelezionato)="evidenziaSuMappa($event)"
-                        (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
-                        ></app-posizione-mezzo>
-                </div>
-                <div class="area-elenco card card-inverse"
+            <p-accordionTab header="Mezzi Seguiti">
+            <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
+                <div class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">
+                <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
+                    <div class="area-elenco card card-inverse drag-column drop-column m-0"
+                    data-toggle="tooltip" 
+                    title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
+                    <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
+                            [posizioneMezzo]="r" 
+                            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                            [filtriStatiMezzoObj]="filtriStatiMezzoObj"
+                            [filtriSediObj]="filtriSediObj"
+                            [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
+                            [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
+                            [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
+                            [filtriSediCardinalita]="vociFiltroSedi.length"
+                            [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
+                            [isSeguiMezzo]="isSeguiMezzo"
+                            (mezzoSelezionato)="centraSuMappa($event)"
+                            (mezzoSelezionato)="evidenziaSuMappa($event)"
+                            (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
+                            pDroppable="seguiMezziSelezionati" pDraggable="seguiMezziSelezionati"
+                            (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"
+                            (onDrop)="rimuoviSeguiMezzoDrop($event)"
+                            ></app-posizione-mezzo>
+                    </div>            
+                    <!--</div>-->
+                </div>      
+            </p-accordionTab>                                    
+            <p-accordionTab header="Posizioni più recenti" [selected]="true">
+
+            <div  class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">            
+                <!--<div class="area-elenco card card-inverse"-->
+                <div class="area-elenco card card-inverse drag-column drop-column m-0"
                 data-toggle="tooltip" 
                 title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
                 <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [posizioneMezzo]="r" 
                                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                                [filtriStatiMezzo]="filtriStatiMezzo"
-                                [filtriSedi]="filtriSedi"
-                                [filtriGeneriMezzo]="filtriGeneriMezzo"
-                                [filtriDestinazioneUso]="filtriDestinazioneUso"
+                                [filtriStatiMezzoObj]="filtriStatiMezzoObj"
+                                [filtriSediObj]="filtriSediObj"
+                                [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
+                                [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
                                 [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
                                 [filtriSediCardinalita]="vociFiltroSedi.length"
                                 [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
@@ -42,8 +56,12 @@
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"
+                                pDroppable="elencoPosizioni" pDraggable="elencoPosizioni" 
+                                (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"                                
+                                (onDrop)="seguiMezzoDrop($event)"                                
                                 ></app-posizione-mezzo>
                     </div>
+            </div>                
             </p-accordionTab>
             <p-accordionTab header="Filtri">
                     <div>
@@ -104,7 +122,7 @@
                     </div>
                 </div>
             </p-accordionTab>
-        </p-accordion>                
+        </p-accordion>
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
         <app-mappa-posizioni-flotta
@@ -112,10 +130,10 @@
             [elencoPosizioni]="elencoPosizioni" 
             [elencoMezziDaSeguire]="seguiMezziSelezionati"
             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-            [filtriStatiMezzo]="filtriStatiMezzo"
-            [filtriSedi]="filtriSedi"            
-            [filtriGeneriMezzo]="filtriGeneriMezzo"
-            [filtriDestinazioneUso]="filtriDestinazioneUso"            
+            [filtriStatiMezzoObj]="filtriStatiMezzoObj"
+            [filtriSediObj]="filtriSediObj"
+            [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
+            [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
             [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
             [filtriSediCardinalita]="vociFiltroSedi.length"
             [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
