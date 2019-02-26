@@ -53,6 +53,10 @@ System publishes statistics about message arrival per day, total number of store
 
 Posting position messages can be subject to client authorization, based on IP source address. The web.config allows to enable/disable IP-based authorization through a flag and to specify the list of allowed IP and/or networks (e.g. 127.0.0.1, 8.8.8.8, 10.0.0.0/24, 172.16.0.0/16).
 
+## Push notifications to clients
+
+The server exposes a web socket the clients can subscribe to, in order to receive new vehicle positions, as they arrive, via push notifications.
+
 # API Documentation
 
 ## POST /api/messaggiPosizione

@@ -43,5 +43,10 @@
     <Compile Include="IpNetworkChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\VVFGeoFleet.licenseheader">
+      <Link>VVFGeoFleet.licenseheader</Link>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
