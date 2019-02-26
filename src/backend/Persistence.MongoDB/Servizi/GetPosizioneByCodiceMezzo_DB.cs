@@ -17,6 +17,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System.Linq;
 using Modello.Classi;
 using Modello.Servizi.Persistence;

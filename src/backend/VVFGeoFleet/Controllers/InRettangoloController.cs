@@ -17,6 +17,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System.Web.Http;
 using Modello.Configurazione;
 using Modello.Servizi.Persistence.GeoQuery.InRettangolo;

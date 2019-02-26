@@ -17,11 +17,11 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 [assembly: WebActivator.PostApplicationStartMethod(typeof(VVFGeoFleet.App_Start.SimpleInjectorWebApiInitializer), "Initialize")]
 
 namespace VVFGeoFleet.App_Start
 {
-    using System;
     using System.Linq;
     using System.Reflection;
     using System.Web.Compilation;
