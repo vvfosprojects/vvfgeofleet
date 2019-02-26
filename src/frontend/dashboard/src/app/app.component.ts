@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ParametriGeoFleetWS } from './shared/model/parametri-geofleet-ws.model';
 import { PosizioneMezzo } from './shared/model/posizione-mezzo.model';
-import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
-import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
+//import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
+//import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
+import { FlottaDispatcherService } from './service-dispatcher/flotta-dispatcher.service';
 import { Observable } from "rxjs/Rx";
 import * as moment from 'moment';
 
@@ -31,10 +32,12 @@ export class AppComponent {
   public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
 
   private trimSec: Number = 0;
+  /*
   private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
   //private defaultAttSec: Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
   private defaultrichiestaAPI: string = 'posizioneFlotta';
   //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
+  */
 
   private geolocationPosition : Position;
   public reset : Boolean = false;
@@ -46,12 +49,17 @@ export class AppComponent {
   public modalita: number = 3 ;
 
   constructor(
-          private posizioneFlottaService: PosizioneFlottaService
+          //private posizioneFlottaService: PosizioneFlottaService
+          private flottaDispatcherService: FlottaDispatcherService
         ) { 
 
           this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+          this.parametriGeoFleetWS.reset();
+          /*
           this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
           this.parametriGeoFleetWS.attSec = this.defaultAttSec;
+          */
+
         }
         
         /*
@@ -100,9 +108,13 @@ export class AppComponent {
             );
           };
 
+          
           this.aggiorna(this.parametriGeoFleetWS, true);
+          
           this.timer = Observable.timer(9000,9000).timeout(120000);
-          this.timerSubcribe = this.timer.subscribe(t => this.aggiorna(this.parametriGeoFleetWS,false));
+          this.timerSubcribe = this.timer.subscribe(t => 
+            this.aggiorna(this.parametriGeoFleetWS,false));
+          
         }   
 
         /*
@@ -111,7 +123,19 @@ export class AppComponent {
         }
         */
 
-        //aggiorna(val : Number, all: boolean) {
+        aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
+
+         
+          this.flottaDispatcherService.getSituazioneFlotta(parm, all).debounceTime(3000)
+          .subscribe( posizioni => {
+              console.log("posizioneFlottaService: ", posizioni);
+              //console.log("posizioneFlottaService.length: ", posizioni.length);
+              this.elencoPosizioniMezzo = posizioni;
+            }      
+          );
+        }
+
+        /*
         aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
             //this.elencoPosizioniMezzoPrec = this.elencoPosizioniMezzo;
           //console.log("elencoPosizioniMezzoPrec: ", this.elencoPosizioniMezzoPrec);
@@ -123,11 +147,7 @@ export class AppComponent {
           // l'invio della richiesta dal client e la sua ricezione dal ws
           // Per essere certi, è necessaria un API che restituisca i messaggi
           // acquisiti successivamente ad un certo istante
-          /*
-          if (this.maxIstanteAcquisizionePrecedente == null) 
-            { this.attSec = null;}
-          else 
-          */
+
           
           if (!all && this.maxIstanteAcquisizionePrecedente != null) 
            {parm.attSec = moment(this.istanteUltimoAggiornamento).
@@ -209,9 +229,10 @@ export class AppComponent {
 
             //console.log(this.elencoPosizioniMezzo.length);
         }
+        */
     
         ngOnDestroy() {
-          this.timerSubcribe.unsubscribe();
+          //this.timerSubcribe.unsubscribe();
           //console.log("Destroy timer");
       
         }
@@ -223,6 +244,13 @@ export class AppComponent {
           if (evento != null) {
             //var gg: number = evento.value;
             var gg: number = evento;
+
+            this.parametriGeoFleetWS.reset();
+            this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
+            this.parametriGeoFleetWS.setAttSec( gg*24*60*60 );
+            this.parametriGeoFleetWS.setDefaultAttSec( gg*24*60*60 );
+
+            /*
             this.parametriGeoFleetWS.richiestaAPI = 'posizioneFlotta';            
             this.parametriGeoFleetWS.attSec = gg*24*60*60;
             this.defaultAttSec = this.parametriGeoFleetWS.attSec ;
@@ -230,16 +258,21 @@ export class AppComponent {
             this.parametriGeoFleetWS.lon1= null;
             this.parametriGeoFleetWS.lat2= null;
             this.parametriGeoFleetWS.lon2= null;
-            
+            */
+
+
+
             // console.log("aggiornaAttSec", evento, gg, this.attSec);
-            this.timerSubcribe.unsubscribe();
+            //this.timerSubcribe.unsubscribe();
             this.reset = true;
             this.aggiorna(this.parametriGeoFleetWS, true);
+            /*
             this.timer = Observable.timer(9000,9000).timeout(120000);
             this.timerSubcribe = this.timer.subscribe(t => 
               {this.aggiorna(this.parametriGeoFleetWS,false);
                 this.reset = false;
               });
+            */
           }
 
         }
@@ -252,21 +285,23 @@ export class AppComponent {
             var vv1 = Object.values(vv[0]);
             var vv2 = Object.values(vv[1]);
             //console.log("aggiornaArea  vv",vv);
-            this.parametriGeoFleetWS.richiestaAPI = 'inRettangolo';
-            this.parametriGeoFleetWS.attSec = this.defaultAttSec ;
-            this.parametriGeoFleetWS.lat1= vv1[1];
-            this.parametriGeoFleetWS.lon1= vv2[0];
-            this.parametriGeoFleetWS.lat2= vv1[0];
-            this.parametriGeoFleetWS.lon2= vv2[1];
+            this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
+            this.parametriGeoFleetWS.setAttSec(null);
+            this.parametriGeoFleetWS.setLat1(vv1[1]);
+            this.parametriGeoFleetWS.setLon1(vv2[0]);
+            this.parametriGeoFleetWS.setLat2(vv1[0]);
+            this.parametriGeoFleetWS.setLon2(vv2[1]);
 
-            this.timerSubcribe.unsubscribe();
+            //this.timerSubcribe.unsubscribe();
             this.reset = true;
             this.aggiorna(this.parametriGeoFleetWS, true);
+            /*
             this.timer = Observable.timer(9000,9000).timeout(120000);
             this.timerSubcribe = this.timer.subscribe(t => 
               {this.aggiorna(this.parametriGeoFleetWS,false);
                 this.reset = false;
               });
+            */
           }
         }
 

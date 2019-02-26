@@ -30,86 +30,60 @@ let options = new RequestOptions( { headers:  headers , method: RequestMethod.Ge
 @Injectable()
 export class PosizioneFlottaService {
 
-  
-  private elencoPosizioni: PosizioneMezzo[];
+  //private timer;
+  //private timerSubcribe: PushSubscription;
 
+  private elencoPosizioni: PosizioneMezzo[] = [];
+  private obsPosizioniMezzo$ : Observable<PosizioneMezzo[]>;
+  
     constructor(private http: Http) { 
+      //this.timer = Observable.timer(9000,9000).timeout(120000);
+      /*
+      this.timer = Observable.interval(9000).timeout(120000);
+      this.obsPosizioniMezzo$ = Observable.of(this.elencoPosizioni);
+      */
     }
     //constructor(private http: HttpClient) { }
     
     //public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
     public getPosizioneFlotta(parm: ParametriGeoFleetWS ): Observable<PosizioneMezzo[]> {
 
-      var parametri : string = '';
-      var richiestaWS : string = '';
-      if (parm.attSec != null) { parametri = parametri+ 
-        (parametri == '' ? '?': '&') + 'attSec='+ String(parm.attSec); }
-      if (parm.lat1 != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lat1='+ String(parm.lat1); }
-      if (parm.lon1 != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lon1='+ String(parm.lon1); }
-      if (parm.lat2 != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lat2='+ String(parm.lat2); }
-      if (parm.lon2 != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lon2='+ String(parm.lon2); }
-
-      if (parametri != '' ) 
-        { richiestaWS = parm.richiestaAPI + parametri; }
-      else 
-        { richiestaWS = parm.richiestaAPI; }
-
-      
       //console.log(API_URL + richiestaWS);
 
-      var observable: Observable<Response> = this.http.get(API_URL + richiestaWS) ;
-      
-      var posizioniMezzo : PosizioneMezzo[];
-      var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
+        var parametri : string = '';
+        var richiestaWS : string = '';
+        if (parm.attSec != null) { parametri = parametri+ 
+          (parametri == '' ? '?': '&') + 'attSec='+ String(parm.attSec); }
+        if (parm.lat1 != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lat1='+ String(parm.lat1); }
+        if (parm.lon1 != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lon1='+ String(parm.lon1); }
+        if (parm.lat2 != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lat2='+ String(parm.lat2); }
+        if (parm.lon2 != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lon2='+ String(parm.lon2); }
 
-      //return this.http.get(API_URL + 'posizioneFlotta').      
-      if ( parm.richiestaAPI == 'posizioneFlotta')
-      {
-      obsPosizioniMezzo = observable.      
-      map((r : Response) => 
-        {  
-        return r.json().
-        map((e : PosizioneMezzo) => 
-          { if (e.infoSO115 == null) { 
-              e.infoSO115 = Object.create( {stato: String}); 
-              e.infoSO115.stato = "0";
-            }
-            if (e.infoSO115.stato == null || e.infoSO115.stato == "" )
-            {
-              e.infoSO115.stato = "0";              
-            }
-            //e.tooltipText = Object.create(String.prototype);
-            e.sedeMezzo = this.sedeMezzo(e);
-            e.destinazioneUso = this.destinazioneUso(e);
-            e.selezionato = false;
-            e.toolTipText = this.toolTipText(e);
-            e.classiMezzoDepurata = this.classiMezzoDepurata(e);
-            e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";            
-            let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
-            return Object.assign(posizioneMezzo, e);
-          }
-        )
-        })
-      .catch(this.handleError);    
-      };
+        if (parametri != '' ) 
+          { richiestaWS = parm.richiestaAPI + parametri; }
+        else 
+          { richiestaWS = parm.richiestaAPI; }
 
-      if ( parm.richiestaAPI == 'inRettangolo')
-      {
+            
+        var observable: Observable<Response> = this.http.get(API_URL + richiestaWS);
+        /*
+        var observable: Observable<Response>;
+        observable = this.http.get(API_URL + richiestaWS);
+        */
+        var posizioniMezzo : PosizioneMezzo[];
 
-
-      //obsPosizioniMezzo = observable.      
-      obsPosizioniMezzo = observable.      
-      map((r : Response) => 
+        //return this.http.get(API_URL + 'posizioneFlotta').      
+        if ( parm.richiestaAPI == 'posizioneFlotta')
         {
-          //var risp : RispostaMezziInRettangolo = r.json();
-          //var posizioniMezzo = risp.risultati.forEach( 
-          return r.json().risultati.map( 
-          (e : PosizioneMezzo) => 
-
+        this.obsPosizioniMezzo$ = observable.      
+        map((r : Response) => 
+          {  
+          return r.json().
+          map((e : PosizioneMezzo) => 
             { if (e.infoSO115 == null) { 
                 e.infoSO115 = Object.create( {stato: String}); 
                 e.infoSO115.stato = "0";
@@ -124,21 +98,57 @@ export class PosizioneFlottaService {
               e.selezionato = false;
               e.toolTipText = this.toolTipText(e);
               e.classiMezzoDepurata = this.classiMezzoDepurata(e);
-              e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
-              e.visibile = true;
+              e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";            
               let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
               return Object.assign(posizioneMezzo, e);
+            }
+          )
+          })
+        .catch(this.handleError);    
+        };
 
-            });
-            //return Observable.of(posizioniMezzo);
-        })
-      .catch(this.handleError);      
-
-      };
+        if ( parm.richiestaAPI == 'inRettangolo')
+        {
 
 
-      return obsPosizioniMezzo;
+        //obsPosizioniMezzo$ = observable.      
+        this.obsPosizioniMezzo$ = observable.      
+        map((r : Response) => 
+          {
+            //var risp : RispostaMezziInRettangolo = r.json();
+            //var posizioniMezzo = risp.risultati.forEach( 
+            return r.json().risultati.map( 
+            (e : PosizioneMezzo) => 
 
+              { if (e.infoSO115 == null) { 
+                  e.infoSO115 = Object.create( {stato: String}); 
+                  e.infoSO115.stato = "0";
+                }
+                if (e.infoSO115.stato == null || e.infoSO115.stato == "" )
+                {
+                  e.infoSO115.stato = "0";              
+                }
+                //e.tooltipText = Object.create(String.prototype);
+                e.sedeMezzo = this.sedeMezzo(e);
+                e.destinazioneUso = this.destinazioneUso(e);
+                e.selezionato = false;
+                e.toolTipText = this.toolTipText(e);
+                e.classiMezzoDepurata = this.classiMezzoDepurata(e);
+                e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
+                e.visibile = true;
+                let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
+                return Object.assign(posizioneMezzo, e);
+
+              });
+              //return Observable.of(posizioniMezzo);
+          })
+        .catch(this.handleError);      
+
+        };
+
+        console.log( this.obsPosizioniMezzo$);
+
+        return this.obsPosizioniMezzo$;
 
     };
   

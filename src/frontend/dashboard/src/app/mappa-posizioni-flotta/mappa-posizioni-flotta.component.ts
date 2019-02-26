@@ -9,9 +9,12 @@ import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryL
 
 import * as moment from 'moment';
 import { Options } from 'selenium-webdriver/ie';
-import { Subject, observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
-import { Observable } from "rxjs/Rx";
+import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
+
+import { Subscription } from 'rxjs';
 
 //import {  } from '@types/google-maps';
 import {  } from 'google-maps';
@@ -42,7 +45,8 @@ import { DOCUMENT } from "@angular/platform-browser";
 export class MappaPosizioniFlottaComponent implements OnInit {
 
   @Input() elencoPosizioni : PosizioneMezzo[] = [];
-  @Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+  //@Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+  public elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   
   @Input() istanteUltimoAggiornamento: Date;
@@ -106,8 +110,24 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private areaChangedDebounceTime = new Subject();
 
-  constructor( ) { 
+  public parametriGeoFleetWS : ParametriGeoFleetWS;
 
+  subscription = new Subscription();
+  
+  constructor( 
+    private flottaDispatcherService: FlottaDispatcherService
+  ) {     
+    this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+    this.parametriGeoFleetWS.reset();    
+    this.subscription.add(
+      this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
+      .debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("posizioneFlottaService: ", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          this.elencoPosizioniDaElaborare = posizioni;
+        })
+      );    
    }    
 
   
@@ -193,7 +213,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
-    if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
+    //if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
+    if (this.elencoPosizioniMostrate.length == 0 ) 
       { 
         //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
         this.elencoPosizioniMostrate = this.elencoPosizioni;        
