@@ -36,7 +36,7 @@ namespace Modello.Classi
         public DateTime IstanteArchiviazione { get; set; }
         public bool Ultimo { get; set; }
         public InterpolationData InterpolationData { get; set; }
-        public short velocity { get; set; }
-        public short direction { get; set; }
+        public short Velocity { get; set; }
+        public short Direction { get; set; }
     }
 }
