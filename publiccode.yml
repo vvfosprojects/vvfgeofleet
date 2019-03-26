@@ -128,7 +128,7 @@ maintenance:
       affiliation: Corpo Nazionale dei Vigili del Fuoco
 
 localisation:
-  localisationReady: no
+  localisationReady: false
   availableLanguages:
     - it
 
@@ -137,23 +137,23 @@ dependsOn:
     - name: MongoDB
       versionMin: "3.2"
       versionMax: "4.0"
-      optional: no
+      optional: false
   proprietary:
     - name: MS Internet Information Services
 
 it:
   countryExtensionVersion: "0.2"
   conforme:
-    lineeGuidaDesign: no
-    modelloInteroperabilita: no
-    misureMinimeSicurezza: yes
-    gdpr: yes
+    lineeGuidaDesign: false
+    modelloInteroperabilita: false
+    misureMinimeSicurezza: true
+    gdpr: true
 
   riuso:
     codiceIPA: m_it 
 
   piattaforme:
-    spid: no
-    pagopa: no
-    cie: no
-    anpr: no
+    spid: false
+    pagopa: false
+    cie: false
+    anpr: false
