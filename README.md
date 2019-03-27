@@ -53,6 +53,10 @@ System publishes statistics about message arrival per day, total number of store
 
 Posting position messages can be subject to client authorization, based on IP source address. The web.config allows to enable/disable IP-based authorization through a flag and to specify the list of allowed IP and/or networks (e.g. 127.0.0.1, 8.8.8.8, 10.0.0.0/24, 172.16.0.0/16).
 
+## Push notifications to clients
+
+The server exposes a web socket the clients can subscribe to, in order to receive new vehicle positions, as they arrive, via push notifications.
+
 # API Documentation
 
 ## POST /api/messaggiPosizione
@@ -302,6 +306,9 @@ Returns the path tracked for vehicle having the code specified as parameter, wit
 
 Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
+## WebSocket /api/PosizioneLive
+
+Forwards every message received from /api/messaggiPosizione through a WebSocket. WebSocket is implemented through the SignalR library.
 
 # Dependencies
 VVFGeoFleet backend depends (also) on the following libraries.
@@ -312,6 +319,8 @@ VVFGeoFleet backend depends (also) on the following libraries.
 * **NUnit v3**: unit tests library;
 * **Moq**: mock classes generation library;
 * **Bogus**: fake data generation library.
+* **Microsoft.AspNet.SignalR**: Incredibly simple real-time web for .NET. This package pulls the server components and the JavaScript client required to use the SignalR in an ASP.NET application.
+* **Microsoft.Owin**: Provides a set of helper types and abstractions for simplifying the creation of OWIN components.
 
 VVFGeoFleet frontend depends (also) on the following libraries.
 

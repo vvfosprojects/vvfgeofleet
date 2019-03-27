@@ -17,6 +17,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using Modello.Classi;
 
 namespace Modello.Servizi.Persistence.GeoQuery.InRettangolo

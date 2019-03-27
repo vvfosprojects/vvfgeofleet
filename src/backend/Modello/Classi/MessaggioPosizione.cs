@@ -17,6 +17,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
+
 using System;
 
 namespace Modello.Classi
@@ -32,10 +33,10 @@ namespace Modello.Classi
         public Fonte Fonte { get; set; }
         public InfoFonte InfoFonte { get; set; }
         public InfoSO115 InfoSO115 { get; set; }
-
         public DateTime IstanteArchiviazione { get; set; }
         public bool Ultimo { get; set; }
-
         public InterpolationData InterpolationData { get; set; }
+        public short Velocity { get; set; }
+        public short Direction { get; set; }
     }
 }
