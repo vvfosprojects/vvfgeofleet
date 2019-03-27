@@ -306,6 +306,9 @@ Returns the path tracked for vehicle having the code specified as parameter, wit
 
 Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
+## WebSocket /api/PosizioneLive
+
+Forwards every message received from /api/messaggiPosizione through a WebSocket. WebSocket is implemented through the SignalR library.
 
 # Dependencies
 VVFGeoFleet backend depends (also) on the following libraries.
@@ -316,6 +319,8 @@ VVFGeoFleet backend depends (also) on the following libraries.
 * **NUnit v3**: unit tests library;
 * **Moq**: mock classes generation library;
 * **Bogus**: fake data generation library.
+* **Microsoft.AspNet.SignalR**: Incredibly simple real-time web for .NET. This package pulls the server components and the JavaScript client required to use the SignalR in an ASP.NET application.
+* **Microsoft.Owin**: Provides a set of helper types and abstractions for simplifying the creation of OWIN components.
 
 VVFGeoFleet frontend depends (also) on the following libraries.
 
