@@ -136,7 +136,6 @@ dependsOn:
   open:
     - name: MongoDB
       versionMin: "3.2"
-      versionMax: "4.0"
       optional: false
   proprietary:
     - name: MS Internet Information Services
