@@ -306,11 +306,9 @@ Returns the path tracked for vehicle having the code specified as parameter, wit
 
 Date are represented in ISO-8601 format (i.e. `2018-03-04T10:45:52.875Z`).
 
+## WebSocket /api/PosizioniLive
 
-## WebSocket /PosizioniLive
-
-forward every message received from /api/messagesPosition
-
+Forwards every message received from /api/messaggiPosizione through a WebSocket. WebSocket is implemented through the SignalR library.
 
 # Dependencies
 VVFGeoFleet backend depends (also) on the following libraries.
