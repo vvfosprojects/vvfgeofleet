@@ -6,6 +6,8 @@ The system is composed of two main modules:
 * a backend module, based on a RESTful server;
 * a frontend module, based on an Angular GUI.
 
+![Alt text](docs/frontend_screenshot.png?raw=true "The frontend")
+
 ## The backend
 The backend is written in C# Asp.Net WebApi, using Visual Studio 2017 Community Edition, with a persistence layer based on MongoDB document database.
 
