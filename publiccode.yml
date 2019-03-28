@@ -112,6 +112,8 @@ description:
          applications.
        - RESTful backend
        - Publishes real-time statistics on the system usage.
+    screenshots:
+       - docs/frontend_screenshot.png
 
 legal:
   license: AGPL-3.0-or-later
