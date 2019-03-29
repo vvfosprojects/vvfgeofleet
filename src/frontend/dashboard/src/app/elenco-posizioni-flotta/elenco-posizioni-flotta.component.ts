@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-import * as moment from 'moment';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
 //import { UiSwitchModule } from 'angular2-ui-switch';
@@ -10,8 +9,14 @@ import {AccordionModule} from 'primeng/accordion';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
+
+import { Subscription } from 'rxjs';
+
 import {DragDropModule} from 'primeng/dragdrop';
 import { Timestamp } from 'rxjs/Rx';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-elenco-posizioni-flotta',
@@ -20,9 +25,10 @@ import { Timestamp } from 'rxjs/Rx';
 })
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
-  @Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
+  //@Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
+  public elencoUltimePosizioni : PosizioneMezzo[] = [];
   @Input() istanteUltimoAggiornamento: Date;
-  @Input() maxIstanteAcquisizione: Date ;
+  //@Input() maxIstanteAcquisizione: Date ;
   @Input() reset: Boolean ;  
 
   @Input() startLat: number ;
@@ -32,10 +38,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
   @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
-  
+
+  public parametriGeoFleetWS : ParametriGeoFleetWS;
+
   private geolocationPosition : Position;
   private modalitaPrecedente: number = 0;
-  private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
+  //private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
  // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
@@ -466,24 +474,66 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     filtriDestinazioneUso: string[] = [];
     filtriDestinazioneUsoObj: Object;
 
-  constructor() { 
+/*
+    constructor({  
+      this.seguiMezziSelezionati = [];
+    }
+    )      
+    */
+
+   subscription = new Subscription();
+      
+    constructor(
+      private flottaDispatcherService: FlottaDispatcherService
+    )    
+    {
     this.seguiMezziSelezionati = [];
-  }
+   
+    this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+    this.parametriGeoFleetWS.reset();    
+    this.subscription.add(
+      this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
+      .debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("ElencoPosizioniFlottaComponent.OnInit() - posizioni:", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //this.elencoUltimePosizioni = JSON.parse( JSON.stringify(posizioni));
+          this.elencoUltimePosizioni = posizioni.filter( r => true);
+          //console.log("elencoPosizioni (prima): ", this.elencoPosizioni);
+          this.inizializzaFiltri();
+          //console.log("elencoPosizioni (dopo): ", this.elencoPosizioni);
+        })
+      );   
 
+    this.subscription.add(
+      this.flottaDispatcherService.getIstanteUltimoAggiornamento()
+      .subscribe( istante => {
+          this.istanteUltimoAggiornamento = istante; 
+          console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
+        })
+      );
+       
+   }    
+
+
+  
   ngOnInit() {
-
-    this.inizializzaFiltri();  
+    null;
+    //this.inizializzaFiltri();  
     
     //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
 
   }
+  
 
+  /*
   ngOnChanges(changes: any) {
     
     this.inizializzaFiltri();  
     //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
 
   }
+  */
 
   
   dragStart(event, pos: PosizioneMezzo) {
@@ -563,9 +613,18 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log("rimuoviSeguiMezzo", evento);
   }
 
+  testModalitaCambiata () {
+    if (this.modalita != this.modalitaPrecedente) {
+      this.cambiaModalita ();
+    }
+    else { 
+      this.reset = false; 
+    }
+  }
+
   cambiaModalita () {
     //console.log(this.modalita, this.modalitaPrecedente);
-    if (this.modalita != this.modalitaPrecedente) {
+    //if (this.modalita != this.modalitaPrecedente) {
       this.modalitaPrecedente = this.modalita;
       if (window.navigator && window.navigator.geolocation) {
         window.navigator.geolocation.getCurrentPosition(
@@ -589,7 +648,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
                 }
             }
         );
-      };
+      //};
   
       switch (this.modalita ) {
         // Modalità Comando
@@ -652,10 +711,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     
     //console.log( 'inizializzaFiltri-start', new Date().getMilliseconds() );
 
-    this.cambiaModalita();
+    //this.cambiaModalita();
+    this.testModalitaCambiata();
     //if (this.elencoPosizioni.length == 0 ) 
     if (this.reset || this.elencoPosizioni.length == 0 ) 
-      { this.elencoPosizioni = this.elencoUltimePosizioni; }
+      { this.elencoPosizioni = this.elencoUltimePosizioni.filter(r => r.infoSO115 != null); }
     else
       {
         //console.log(this.elencoPosizioni.length);
@@ -817,7 +877,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
       //filter(r => (new Date(r.istanteAcquisizione) > this.maxIstanteAcquisizionePrecedente ) );
     */
-    this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+    //this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
 
     /*
     l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 

@@ -44,12 +44,13 @@ import { DOCUMENT } from "@angular/platform-browser";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  @Input() elencoPosizioni : PosizioneMezzo[] = [];
+  //@Input() elencoPosizioni : PosizioneMezzo[] = [];
   //@Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+  public elencoPosizioni : PosizioneMezzo[] = [];
   public elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   
-  @Input() istanteUltimoAggiornamento: Date;
+  //@Input() istanteUltimoAggiornamento: Date;
 
   /*
   @Input() filtriStatiMezzo: string[] = [];
@@ -123,14 +124,19 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
       .debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("posizioneFlottaService: ", posizioni);
+          //console.log("flottaDispatcherService: ", posizioni);
           //console.log("posizioneFlottaService.length: ", posizioni.length);
-          this.elencoPosizioniDaElaborare = posizioni;
+          //this.elencoPosizioni = JSON.parse( JSON.stringify(posizioni));
+          //this.elencoPosizioniDaElaborare = JSON.parse( JSON.stringify(posizioni));
+          this.elencoPosizioni = posizioni.filter( r=> true);
+          this.elencoPosizioniDaElaborare = posizioni.filter( r=> true);
+          //console.log("elencoPosizioniMostrate (prima): ", this.elencoPosizioniMostrate);
+          this.elaboraPosizioniRicevute();
+          //console.log("elencoPosizioniMostrate (dopo): ", this.elencoPosizioniMostrate);
         })
       );    
    }    
 
-  
   //public fixed: boolean = false; 
   /*
   constructor(@Inject(DOCUMENT) private doc: Document) {}
@@ -209,19 +215,13 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     */
 }
 
-  ngOnChanges() {
 
-    // aggiunge alle posizioni Mostrate quelle Nuove     
-    //if (this.elencoPosizioniMostrate.length == 0 ) 
-    //if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
-    if (this.elencoPosizioniMostrate.length == 0 ) 
-      { 
-        //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
-        this.elencoPosizioniMostrate = this.elencoPosizioni;        
-        this.elencoPosizioniMostratePrecedenti = [];
-      }
-    else 
-      { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
+  ngOnChanges() {
+    //this.elaboraPosizioniRicevute();
+    return;
+  }
+
+  elaboraPosizioniRicevute(){
 
     //console.log("ngOnChanges()-mezzo Selezionato", this.mezzoSelezionato);
     // individua le posizioni non ancora elaborate
@@ -240,6 +240,24 @@ export class MappaPosizioniFlottaComponent implements OnInit {
      }
     })
 
+     
+    // aggiunge alle posizioni Mostrate quelle Nuove     
+    //if (this.elencoPosizioniMostrate.length == 0 ) 
+    //if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
+    if (this.elencoPosizioniMostrate.length == 0 ) 
+      { 
+        //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
+        //this.elencoPosizioniMostrate = this.elencoPosizioni; 
+        this.elencoPosizioniMostrate = JSON.parse( JSON.stringify(this.elencoPosizioni));                        
+        this.elencoPosizioniMostratePrecedenti = [];
+      }
+    else 
+      { 
+        null;
+        /*if (this.elencoPosizioniNuove.length != 0 ) 
+        { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
+        */
+      }
 
     /*
     console.log('ngOnChanges - elencoPosizioniPrecedenti: ', this.elencoPosizioniPrecedenti );
@@ -340,7 +358,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     } )
 
     // salva l'elenco delle posizioni Mostrate attualmente
-    this.elencoPosizioniMostratePrecedenti = this.elencoPosizioniMostrate;
+    this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
     
   }
     

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from "rxjs/Rx";
+import { Observable, Subject, of } from "rxjs";
+//import { Observable, Subject } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -13,9 +14,9 @@ import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flo
 //import { observable } from 'rxjs';
 //import { toObservable } from '@angular/forms/src/validators';
 
-@Injectable({
+@Injectable(/*{
   providedIn: 'root'
-})
+}*/)
 export class FlottaDispatcherService {
 
   public parametriGeoFleetWS : ParametriGeoFleetWS;
@@ -47,6 +48,7 @@ export class FlottaDispatcherService {
   public modalita: number = 3 ;
 
   private subjectPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
+  private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   constructor(
     private posizioneFlottaService: PosizioneFlottaService
@@ -57,17 +59,30 @@ export class FlottaDispatcherService {
     this.parametriGeoFleetWS.attSec = this.defaultAttSec;
 
     this.timer = Observable.interval(9000).timeout(120000);
-
+    this.timer = Observable.timer(9000,9000).timeout(120000);
+    this.timerSubcribe = this.timer.subscribe(t => 
+      this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
   }
+
+  public getIstanteUltimoAggiornamento(): 
+      Observable<Date> {
+        return this.subjectIstanteUltimoAggiornamento$.asObservable();                
+      }  
 
   public getSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): 
       Observable<PosizioneMezzo[]> {
-        
-    var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
-    this.subjectPosizioniMezzo$.next();
+
+        return this.subjectPosizioniMezzo$.asObservable();
+      }
+
+  private aggiornaSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): void {
+      var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
+    //this.subjectPosizioniMezzo$.next();
 
     this.istanteUltimoAggiornamento = moment().toDate();      
-    
+
+    this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
+  
     // aggiungere sempre X secondi per essere sicuri di perdersi
     // meno posizioni possibili, a causa della distanza di tempo tra
     // l'invio della richiesta dal client e la sua ricezione dal ws
@@ -84,7 +99,7 @@ export class FlottaDispatcherService {
       diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
       this.trimSec.valueOf() ; }
 
-    //console.log("istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
+    //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
     if (all) { this.maxIstanteAcquisizionePrecedente = null;}
 
@@ -158,14 +173,14 @@ export class FlottaDispatcherService {
         }      
     
         obsPosizioniMezzo = Observable.of( this.elencoPosizioniMezzo);
-        //return obsPosizioniMezzo;
+        ////return obsPosizioniMezzo;
         this.subjectPosizioniMezzo$.next(this.elencoPosizioniMezzo);
           
       });
 
-      return this.subjectPosizioniMezzo$.asObservable();
 
     //console.log(this.elencoPosizioniMezzo.length);
     }
+
 
 }

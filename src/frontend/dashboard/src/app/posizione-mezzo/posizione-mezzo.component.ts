@@ -5,6 +5,7 @@ import { Inject, HostListener } from "@angular/core";
 import { DOCUMENT } from "@angular/platform-browser";
 import { MapType } from '@angular/compiler';
 
+import * as moment from 'moment';
 
 //import { EventEmitter } from 'events';
 
@@ -22,7 +23,8 @@ export class PosizioneMezzoComponent implements OnInit {
   //private filtriGeneriMezzoObj : Object ;
 
   @Input() posizioneMezzo: PosizioneMezzo;
-  @Input() istanteUltimoAggiornamento: Date;
+  //@Input() istanteUltimoAggiornamento: Date;
+  public  istanteUltimoAggiornamento: Date;
   /*
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
@@ -129,6 +131,7 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   ngOnChanges() {
+    this.istanteUltimoAggiornamento = moment().toDate();
 /*
     this.filtriSediObj = undefined;  
     this.filtriGeneriMezzoObj = undefined;

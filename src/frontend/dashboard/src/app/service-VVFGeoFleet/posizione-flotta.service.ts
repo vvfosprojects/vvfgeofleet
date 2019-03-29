@@ -146,7 +146,7 @@ export class PosizioneFlottaService {
 
         };
 
-        console.log( this.obsPosizioniMezzo$);
+        //console.log( this.obsPosizioniMezzo$);
 
         return this.obsPosizioniMezzo$;
 

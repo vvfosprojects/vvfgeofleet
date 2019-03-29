@@ -12,9 +12,9 @@
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
                     title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
+                            <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->                    
                     <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
-                            [posizioneMezzo]="r" 
-                            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                            [posizioneMezzo]="r"                             
                             [filtriStatiMezzoObj]="filtriStatiMezzoObj"
                             [filtriSediObj]="filtriSediObj"
                             [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
@@ -41,9 +41,9 @@
                 <div class="area-elenco card card-inverse drag-column drop-column m-0"
                 data-toggle="tooltip" 
                 title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
+                            <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->                    
                 <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [posizioneMezzo]="r" 
-                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                                 [filtriStatiMezzoObj]="filtriStatiMezzoObj"
                                 [filtriSediObj]="filtriSediObj"
                                 [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
@@ -126,10 +126,10 @@
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
         <!--[elencoPosizioniDaElaborare]="elencoUltimePosizioni" -->
-        <app-mappa-posizioni-flotta
-            [elencoPosizioni]="elencoPosizioni" 
+        <!--[elencoPosizioni]="elencoPosizioni" -->
+        <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->
+        <app-mappa-posizioni-flotta            
             [elencoMezziDaSeguire]="seguiMezziSelezionati"
-            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
             [filtriStatiMezzoObj]="filtriStatiMezzoObj"
             [filtriSediObj]="filtriSediObj"
             [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"

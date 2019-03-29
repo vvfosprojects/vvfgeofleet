@@ -4,7 +4,7 @@ import { PosizioneMezzo } from './shared/model/posizione-mezzo.model';
 //import { PosizioneFlottaService } from './service-VVFGeoFleet/posizione-flotta.service';
 //import { PosizioneFlottaServiceFake } from './service-VVFGeoFleet/posizione-flotta.service.fake';
 import { FlottaDispatcherService } from './service-dispatcher/flotta-dispatcher.service';
-import { Observable } from "rxjs/Rx";
+import { Observable, Subscription } from "rxjs/Rx";
 import * as moment from 'moment';
 
 
@@ -48,6 +48,8 @@ export class AppComponent {
 
   public modalita: number = 3 ;
 
+  subscription = new Subscription();
+     
   constructor(
           //private posizioneFlottaService: PosizioneFlottaService
           private flottaDispatcherService: FlottaDispatcherService
@@ -55,13 +57,14 @@ export class AppComponent {
 
           this.parametriGeoFleetWS = new ParametriGeoFleetWS();
           this.parametriGeoFleetWS.reset();
-          /*
-          this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
-          this.parametriGeoFleetWS.attSec = this.defaultAttSec;
-          */
+        
+          //this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
+          //this.parametriGeoFleetWS.attSec = this.defaultAttSec;
+          
 
         }
-        
+
+
         /*
         ngOnInit() { this.posizioneFlottaService.getPosizioneFlotta()
           .subscribe( posizioni => {
@@ -108,13 +111,23 @@ export class AppComponent {
             );
           };
 
-          
+          /*
           this.aggiorna(this.parametriGeoFleetWS, true);
           
           this.timer = Observable.timer(9000,9000).timeout(120000);
           this.timerSubcribe = this.timer.subscribe(t => 
             this.aggiorna(this.parametriGeoFleetWS,false));
-          
+          */
+
+
+          this.subscription.add(
+            this.flottaDispatcherService.getIstanteUltimoAggiornamento()
+            .subscribe( istante => {
+                this.istanteUltimoAggiornamento = istante; 
+                console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
+              })
+            );
+                      
         }   
 
         /*
@@ -123,17 +136,19 @@ export class AppComponent {
         }
         */
 
+        
         aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
 
          
           this.flottaDispatcherService.getSituazioneFlotta(parm, all).debounceTime(3000)
           .subscribe( posizioni => {
-              console.log("posizioneFlottaService: ", posizioni);
+              console.log("app.component.aggiorna() - posizioni:", posizioni);
               //console.log("posizioneFlottaService.length: ", posizioni.length);
               this.elencoPosizioniMezzo = posizioni;
             }      
           );
         }
+        
 
         /*
         aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
