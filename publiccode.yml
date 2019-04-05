@@ -1,35 +1,28 @@
-publiccode-yaml-version: "http://w3id.org/publiccode/version/0.1"
+publiccodeYmlVersion: "0.2"
 
 name: geofleet 
 applicationSuite: Fleet Tracking System
-url: "https://github.com/vvfosprojects/vvfgeofleet.git"        # URL of this repository
+url: "https://github.com/vvfosprojects/vvfgeofleet.git"
 landingURL: "https://github.com/vvfosprojects/vvfgeofleet"
 
-# isBasedOn: ""
 softwareVersion: "0.1"
 releaseDate: "2018-05-17"
-# logo:
-# monochromeLogo:
 
 inputTypes:
   - text/plain
 outputTypes:
   - text/plain
 
-platforms: # or Windows, Mac, Linux, etc.
+platforms:
   - web browser (client)
   - asp.net WebApi written in C# .net 4.6 (server)
 
-tags:
-  - monitor
-  - archiving
+categories:
+  - fleet-management
+  - data-collection 
+  - data-analytics
+  - data-visualization
   
-freeTags:
-  eng:
-    - fleet tracking spatial queries mongodb maps
-  ita:
-    - gestione flotte queries georeferenziate mongodb mappe
-
 usedBy:
   - Corpo Nazionale dei Vigili del Fuoco
 
@@ -37,39 +30,26 @@ roadmap: "https://github.com/vvfosprojects/vvfgeofleet"
 
 developmentStatus: stable
 
-softwareType: "standalone"
+softwareType: standalone/web
 
 intendedAudience:
-  onlyFor:
-    - cities
-    - health-services
-    - police-forces
-    - it-ag-sanita
-    - it-altrilocali
-    - it-aci
-    - it-au-portuale
-    - hospital
-    - it-az-servizi
-    - it-metro
-    - city
-    - it-regione
-    - university
+  scope:
+    - emergency-services
+    - defence
+    - security
+    - transportation
   countries:
-    - IT
+    - it 
 
 description:
-  eng:
+  en:
     localisedName: geofleet
     genericName: geofleet
-    shortDescription: >
+    shortDescription: |-
       VVFGeoFleet is a system allowing to track a fleet,
       where vehicles are equipped with GPS enabled
-      devices periodically sending their position. The
-      system is composed of two main modules: (i) a backend
-      module, based on a RESTful server; (ii) a frontend
-      module, based on an Angular GUI.
-        
-    longDescription: >
+      devices periodically sending their position.         
+    longDescription: |- 
       VVFGeoFleet is a system allowing to track a fleet, where 
       vehicles are equipped with GPS enabled devices periodically 
       sending their position. The system is composed of two main 
@@ -126,21 +106,23 @@ description:
     documentation: "https://github.com/vvfosprojects/vvfgeofleet"
     apiDocumentation: "https://github.com/vvfosprojects/vvfgeofleet"
 
-    featureList:
+    features:
        - Web based frontend for public applicants.
        - Web based backoffice frontend to check, navigate submitted
          applications.
        - RESTful backend
        - Publishes real-time statistics on the system usage.
+    screenshots:
+       - docs/frontend_screenshot.png
 
 legal:
-  license: AGPL-3.0-or-later        # SPDX expression of license
+  license: AGPL-3.0-or-later
   mainCopyrightOwner: 2018 Corpo Nazionale dei Vigili del Fuoco
   repoOwner: Corpo Nazionale dei Vigili del Fuoco
   authorsFile: AUTHORS
 
 maintenance:
-  type: "up to internal employees"
+  type: internal
 
   contacts:
     - name: Marcello Esposito
@@ -148,42 +130,31 @@ maintenance:
       affiliation: Corpo Nazionale dei Vigili del Fuoco
 
 localisation:
-  localisationReady: no
+  localisationReady: false
   availableLanguages:
-    - ita
+    - it
 
 dependsOn:
   open:
     - name: MongoDB
       versionMin: "3.2"
-      versionMax: "4.0"
-      optional: no
+      optional: false
   proprietary:
     - name: MS Internet Information Services
 
 it:
-
+  countryExtensionVersion: "0.2"
   conforme:
-    accessibile: no
-    interoperabile: no
-    sicuro: yes
-    privacy: yes
+    lineeGuidaDesign: false
+    modelloInteroperabilita: false
+    misureMinimeSicurezza: true
+    gdpr: true
 
   riuso:
-    codiceIPA: 5EDW58
+    codiceIPA: m_it 
 
-  spid: no
-  pagopa: no
-  cie: no
-  anpr: no
-  ecosistemi:
-    - sanita
-    - welfare
-    - difesa-sicurezza-soccorso-legalita
-    - infrastruttura-logistica
-
-  designKit:
-    seo: no
-    ui: no
-    web: no
-    content: no
+  piattaforme:
+    spid: false
+    pagopa: false
+    cie: false
+    anpr: false

@@ -17,7 +17,6 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // </copyright>
 //-----------------------------------------------------------------------
-
 using System;
 using System.Web.Http;
 using Modello.Classi;
@@ -64,6 +63,7 @@ namespace VVFGeoFleet.Controllers
         /// <returns>L'oggetto inserito con la sua location</returns>
         public IHttpActionResult Post([FromBody]MessaggioPosizione messaggio)
         {
+
             this.storeMessaggioPosizione.Store(messaggio);
 
             DatiPosizioneLive.InviaPosLive(messaggio);
