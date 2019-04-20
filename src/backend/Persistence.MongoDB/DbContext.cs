@@ -50,11 +50,9 @@ namespace Persistence.MongoDB
                 this.MapClasses();
 
                 var url = MongoUrl.Create(connectionString);
-                IEnumerable<MongoCredential> credentials;
+                MongoCredential credential = null;
                 if (!string.IsNullOrWhiteSpace(url.Username))
-                    credentials = new[] { MongoCredential.CreateCredential(url.DatabaseName, url.Username, url.Password) };
-                else
-                    credentials = Enumerable.Empty<MongoCredential>();
+                    credential = MongoCredential.CreateCredential(url.DatabaseName, url.Username, url.Password);
 
                 var settings = new MongoClientSettings
                 {
@@ -67,7 +65,7 @@ namespace Persistence.MongoDB
                         });
                     },
                     Server = url.Server,
-                    Credentials = credentials
+                    Credential = credential
                 };
 
                 var client = new MongoClient(settings);
