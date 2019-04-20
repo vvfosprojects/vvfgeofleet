@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using Modello.Classi;
 using Newtonsoft.Json;
@@ -10,10 +6,8 @@ using Newtonsoft.Json.Serialization;
 
 namespace VVFGeoFleet
 {
-
     public class DatiPosizioneLive : PersistentConnection
     {
-
         protected override Task OnConnected(IRequest request, string connectionId)
         {
             return Connection.Send(connectionId, "Connesso!");
@@ -40,10 +34,7 @@ namespace VVFGeoFleet
             }
             catch
             {
-
             }
-
-
         }
     }
 }

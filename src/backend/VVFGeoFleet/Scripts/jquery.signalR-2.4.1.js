@@ -12,7 +12,6 @@
 /// <reference path="Scripts/jquery-1.6.4.js" />
 /// <reference path="jquery.signalR.version.js" />
 (function ($, window, undefined) {
-
     var resources = {
         nojQuery: "jQuery was not found. Please ensure jQuery is referenced before the SignalR client JavaScript file.",
         noTransportOnInit: "No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",
@@ -288,7 +287,6 @@
         } else if (requestedTransport === "auto" && signalR._.ieVersion <= 8) {
             // If we're doing an auto transport and we're IE8 then force longPolling, #1764
             return ["longPolling"];
-
         }
 
         return requestedTransport;
@@ -1081,7 +1079,6 @@
     }
 
     $.connection = $.signalR = signalR;
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.common.js */
 // Copyright (c) .NET Foundation. All rights reserved.
@@ -1091,7 +1088,6 @@
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1483,7 +1479,6 @@
                     $(connection).triggerHandler(events.onError, [signalR._.transportError(signalR.resources.sendFailed, connection.transport, error, xhr), data]);
                 };
 
-
             xhr = transportLogic.ajax(connection, {
                 url: url,
                 type: connection.ajaxDataType === "jsonp" ? "GET" : "POST",
@@ -1613,7 +1608,6 @@
             } else if (persistentResponse.Initialized) {
                 connection.log("WARNING! The client received an init message after reconnecting.");
             }
-
         },
 
         triggerReceived: function (connection, data) {
@@ -1805,18 +1799,15 @@
             connections: {}
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.webSockets.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -1955,18 +1946,15 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.serverSentEvents.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -2139,18 +2127,15 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.foreverFrame.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -2390,23 +2375,19 @@
             if (changeState(connection,
                 signalR.connectionState.reconnecting,
                 signalR.connectionState.connected) === true) {
-
                 $(connection).triggerHandler(events.onReconnect);
             }
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.transports.longPolling.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /*global window:false */
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, window, undefined) {
-
     var signalR = $.signalR,
         events = $.signalR.events,
         changeState = $.signalR.changeState,
@@ -2580,7 +2561,6 @@
                             }
 
                             if (!tryFailConnect(error)) {
-
                                 // Increment our reconnect errors, we assume all errors to be reconnect errors
                                 // In the case that it's our first error this will cause Reconnect to be fired
                                 // after 1 second due to reconnectErrors being = 1.
@@ -2658,7 +2638,6 @@
             transportLogic.ajaxAbort(connection, async);
         }
     };
-
 }(window.jQuery, window));
 /* jquery.signalR.hubs.js */
 // Copyright (c) .NET Foundation. All rights reserved.
@@ -2668,7 +2647,6 @@
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, window, undefined) {
-
     var nextGuid = 0;
     var eventNamespace = ".hubProxy",
         signalR = $.signalR;
@@ -2836,7 +2814,6 @@
 
             // Verify that there is an event space to unbind
             if (callbackSpace) {
-
                 if (callback) {
                     // Find the callback registration
                     var callbackRegistration;
@@ -3137,12 +3114,10 @@
     hubConnection.fn.init.prototype = hubConnection.fn;
 
     $.hubConnection = hubConnection;
-
 }(window.jQuery, window));
 /* jquery.signalR.version.js */
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 
 /*global window:false */
 /// <reference path="jquery.signalR.core.js" />
