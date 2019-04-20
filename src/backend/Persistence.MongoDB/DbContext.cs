@@ -64,8 +64,9 @@ namespace Persistence.MongoDB
                                 log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
                         });
                     },
-                    Server = url.Server,
-                    Credential = credential
+                    Servers = url.Servers,
+                    Credential = credential,
+                    ReplicaSetName = url.ReplicaSetName
                 };
 
                 var client = new MongoClient(settings);
