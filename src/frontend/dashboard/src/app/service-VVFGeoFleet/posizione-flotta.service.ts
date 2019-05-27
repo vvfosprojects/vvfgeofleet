@@ -32,6 +32,7 @@ export class PosizioneFlottaService {
 
   //private timer;
   //private timerSubcribe: PushSubscription;
+  public parametriGeoFleetWS : ParametriGeoFleetWS;
 
   private elencoPosizioni: PosizioneMezzo[] = [];
   private obsPosizioniMezzo$ : Observable<PosizioneMezzo[]>;
@@ -42,6 +43,7 @@ export class PosizioneFlottaService {
       this.timer = Observable.interval(9000).timeout(120000);
       this.obsPosizioniMezzo$ = Observable.of(this.elencoPosizioni);
       */
+     
     }
     //constructor(private http: HttpClient) { }
     
