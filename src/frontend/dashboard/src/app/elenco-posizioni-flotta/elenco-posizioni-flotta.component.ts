@@ -493,9 +493,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.parametriGeoFleetWS.reset();    
     this.subscription.add(
       this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
-      .debounceTime(3000)
+      //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent.OnInit() - posizioni:", posizioni);
+          console.log("ElencoPosizioniFlottaComponent, getSituazioneFlotta - posizioni:", posizioni);
           //console.log("posizioneFlottaService.length: ", posizioni.length);
           //this.elencoUltimePosizioni = JSON.parse( JSON.stringify(posizioni));
           this.elencoUltimePosizioni = posizioni.filter( r => true);

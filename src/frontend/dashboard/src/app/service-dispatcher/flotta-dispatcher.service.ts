@@ -27,9 +27,10 @@ export class FlottaDispatcherService {
   private timerSubcribe: PushSubscription;
 
   public istanteUltimoAggiornamento: Date;
+  private istanteAggiornamentoPrecedente: Date = null;
 
-  private maxIstanteAcquisizionePrecedente: Date ;
-  public maxIstanteAcquisizione: Date = new Date("01/01/1900 00:00:00");
+  public maxIstanteAcquisizione: Date;
+  private maxIstanteAcquisizionePrecedente: Date = null;
 
   private trimSec: Number = 0;
   private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
@@ -38,6 +39,7 @@ export class FlottaDispatcherService {
   //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
 
   private geolocationPosition : Position;
+
   public reset : Boolean = false;
 
   public startLat: number = 41.889777;
@@ -56,12 +58,12 @@ export class FlottaDispatcherService {
   //public elencoPosizioni : PosizioneMezzo[] = [];
 
   // elenco delle posizioni ricevute
-  public elencoPosizioniMezzo : PosizioneMezzo[] = [];
+  private elencoPosizioniMezzo : PosizioneMezzo[] = [];
 
   // elenco delle posizioni da elaborare, ovvero quelle ricevute dal service e 
   // successive all'ultimo istante di aggiornamento 
   //public elencoPosizioniMezzoTrim : PosizioneMezzo[] = [];
-  public elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+  private elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
 
   // array delle sole Nuove posizioni 
   private elencoPosizioniNuove : PosizioneMezzo[] = [];
@@ -131,9 +133,9 @@ export class FlottaDispatcherService {
 
     //var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
 
-    this.istanteUltimoAggiornamento = moment().toDate();      
 
-    this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
+    // memorizza l'istante di inizio di questa operazione di aggiornamento
+    this.istanteUltimoAggiornamento = moment().toDate();      
   
     // aggiungere sempre X secondi per essere sicuri di perdersi
     // meno posizioni possibili, a causa della distanza di tempo tra
@@ -148,7 +150,7 @@ export class FlottaDispatcherService {
 
     //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
-    if (all) { this.maxIstanteAcquisizionePrecedente = null;}
+    if (all) { this.maxIstanteAcquisizionePrecedente = null; }
 
     this.posizioneFlottaService.getPosizioneFlotta(parm).debounceTime(3000)
     .subscribe( posizioni => 
@@ -168,14 +170,16 @@ export class FlottaDispatcherService {
         if (this.elencoPosizioniMezzo.length > 0) {
           //l'attSec deve essere calcolato in relazione all'istante 
           //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
-          //eventuali messaggi "futuri", consentiti dagli adapter SO115.
+          //eventuali messaggi "futuri", che potrebbero essere ricevuti dagli adapter SO115
+          //a seguito di errata impostazione della data di sistema sui server dei Comandi Provinciali
 
-          // imposta maxIstanteAcquisizione filtrando le posizioni precedente all'
-          // istanteUltimoAggiornamento
           var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
           elencoPosizioniMezzoDepurate = this.elencoPosizioniMezzo.filter(
             i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
           );            
+
+          // imposta maxIstanteAcquisizione filtrando le posizioni precedenti all'
+          // istanteUltimoAggiornamento
           if (elencoPosizioniMezzoDepurate.length > 0) {
             this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
               reduce( function (a,b) 
@@ -184,10 +188,8 @@ export class FlottaDispatcherService {
                 return aa>bb ? a : b ;
               }).istanteAcquisizione);
 
-            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
             }
 
-            
           //console.log("elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
           //console.log("elencoPosizioniMezzoDepurate.length", elencoPosizioniMezzoDepurate.length);
           //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
@@ -198,8 +200,9 @@ export class FlottaDispatcherService {
           this.trimSec = 0;
 
           this.elencoPosizioniDaElaborare = this.elencoPosizioniMezzo.filter(
-            i => (new Date(i.istanteAcquisizione) >= new Date(this.istanteUltimoAggiornamento) )
+            i => (new Date(i.istanteAcquisizione) >= new Date(this.maxIstanteAcquisizionePrecedente) )
             );
+
           //console.log("elencoPosizioniDaElaborare", this.elencoPosizioniDaElaborare);
           if (this.elencoPosizioniDaElaborare.length > 0) {
               this.trimSec = moment(
@@ -218,16 +221,24 @@ export class FlottaDispatcherService {
 
         //obsPosizioniMezzo = Observable.of( this.elencoPosizioniDaElaborare);
         this.subjectPosizioniMezzo$.next(this.elencoPosizioniDaElaborare);
-  
+
         // elabora le posizioni ricevute in modo da attivare i subject specifici
         // delle posizioni Nuove, Modificate e d Eliminate
         this.elaboraPosizioniRicevute();
+
+        // restituisce gli array delle posizioni elaborate
         this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove);
         this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
         this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato);
   
+        // restituisce l'istante di inizio di questa operazione di aggiornamento
+        this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
               
-        
+        if (elencoPosizioniMezzoDepurate.length > 0) {
+          this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+          }
+         
+      
       });
 
 
