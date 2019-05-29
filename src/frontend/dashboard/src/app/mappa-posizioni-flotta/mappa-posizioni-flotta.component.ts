@@ -240,7 +240,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
      }
     })
 
-     
     // aggiunge alle posizioni Mostrate quelle Nuove     
     //if (this.elencoPosizioniMostrate.length == 0 ) 
     //if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 

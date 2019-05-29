@@ -111,19 +111,19 @@ export class FlottaDispatcherService {
       }
 
 
-  public getNuovePosizioniFlotta(parm : ParametriGeoFleetWS, all: boolean): 
+  public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
 
     return this.subjectNuovePosizioniMezzo$.asObservable();
   }
 
-  public getPosizioniFlottaStatoModificato(parm : ParametriGeoFleetWS, all: boolean): 
+  public getPosizioniFlottaStatoModificato(): 
   Observable<PosizioneMezzo[]> {
 
     return this.subjectPosizioniMezzoStatoModificato$.asObservable();
   }
   
-  public getPosizioniFlottaLocalizzazioneModificata(parm : ParametriGeoFleetWS, all: boolean): 
+  public getPosizioniFlottaLocalizzazioneModificata(): 
   Observable<PosizioneMezzo[]> {
 
     return this.subjectPosizioniMezzoLocalizzazioneModificata$.asObservable();
@@ -228,8 +228,8 @@ export class FlottaDispatcherService {
 
         // restituisce gli array delle posizioni elaborate
         this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove);
-        this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
         this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato);
+        this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
   
         // restituisce l'istante di inizio di questa operazione di aggiornamento
         this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
@@ -271,27 +271,22 @@ export class FlottaDispatcherService {
       if (this.elencoPosizioniMostrate.length == 0 ) 
         { 
           this.elencoPosizioniMostrate = JSON.parse( 
-            JSON.stringify(this.elencoPosizioniNuove));                        
-          this.elencoPosizioniMostratePrecedenti = [];
+            JSON.stringify(this.elencoPosizioniNuove));
         }
       else 
         { 
-          //null;
-          this.elencoPosizioniMostratePrecedenti =  JSON.parse( 
-            JSON.stringify(this.elencoPosizioniMostrate));    
+          /*
+            this.elencoPosizioniMostratePrecedenti =  JSON.parse( 
+            JSON.stringify(this.elencoPosizioniMostrate));    */
           this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(
             JSON.parse( 
             JSON.stringify(this.elencoPosizioniNuove)));                        
         }
   
-      /*
-      console.log('ngOnChanges - elencoPosizioniPrecedenti: ', this.elencoPosizioniPrecedenti );
-      console.log('ngOnChanges - elencoPosizioni: ', this.elencoPosizioni );
-      console.log('ngOnChanges - elencoPosizioniNuove: ', this.elencoPosizioniNuove );
-      */
-  
+      //console.log("flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove );
 
-       /*
+
+      /*
       // estra le posizioni dei Mezzi rientrati
       this.elencoPosizioniRientrate = this.elencoPosizioniMostratePrecedenti.
        filter( (item) => {
@@ -305,44 +300,83 @@ export class FlottaDispatcherService {
       */
  
   
-      // individua le posizioni con localizzazione Modificata
+      // individua le posizioni con localizzazione Modificata ed eventualmente anche lo stato
       this.elencoPosizioniLocalizzazioneModificata = this.elencoPosizioniDaElaborare.
         filter( (item) => {
           var v = this.elencoPosizioniMostratePrecedenti.find( 
             x => item.codiceMezzo == x.codiceMezzo );
           if ( v != null &&
-               v.localizzazione.lat != item.localizzazione.lat &&
-               v.localizzazione.lon != item.localizzazione.lon
+               (
+                 (v.localizzazione.lat != item.localizzazione.lat ||
+               v.localizzazione.lon != item.localizzazione.lon )
+               || (v.localizzazione.lat != item.localizzazione.lat ||
+                v.localizzazione.lon != item.localizzazione.lon ) && 
+                v.infoSO115.stato != item.infoSO115.stato )
               ) {
-            return item}
+                // modifica nel DataStore la posizioni variata ed eventualmente il suo stato         
+                var kk = this.elencoPosizioniMostrate.findIndex( 
+                  x => item.codiceMezzo === x.codiceMezzo );                
+                if ( kk != null ) 
+                  {                           
+                    this.elencoPosizioniMostrate[kk].fonte = item.fonte;
+                    this.elencoPosizioniMostrate[kk].istanteAcquisizione = item.istanteAcquisizione;
+                    this.elencoPosizioniMostrate[kk].istanteArchiviazione = item.istanteArchiviazione;
+                    this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
+                    this.elencoPosizioniMostrate[kk].localizzazione = item.localizzazione;
+                    if (  item.infoSO115.stato != "0")
+                     {this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato; }
+                  }
+                
+                return item}
           else {return null}  }
          );
+      //console.log("flotta-dispatcher.service - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata );
 
-      // individua le posizioni con stato Modificato
+      // individua le posizioni con il solo stato Modificato
       this.elencoPosizioniStatoModificato = this.elencoPosizioniDaElaborare.
         filter( (item) => {
           var v = this.elencoPosizioniMostratePrecedenti.find( 
             x => item.codiceMezzo == x.codiceMezzo );
           if ( v != null &&
-               v.infoSO115.stato != item.infoSO115.stato
+               v.infoSO115.stato != item.infoSO115.stato &&
+               v.localizzazione.lat === item.localizzazione.lat &&
+                v.localizzazione.lon === item.localizzazione.lon               
               ) {
-            return item}
+                // modifica nel DataStore lo stato variato
+                var kk = this.elencoPosizioniMostrate.findIndex( 
+                  x => item.codiceMezzo === x.codiceMezzo );                
+                if ( kk != null ) 
+                  {                           
+                    this.elencoPosizioniMostrate[kk].fonte = item.fonte;
+                    this.elencoPosizioniMostrate[kk].istanteAcquisizione = item.istanteAcquisizione;
+                    this.elencoPosizioniMostrate[kk].istanteArchiviazione = item.istanteArchiviazione;
+                    this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
+                    this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato;
+                  }
+                  
+                return item}
           else {return null}  }
          );
-          
+      //console.log("flotta-dispatcher.service - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato );
+
+      /*
       // modifica nel DataStore le posizioni con variazioni
       this.elencoPosizioniDaElaborare.forEach( item => { 
         var v = this.elencoPosizioniMostrate.findIndex( 
           x => item.codiceMezzo === x.codiceMezzo );
         
-        if ( v != null ) {  
-          this.elencoPosizioniMostrate[v] = item;
-
-          /*
+        if ( v != null ) 
+          {           
+          // se la posizione ricevuta ha uno stato 'sconosciuto', significa che proviene
+          // da un dispositivo che fornisce solo la localizzazione pertanto
+          // modifica solo quelle informazioni,
+          // altrimenti modifica anche aggiuntive, inviate ad esempio da SO115 e GAC
           if (item.infoSO115.stato != "0")
             { 
               //console.log("stato ok", this.elencoPosizioniMostrate[v] );
-              //this.elencoPosizioniMostrate[v] = item; 
+              this.elencoPosizioniMostrate[v] = item; 
+*/              
+              /*
               var vePM = Object.values(this.elencoPosizioniMostrate[v]);
               var vitem = Object.values(item);
               var trovato : boolean = false;
@@ -357,7 +391,8 @@ export class FlottaDispatcherService {
                   }
                   ii++;
               } while ( !trovato && ii < vePM.length)
-  
+              */
+/*  
             }
           else
             { //console.log("stato 0", this.elencoPosizioniMostrate[v] );
@@ -371,12 +406,12 @@ export class FlottaDispatcherService {
 
               //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
             }
-            */
+            
         }    
 
 
       } )
-  
+ */ 
       // salva l'elenco delle posizioni Mostrate attualmente
       this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
       

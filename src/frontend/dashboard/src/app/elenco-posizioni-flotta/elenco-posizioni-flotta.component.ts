@@ -474,12 +474,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     filtriDestinazioneUso: string[] = [];
     filtriDestinazioneUsoObj: Object;
 
-/*
-    constructor({  
-      this.seguiMezziSelezionati = [];
-    }
-    )      
-    */
 
    subscription = new Subscription();
       
@@ -491,6 +485,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
    
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
     this.parametriGeoFleetWS.reset();    
+    
+    /*
     this.subscription.add(
       this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
       //.debounceTime(3000)
@@ -500,8 +496,43 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           //this.elencoUltimePosizioni = JSON.parse( JSON.stringify(posizioni));
           this.elencoUltimePosizioni = posizioni.filter( r => true);
           //console.log("elencoPosizioni (prima): ", this.elencoPosizioni);
+          this.gestisciPosizioniFlotta();
           this.inizializzaFiltri();
           //console.log("elencoPosizioni (dopo): ", this.elencoPosizioni);
+        })
+      );   
+    */
+
+    this.subscription.add(
+      this.flottaDispatcherService.getNuovePosizioniFlotta()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          this.aggiungiNuovePosizioniFlotta(posizioni);
+          this.inizializzaFiltri();
+        })
+      );   
+
+    this.subscription.add(
+      this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          this.modificaPosizioniFlotta(posizioni);
+          this.inizializzaFiltri();
+        })
+      );   
+  
+    this.subscription.add(
+      this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          this.modificaPosizioniFlotta(posizioni);
+          this.inizializzaFiltri();
         })
       );   
 
@@ -525,16 +556,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
   }
   
-
-  /*
-  ngOnChanges(changes: any) {
-    
-    this.inizializzaFiltri();  
-    //this.impostaPosizioneMezzoVisibile(this.elencoUltimePosizioni);
-
-  }
-  */
-
   
   dragStart(event, pos: PosizioneMezzo) {
     this.draggedPosizioneMezzo = pos;
@@ -706,12 +727,94 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     }
   }
 
-  inizializzaFiltri() {
-    
-    
-    //console.log( 'inizializzaFiltri-start', new Date().getMilliseconds() );
+  aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
+    this.testModalitaCambiata();
+    var p : PosizioneMezzo[];
+    p = nuovePosizioniMezzo.filter(r => r.infoSO115 != null); 
+    // aggiunge le nuove posizioni a quelle visualizzate nella pagina HTML
+    this.elencoPosizioni = this.elencoPosizioni.concat(p);
 
-    //this.cambiaModalita();
+    // riordina l'array elencoPosizioni
+    this.elencoPosizioni = this.elencoPosizioni.sort( 
+      function(a,b) 
+      { var bb : Date = new Date(b.istanteAcquisizione);
+        var aa : Date  = new Date(a.istanteAcquisizione);
+        return aa>bb ? -1 : aa<bb ? 1 : 0;
+      });
+
+    // riordina l'array seguiMezziSelezionati
+    this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
+      function(a,b) 
+      { var bb : Date = new Date(b.istanteAcquisizione);
+        var aa : Date  = new Date(a.istanteAcquisizione);
+        return aa>bb ? -1 : aa<bb ? 1 : 0;
+      });
+      
+  }
+
+  modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
+    this.testModalitaCambiata();
+    var p : PosizioneMezzo[];
+    p = posizioniMezzoModificate.filter(r => r.infoSO115 != null); 
+
+    // modifica nelle posizioni Mostrate quelle con variazioni
+    p.forEach( item => { 
+      var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+      if ( v != null) {  
+        // se la posizione ricevuta ha uno stato 'sconosciuto'
+        // modifica solo le informazioni di base, senza modificare quelle relative a SO115 
+        // altrimenti modifica tutte le informazioni
+        if (item.infoSO115.stato != "0")
+          { this.elencoPosizioni[v] = item; }
+        else
+          { this.elencoPosizioni[v].fonte = item.fonte;
+            //this.elencoPosizioni[v].classiMezzo = item.classiMezzo;
+            this.elencoPosizioni[v].istanteAcquisizione = item.istanteAcquisizione;
+            this.elencoPosizioni[v].istanteArchiviazione = item.istanteArchiviazione;
+            this.elencoPosizioni[v].istanteInvio = item.istanteInvio;
+            this.elencoPosizioni[v].localizzazione = item.localizzazione;
+          }
+      }    
+    } )
+
+     
+    // riordina l'array elencoPosizioni
+    this.elencoPosizioni = this.elencoPosizioni.sort( 
+      function(a,b) 
+      { var bb : Date = new Date(b.istanteAcquisizione);
+        var aa : Date  = new Date(a.istanteAcquisizione);
+        return aa>bb ? -1 : aa<bb ? 1 : 0;
+      });
+
+    // modifica nelle posizioni dei Mezzi da seguire quelle con variazioni
+    p.forEach( item => { 
+      var v = this.seguiMezziSelezionati.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+      //if ( v != null) {  
+      if ( v != -1) {  
+        if (item.infoSO115.stato != "0")
+          { this.seguiMezziSelezionati[v] = item; }
+        else
+          { this.seguiMezziSelezionati[v].fonte = item.fonte;
+            this.seguiMezziSelezionati[v].classiMezzo = item.classiMezzo;
+            this.seguiMezziSelezionati[v].istanteAcquisizione = item.istanteAcquisizione;
+            this.seguiMezziSelezionati[v].istanteArchiviazione = item.istanteArchiviazione;
+            this.seguiMezziSelezionati[v].istanteInvio = item.istanteInvio;
+            this.seguiMezziSelezionati[v].localizzazione = item.localizzazione;
+          }
+      }    
+    } )
+      
+    // riordina l'array seguiMezziSelezionati
+    this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
+      function(a,b) 
+      { var bb : Date = new Date(b.istanteAcquisizione);
+        var aa : Date  = new Date(a.istanteAcquisizione);
+        return aa>bb ? -1 : aa<bb ? 1 : 0;
+      });
+      
+  }
+  
+  gestisciPosizioniFlotta( ) {
     this.testModalitaCambiata();
     //if (this.elencoPosizioni.length == 0 ) 
     if (this.reset || this.elencoPosizioni.length == 0 ) 
@@ -796,6 +899,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     }
 
+
+  }
+
+  inizializzaFiltri() {
+    
+    
+    //console.log( 'inizializzaFiltri-start', new Date().getMilliseconds() );
+
+    //this.cambiaModalita();
     /*
     this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
       this.elencoPosizioni.find( iii => 
@@ -806,6 +918,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         } 
       ));
     */
+
     this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
       this.elencoPosizioni.some( iii => 
         ( iii.classiMezzo.some( cm  => cm === i.codice)) 
