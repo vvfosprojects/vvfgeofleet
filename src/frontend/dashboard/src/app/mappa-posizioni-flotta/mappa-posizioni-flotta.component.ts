@@ -44,14 +44,10 @@ import { DOCUMENT } from "@angular/platform-browser";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  //@Input() elencoPosizioni : PosizioneMezzo[] = [];
-  //@Input() elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
   public elencoPosizioni : PosizioneMezzo[] = [];
-  public elencoPosizioniDaElaborare : PosizioneMezzo[] = [];
+
   @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   
-  //@Input() istanteUltimoAggiornamento: Date;
-
   /*
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
@@ -101,12 +97,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   //private markers: AgmMarker;
 
   public elencoPosizioniMostrate : PosizioneMezzo[] = [];
-  private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
-  private elencoPosizioniNuove : PosizioneMezzo[] = [];
-  private elencoPosizioniEliminate : PosizioneMezzo[] = [];
-  private elencoPosizioniRientrate : PosizioneMezzo[] = [];
-  private elencoPosizioniModificate : PosizioneMezzo[] = [];
+
   private sedeMezzoCorrente : string;
 
   private areaChangedDebounceTime = new Subject();
@@ -120,21 +112,41 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   ) {     
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
     this.parametriGeoFleetWS.reset();    
+
+   this.subscription.add(
+    this.flottaDispatcherService.getNuovePosizioniFlotta()
+    //.debounceTime(3000)
+    .subscribe( posizioni => {
+        console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
+        //console.log("posizioneFlottaService.length: ", posizioni.length);
+        this.aggiungiNuovePosizioniFlotta(posizioni);
+        //this.controllaCentraSuUltimaPosizione();
+      })
+    );   
+
     this.subscription.add(
-      this.flottaDispatcherService.getSituazioneFlotta(this.parametriGeoFleetWS, false)
-      .debounceTime(3000)
+      this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
+      //.debounceTime(3000)
       .subscribe( posizioni => {
-          //console.log("flottaDispatcherService: ", posizioni);
+          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
           //console.log("posizioneFlottaService.length: ", posizioni.length);
-          //this.elencoPosizioni = JSON.parse( JSON.stringify(posizioni));
-          //this.elencoPosizioniDaElaborare = JSON.parse( JSON.stringify(posizioni));
-          this.elencoPosizioni = posizioni.filter( r=> true);
-          this.elencoPosizioniDaElaborare = posizioni.filter( r=> true);
-          //console.log("elencoPosizioniMostrate (prima): ", this.elencoPosizioniMostrate);
-          this.elaboraPosizioniRicevute();
-          //console.log("elencoPosizioniMostrate (dopo): ", this.elencoPosizioniMostrate);
+          this.modificaPosizioniFlotta(posizioni);
+          //this.controllaCentraSuUltimaPosizione();
         })
-      );    
+      );   
+
+    this.subscription.add(
+      this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
+          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          this.modificaPosizioniFlotta(posizioni);
+          //this.controllaCentraSuUltimaPosizione();
+        })
+      );   
+
+
    }    
 
   //public fixed: boolean = false; 
@@ -221,94 +233,33 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     return;
   }
 
-  elaboraPosizioniRicevute(){
+  aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
+    var p : PosizioneMezzo[];
+    p = nuovePosizioniMezzo.filter(r => r.infoSO115 != null); 
+    if (p.length  > 0) 
+    {
+      // aggiunge alle posizioni Mostrate quelle Nuove     
+      this.elencoPosizioniMostrate = JSON.parse( JSON.stringify(p));
+    }
+  }
 
-    //console.log("ngOnChanges()-mezzo Selezionato", this.mezzoSelezionato);
-    // individua le posizioni non ancora elaborate
-    this.elencoPosizioniNuove = this.elencoPosizioniDaElaborare.
-      filter( (item) => {
-        var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
-        if ( v == null) {
-          return item}
-        else {return null}  }
-       );
-      
-    // rimuove dalle posizioni da elaborare quelle Nuove
-    this.elencoPosizioniNuove.forEach( v => { 
-      var k = this.elencoPosizioniDaElaborare.indexOf( v );
-      if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
-     }
-    })
-
-    // aggiunge alle posizioni Mostrate quelle Nuove     
-    //if (this.elencoPosizioniMostrate.length == 0 ) 
-    //if (this.reset || this.elencoPosizioniMostrate.length == 0 ) 
-    if (this.elencoPosizioniMostrate.length == 0 ) 
-      { 
-        //this.elencoPosizioniMostrate = this.elencoPosizioniNuove;
-        //this.elencoPosizioniMostrate = this.elencoPosizioni; 
-        this.elencoPosizioniMostrate = JSON.parse( JSON.stringify(this.elencoPosizioni));                        
-        this.elencoPosizioniMostratePrecedenti = [];
-      }
-    else 
-      { 
-        null;
-        /*if (this.elencoPosizioniNuove.length != 0 ) 
-        { this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(this.elencoPosizioniNuove); }
-        */
-      }
-
-    /*
-    console.log('ngOnChanges - elencoPosizioniPrecedenti: ', this.elencoPosizioniPrecedenti );
-    console.log('ngOnChanges - elencoPosizioni: ', this.elencoPosizioni );
-    console.log('ngOnChanges - elencoPosizioniNuove: ', this.elencoPosizioniNuove );
-    */
-
-    //this.gmapsApi.getNativeMap().then(map => {
-    //  this.markerManager.getNativeMarker(this.agmMarker).then(marker => { console.log(marker);
-    //  });
-    //});  
-    
-    /*
-    // individua le posizioni eliminate estraendo quello non più presenti 
-    // nell'elenco aggiornato rispetto a quello precedente
-    this.elencoPosizioniEliminate = this.elencoPosizioniMostratePrecedenti.
-    filter( (item) => {
-      var v = this.elencoPosizioniDaElaborare.find( x => item.codiceMezzo == x.codiceMezzo );
-      if ( v == null) {return item}
-      else {return null}  }
-    );
-    */
-     /*
-    // estra le posizioni dei Mezzi rientrati
-    this.elencoPosizioniRientrate = this.elencoPosizioniMostratePrecedenti.
-     filter( (item) => {
-       var v = this.elencoPosizioniDaElaborare.find( x => item.infoSO115.stato == '4' );
-       if ( v != null) {return item}
-       else {return null}  }
-    );
-       
-    // aggiunge alle posizioni da eliminare quelle dei Mezzi rientrati
-    this.elencoPosizioniEliminate = this.elencoPosizioniEliminate.concat(this.elencoPosizioniRientrate);
-    */
-    /*
-    // rimuove dalle posizioni Mostrate quelle Eliminate
-    this.elencoPosizioniEliminate.forEach( v => { 
-       var k = this.elencoPosizioniMostrate.indexOf( v );
-       if (k != -1) { this.elencoPosizioniMostrate.splice(k,1); 
-      }
-     })
-     */
-
+  modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
+    var p : PosizioneMezzo[];
+    p = posizioniMezzoModificate.filter(r => r.infoSO115 != null); 
 
     // modifica nelle posizioni Mostrate quelle con variazioni
-    this.elencoPosizioniDaElaborare.forEach( item => { 
+    p.forEach( item => { 
       var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
       //if ( v != null) {  this.elencoPosizioniMostrate[v] = item; }    
       
       if ( v != null ) {  
+        // se la posizione ricevuta ha uno stato 'sconosciuto'
+        // modifica solo le informazioni di base, senza modificare quelle relative a SO115 
+        // altrimenti modifica tutte le informazioni
         if (item.infoSO115.stato != "0")
           { 
+            this.elencoPosizioniMostrate[v] = item; 
+            /*
             //console.log("stato ok", this.elencoPosizioniMostrate[v] );
             //this.elencoPosizioniMostrate[v] = item; 
             var vePM = Object.values(this.elencoPosizioniMostrate[v]);
@@ -325,42 +276,28 @@ export class MappaPosizioniFlottaComponent implements OnInit {
                 }
                 ii++;
             } while ( !trovato && ii < vePM.length)
+            */
 
           }
         else
           { //console.log("stato 0", this.elencoPosizioniMostrate[v] );
             //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
             this.elencoPosizioniMostrate[v].fonte = item.fonte;
-            this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
+            //this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
             this.elencoPosizioniMostrate[v].istanteAcquisizione = item.istanteAcquisizione;
             this.elencoPosizioniMostrate[v].istanteArchiviazione = item.istanteArchiviazione;
             this.elencoPosizioniMostrate[v].istanteInvio = item.istanteInvio;
             this.elencoPosizioniMostrate[v].localizzazione = item.localizzazione;
-            /*
-            if ( this.elencoPosizioniMostrate[v].fonte != item.fonte)
-              this.elencoPosizioniMostrate[v].fonte = item.fonte;
-            if (this.elencoPosizioniMostrate[v].classiMezzo != item.classiMezzo)
-              this.elencoPosizioniMostrate[v].classiMezzo = item.classiMezzo;
-            if (this.elencoPosizioniMostrate[v].istanteAcquisizione != item.istanteAcquisizione)
-              this.elencoPosizioniMostrate[v].istanteAcquisizione = item.istanteAcquisizione;
-            if (this.elencoPosizioniMostrate[v].istanteArchiviazione != item.istanteArchiviazione)
-              this.elencoPosizioniMostrate[v].istanteArchiviazione = item.istanteArchiviazione;
-            if (this.elencoPosizioniMostrate[v].istanteInvio != item.istanteInvio)
-              this.elencoPosizioniMostrate[v].istanteInvio = item.istanteInvio;
-            if (this.elencoPosizioniMostrate[v].localizzazione != item.localizzazione)
-              this.elencoPosizioniMostrate[v].localizzazione = item.localizzazione;
-            */
-            //console.log(this.elencoPosizioniMostrate[v].infoSO115.stato );
+
           }
       }    
 
     } )
-
-    // salva l'elenco delle posizioni Mostrate attualmente
-    this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
     
   }
-    
+     
+
+
   markerIconUrl(m: PosizioneMezzo) {
     //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
 
@@ -445,8 +382,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) { 
+
     
-      if (p.infoSO115 != null) {
+    if (p.infoSO115 != null) {
+
        
 
         var r : boolean ;
@@ -505,14 +444,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       
   }
 
-  
-  /*
-  sedeMezzo(p : PosizioneMezzo) {
-    return (p.classiMezzo.
-      find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);    
-  }
-  */
-
   classiMezzoDepurata(p : PosizioneMezzo) {
     return p.classiMezzo.
       filter( i =>  (i.substr(0,5) != "PROV:") )
@@ -531,25 +462,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       { return 2; } else {return 1; }
   }
 
-  /*
-  toolTipText(item : PosizioneMezzo) {
-    var testo : String;
-    var opzioniDataOra = {};
-    //" (" + this.sedeMezzo(item) + ") del " + 
-    testo = this.classiMezzoDepurata(item) + " " + item.codiceMezzo +
-    " (" + item.sedeMezzo + ") del " + 
-    new Date(item.istanteAcquisizione).toLocaleString() + 
-    " (da " + item.fonte.classeFonte + ":" + item.fonte.codiceFonte + ")";
-
-    if (item.infoSO115 != null && 
-      item.infoSO115.codiceIntervento != null &&
-        new Number(item.infoSO115.codiceIntervento) != 0) {
-      testo = testo + " - Intervento " + item.infoSO115.codiceIntervento + " del " +
-      new Date(item.infoSO115.dataIntervento).toLocaleDateString() ;
-    }
-    return testo;
-  }  
-  */
 
   areaChangedOnMap(e) {
     this.areaChangedDebounceTime.next(e);
