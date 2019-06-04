@@ -87,15 +87,16 @@
   <div class="container-fluid">
       <!--[elencoUltimePosizioni]="elencoPosizioniMezzo"-->      
       <!--[maxIstanteAcquisizione]="maxIstanteAcquisizione"-->
+      <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->
+      <!--(nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)"-->
+      <!--(nuovaSelezioneAreaPos)="aggiornaArea($event)"-->
+      <!--[reset]="reset"-->
+      <!--[startLat]="startLat"-->
+      <!--[startLon]="startLon" -->
+      <!--[startZoom]="startZoom"  --> 
     <app-elenco-posizioni-flotta       
-      [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"      
-      [reset]="reset"
-      [startLat]="startLat"
-      [startLon]="startLon" 
-      [startZoom]="startZoom"   
       [modalita]="modalita"
-      (nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)"
-      (nuovaSelezioneAreaPos)="aggiornaArea($event)">
+      (nuovoIstanteUltimoAggiornamento)="aggiornaIstanteUltimoAggiornamento($event)">
     </app-elenco-posizioni-flotta>
   </div>
 </body>

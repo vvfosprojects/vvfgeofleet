@@ -52,7 +52,7 @@ export class FlottaDispatcherService {
   private subjectPosizioniMezzoStatoModificato$ = new Subject<PosizioneMezzo[]>();
   private subjectPosizioniMezzoLocalizzazioneModificata$ = new Subject<PosizioneMezzo[]>();
 
-  private subjectPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
+  //private subjectPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   //public elencoPosizioni : PosizioneMezzo[] = [];
@@ -104,12 +104,13 @@ export class FlottaDispatcherService {
         return this.subjectIstanteUltimoAggiornamento$.asObservable();                
       }  
 
+  /*
   public getSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): 
       Observable<PosizioneMezzo[]> {
 
         return this.subjectPosizioniMezzo$.asObservable();
       }
-
+  */
 
   public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
@@ -132,7 +133,6 @@ export class FlottaDispatcherService {
   private aggiornaSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): void {
 
     //var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
-
 
     // memorizza l'istante di inizio di questa operazione di aggiornamento
     this.istanteUltimoAggiornamento = moment().toDate();      
@@ -216,28 +216,31 @@ export class FlottaDispatcherService {
           //console.log("trimSec", this.trimSec);
           this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
           //console.log("trimSec adj", this.trimSec);
+
+          /*
+          //obsPosizioniMezzo = Observable.of( this.elencoPosizioniDaElaborare);
+          this.subjectPosizioniMezzo$.next(this.elencoPosizioniDaElaborare);
+          */
+
+          // elabora le posizioni ricevute in modo da attivare i subject specifici
+          // delle posizioni Nuove, Modificate e d Eliminate
+          this.elaboraPosizioniRicevute();
+
+          // restituisce gli array delle posizioni elaborate
+          this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove);
+          this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato);
+          this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
+    
+          // restituisce l'istante di inizio di questa operazione di aggiornamento
+          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
+                
+          if (elencoPosizioniMezzoDepurate.length > 0) {
+            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+          }
+                   
         }      
     
 
-        //obsPosizioniMezzo = Observable.of( this.elencoPosizioniDaElaborare);
-        this.subjectPosizioniMezzo$.next(this.elencoPosizioniDaElaborare);
-
-        // elabora le posizioni ricevute in modo da attivare i subject specifici
-        // delle posizioni Nuove, Modificate e d Eliminate
-        this.elaboraPosizioniRicevute();
-
-        // restituisce gli array delle posizioni elaborate
-        this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove);
-        this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato);
-        this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
-  
-        // restituisce l'istante di inizio di questa operazione di aggiornamento
-        this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
-              
-        if (elencoPosizioniMezzoDepurate.length > 0) {
-          this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
-          }
-         
       
       });
 
@@ -416,5 +419,4 @@ export class FlottaDispatcherService {
       this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
       
     }
-  
 }
