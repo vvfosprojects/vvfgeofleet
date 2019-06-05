@@ -11,14 +11,15 @@
             (mouseOut)="outOfMarker(m, i)"
             [latitude]="m.localizzazione.lat"
             [longitude]="m.localizzazione.lon"
+            [visible]="m.visibile"            
             [openInfoWindow]="false"
             [iconUrl]="markerIconUrl(m)"
-            [visible]="posizioneMezzoSelezionata(m)"
             [zIndex]="indiceMezzoSelezionato(m)"            
             data-toggle="tooltip" data-html="true" 
             title="{{m.toolTipText}}">    
             >
-            <!--            [visible]="m.visibile"
+            <!--[visible]="posizioneMezzoSelezionata(m)"-->
+            <!--            
             -->
             <!--
             <agm-info-window [disableAutoPan]="true">

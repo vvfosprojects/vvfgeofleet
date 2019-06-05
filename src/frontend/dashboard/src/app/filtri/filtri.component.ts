@@ -45,13 +45,26 @@ export class FiltriComponent implements OnInit {
     console.log('codice: ' + this.vociFiltro[4].codice);
     console.log('codice: ' + this.vociFiltro[5].codice);
     */
+    
     this.vociFiltro.find(vf => vf.codice === codice).selezionato = event.target.checked;
+    // restituisce le sole voci selezionate
     this.nuovaSelezione.emit(
       this.vociFiltro
         .filter(v => v.selezionato)
         .map(v => v.codice)
     );
-
+    
+    /*
+    var voceFiltro : VoceFiltro;
+    voceFiltro = this.vociFiltro.find(vf => vf.codice === codice)
+    if (voceFiltro != null) {
+      voceFiltro.selezionato = event.target.checked;
+      // restituisce la sola voce cliccata, chi la riceve dovrà controllare se è stata
+      // selezionata o deselezionata
+      this.nuovaSelezione.emit([voceFiltro]);
+    }
+    */
+  
   }
 
 }

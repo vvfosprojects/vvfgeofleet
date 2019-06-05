@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, of } from "rxjs";
 
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
-@Injectable({
+@Injectable(/*{
   providedIn: 'root'
-})
+}*/)
 
 export class GestioneFiltriService {
 
 
-  public titoloFiltroStatiMezzo: string = "Stati Mezzo";
-  public vociFiltroStatiMezzo: VoceFiltro[] = [
+  private titoloFiltroStatiMezzo: string = "Stati Mezzo";
+  private vociFiltroStatiMezzo: VoceFiltro[] = [
     new VoceFiltro(
       "1", "In viaggio verso l'intervento ", 0, true, "", "badge-info", 
       "assets/images/mm_20_red.png"
@@ -44,12 +45,12 @@ export class GestioneFiltriService {
     ];
 
     //vociFiltroStatiMezzoDefault: VoceFiltro[];  
-    public filtriStatiMezzo: string[] = [];
-    public filtriStatiMezzoObj: Object;
+    private filtriStatiMezzo: string[] = [];
+    private filtriStatiMezzoObj: Object;
 
-    public titoloFiltroSedi: string = "Sedi";
-    public vociFiltroSedi: VoceFiltro[] = [];
-    public vociFiltroSediALL: VoceFiltro[] = [
+    private titoloFiltroSedi: string = "Sedi";
+    private vociFiltroSedi: VoceFiltro[] = [];
+    private vociFiltroSediALL: VoceFiltro[] = [
       new VoceFiltro("CH", "ABRUZZO - Chieti", 0, true, "", "badge-info", ""),
       new VoceFiltro("AQ", "ABRUZZO - L'Aquila", 0, true, "", "badge-info", ""),
       new VoceFiltro("PE", "ABRUZZO - Pescara", 0, true, "", "badge-info", ""),
@@ -152,12 +153,12 @@ export class GestioneFiltriService {
       new VoceFiltro("VI", "VENETO - Vicenza", 0, true, "", "badge-info", ""),
       new VoceFiltro("..", "sconosciuta", 0, true, "", "badge-info", "")
     ];
-    filtriSedi: string[] = [];
-    filtriSediObj: Object;
+    private filtriSedi: string[] = [];
+    private filtriSediObj: Object;
 
-    public titoloFiltroGeneriMezzo: string = "Generi Mezzo";
-    public vociFiltroGeneriMezzo: VoceFiltro[] = [];
-    public vociFiltroGeneriMezzoALL: VoceFiltro[] = [
+    private titoloFiltroGeneriMezzo: string = "Generi Mezzo";
+    private vociFiltroGeneriMezzo: VoceFiltro[] = [];
+    private vociFiltroGeneriMezzoALL: VoceFiltro[] = [
       new VoceFiltro("", "sconosciuto", 0, true, "", "badge-info", ""),
       new VoceFiltro("*****", "non definito", 0, true, "", "badge-info", ""),
       new VoceFiltro("ATOM", "ATOMIZZATORE", 0, true, "", "badge-info", ""),
@@ -403,29 +404,185 @@ export class GestioneFiltriService {
       new VoceFiltro("FS/NEVE", "YETI E PRINOTH PER ZONE INNEVATE", 0, true, "", "badge-info", ""),
       new VoceFiltro("ZA", "ZATTERA", 0, true, "", "badge-info", "")
     ];
-    filtriGeneriMezzo: string[] = [];
-    filtriGeneriMezzoObj: Object;
+    private filtriGeneriMezzo: string[] = [];
+    private filtriGeneriMezzoObj: Object;
 
-    public titoloFiltroDestinazioneUso: string = "Destinazione d'uso";
-    public vociFiltroDestinazioneUso: VoceFiltro[] = [];
-    public vociFiltroDestinazioneUsoALL: VoceFiltro[] = [
+    private titoloFiltroDestinazioneUso: string = "Destinazione d'uso";
+    private vociFiltroDestinazioneUso: VoceFiltro[] = [];
+    private vociFiltroDestinazioneUsoALL: VoceFiltro[] = [
      new VoceFiltro("..", "sconosciuta", 0, true, "", "badge-info", ""),
      new VoceFiltro("CORP", "Comando", 0, true, "", "badge-info", ""),
      new VoceFiltro("CMOB", "Colonna Mobile", 0, true, "", "badge-info", ""),
      new VoceFiltro("GOS", "Gruppo Operativo Speciale", 0, true, "", "badge-info", "")
     ];
-    filtriDestinazioneUso: string[] = [];
-    filtriDestinazioneUsoObj: Object;
+    private filtriDestinazioneUso: string[] = [];
+    private filtriDestinazioneUsoObj: Object;
 
     private subjectFiltriStatiMezzo$ = new Subject<VoceFiltro[]>();
     private subjectFiltriSedi$ = new Subject<VoceFiltro[]>();
     private subjectFiltriGeneriMezzo$ = new Subject<VoceFiltro[]>();
     private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
     
-  constructor() { }
+  constructor() {     
+      // scatena l'invio dei subject a chi è in ascolto
+      var elencoPosizioni : PosizioneMezzo[] = [];
+      this.setupFiltri(elencoPosizioni);
+  }
+
+  private setupFiltriStatiMezzo(elencoPosizioni : PosizioneMezzo[]): void {
+    // elabora solo le posizioni su cui sono disponibili le info di SO115
+    elencoPosizioni = elencoPosizioni.filter(r => r.infoSO115 != null);
+  
+    // calcola la cardinalità per tutti gli Stati del Mezzo, se non sono presenti nell'elenco Posizioni, sarà 0
+    this.vociFiltroStatiMezzo.find(v => v.codice === "0").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("0") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "1").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("1") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "2").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("2") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "3").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("3") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "4").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("4") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "5").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("5") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "6").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
+    this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = 
+      elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
+
+    this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+  }
+
+  private setupFiltriSedi(elencoPosizioni : PosizioneMezzo[]): void {
+
+    // filtra solo le Sedi presenti nell'elenco Posizioni
+
+    this.vociFiltroSedi = this.vociFiltroSediALL.filter( i =>
+      elencoPosizioni.some( iii => 
+        ( iii.sedeMezzo === i.codice ) 
+      ));
+
+    this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+  }
+  
+  private setupFiltriGeneriMezzo(elencoPosizioni : PosizioneMezzo[]): void {
+
+    // filtra solo i Generi Mezzo presenti nell'elenco Posizioni
+    this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
+      elencoPosizioni.some( iii => 
+        ( iii.classiMezzo.some( cm  => cm === i.codice)) 
+      ));
+
+    // aggiungo sempre il genere Mezzo "sconosciuto"
+    if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "sconosciuto"))
+    {
+      this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
+        new VoceFiltro("", "sconosciuto", 0, true, "", "badge-info", "") );
+    }
+
+    // aggiungo sempre il genere Mezzo "non definito"
+    if (!this.vociFiltroGeneriMezzo.find(i => i.descrizione == "non definito"))
+    {
+      this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzo.concat(
+        new VoceFiltro("*****", "non definito", 0, true, "", "badge-info", "") );
+    }
+
+    this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
+  }
+  
+  private setupFiltriDestinazioneUso(elencoPosizioni : PosizioneMezzo[]): void {
+
+    // filtra solo le Destinazioni d'uso presenti nell'elenco Posizioni
+    this.vociFiltroDestinazioneUso = this.vociFiltroDestinazioneUsoALL.filter( i =>
+      elencoPosizioni.find( iii => 
+        {if ( iii.destinazioneUso === i.codice)
+          return true; 
+          else 
+          return false;
+        } 
+      ));
+             
+
+    this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
+
+  }
+  
+  public setVisibleStatiMezzo(vociFiltroSelezionate : String[]): void {
+    /*
+    this.filtriStatiMezzoObj = undefined;  
+    this.filtriStatiMezzoObj = new Object();  
+    this.filtriStatiMezzo = this.vociFiltroStatiMezzo
+    .filter(v => v.selezionato)
+    .map(v => (v.codice).toString())
+    ;
+    this.filtriStatiMezzo.forEach( item => { this.filtriStatiMezzoObj[item] = item; } ); 
+    */
+    vociFiltroSelezionate.forEach( ii => { 
+      this.vociFiltroStatiMezzo.find( item => item.codice == ii).selezionato = true;
+      });
+
+    this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+      
+  }
+
+  public setVisibleSedi(vociFiltroSelezionate : String[]): void {
+    /*
+    this.filtriSediObj = undefined;  
+    this.filtriSediObj = new Object();  
+    this.filtriSedi = this.vociFiltroSedi
+    .filter(v => v.selezionato)
+    .map(v => (v.codice).toString())
+    ;
+    this.filtriSedi.forEach( item => { this.filtriSediObj[item] = item; } );    
+    */
+    vociFiltroSelezionate.forEach( ii => { 
+      this.vociFiltroSedi.find( item => item.codice == ii).selezionato = true;
+      });
+    
+    this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+        
+  }
+
+  public setVisibleGeneriMezzo(vociFiltroSelezionate : String[]): void {
+    /*
+    this.filtriGeneriMezzoObj = undefined;
+    this.filtriGeneriMezzoObj = new Object();
+    this.filtriGeneriMezzo = this.vociFiltroGeneriMezzo
+    .filter(v => v.selezionato)
+    .map(v => (v.codice).toString())
+    ;
+    this.filtriGeneriMezzo.forEach( item => { this.filtriGeneriMezzoObj[item]=item; } );
+    */
+   
+    vociFiltroSelezionate.forEach( ii => { 
+      this.vociFiltroGeneriMezzo.find( item => item.codice == ii).selezionato = true;
+      });
+
+    this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
+      
+  }
+
+  public setVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
+    /*
+    this.filtriDestinazioneUsoObj = undefined;      
+    this.filtriDestinazioneUsoObj = new Object();  
+    this.filtriDestinazioneUso = this.vociFiltroDestinazioneUso
+    .filter(v => v.selezionato)
+    .map(v => (v.codice).toString())
+    ;
+    this.filtriDestinazioneUso.forEach( item => { this.filtriDestinazioneUsoObj[item]=item; } );      
+    */
+    vociFiltroSelezionate.forEach( ii => { 
+      this.vociFiltroDestinazioneUso.find( item => item.codice == ii).selezionato = true;
+      });
+
+    this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
+      
+  }
 
   public getFiltriStatiMezzo(): Observable<VoceFiltro[]> {
-        return this.subjectFiltriStatiMezzo$.asObservable();
+    return this.subjectFiltriStatiMezzo$.asObservable();
   }
 
   public getFiltriSedi(): Observable<VoceFiltro[]> {
@@ -439,5 +596,83 @@ export class GestioneFiltriService {
   public getFiltriDestinazioneUso(): Observable<VoceFiltro[]> {
     return this.subjectFiltriDestinazioneUso$.asObservable();
   }
+
+
+  public setupFiltri(elencoPosizioni : PosizioneMezzo[]): void {
+    
+    this.setupFiltriStatiMezzo(elencoPosizioni);
+    this.setupFiltriSedi(elencoPosizioni);
+    this.setupFiltriGeneriMezzo(elencoPosizioni);
+    this.setupFiltriDestinazioneUso(elencoPosizioni);
+
+   
+    /*
+    var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
+
+    this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
+    */
+
+
+    /*
+    l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
+    per tutti gli elementi, e di impostarla in base allo stato dei filtri selezionato 
+    (true/false) si è rivelata una soluzione molto lenta e quindi abbandonata
+
+    //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
+
+
+        import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+
+        export class PosizioneMezzoFiltrata {
+            constructor (
+                public posizioneMezzo:PosizioneMezzo,       
+                public visible:boolean
+            ) {}
+            
+            }
+
+
+    this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni.map( 
+      (posizioneMezzo) => 
+        { return Object.assign({}, {posizioneMezzo, "visible": true }) });
+    */
+
+    //this.mezzoSelezionato = this.elencoPosizioni[0];
+
+    //if (this.vociFiltroStatiMezzo.length > 0) {
+    /*
+      l'ipotesi di creare un altro vettore con i soli elementi filtrari 
+      è anch'essa troppo lenta su un elevato numero di elementi
+
+
+      this.vociFiltroStatiMezzoDefault = this.vociFiltroStatiMezzo.
+      filter( v => v.selezionato === true);
+
+      this.elencoPosizioniMezzoFiltrate = this.elencoPosizioniMezzoFiltrate.
+        filter(r => this.vociFiltroStatiMezzoDefault.
+        some(filtro => filtro.codice.toString() === r.infoSO115.stato));
+      
+    */
+    /*
+      l'ipotesi di applicare un filtro sullo stesso vettore utilizzando 
+      il metodo forEach() è anch'essa troppo lenta su un elevato numero 
+      di elementi
+
+      this.elencoPosizioniMezzoFiltrate.forEach( pos => 
+        pos.selezionata = this.vociFiltroStatiMezzoDefault.
+        some(filtro => filtro.codice.toString() === pos.infoSO115.stato));
+      //console.log(this.elencoPosizioniMezzoFiltrate);
+      
+     */
+      // soluzione utilizzando una funzione valutata durante l'aggiornamento della view
+
+
+
+
+    //}
+
+  }
+  
+  
 
 }

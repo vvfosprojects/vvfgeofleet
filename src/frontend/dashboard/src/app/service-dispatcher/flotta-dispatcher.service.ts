@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, of } from "rxjs";
+import { Observable, Subscription, Subject, of } from "rxjs";
 //import { Observable, Subject } from "rxjs/Rx";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+
 
 import * as moment from 'moment';
 
@@ -11,6 +12,10 @@ import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { PosizioneFlottaService } from '../service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flotta.service.fake';
+
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { VoceFiltro } from "../filtri/voce-filtro.model";
+
 //import { observable } from 'rxjs';
 //import { toObservable } from '@angular/forms/src/validators';
 
@@ -84,9 +89,22 @@ export class FlottaDispatcherService {
   // copia del dataStore delle posizioni relative all'aggiornamento precedente
   private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
+  subscription = new Subscription();
 
+  public vociFiltroStatiMezzo: VoceFiltro[] = [];
+  public vociFiltroSedi: VoceFiltro[] = [];
+  public vociFiltroGeneriMezzo: VoceFiltro[] = [];
+  public vociFiltroDestinazioneUso: VoceFiltro[] = [];
+  
+  private subjectFiltriStatiMezzo$ = new Subject<VoceFiltro[]>();
+  private subjectFiltriSedi$ = new Subject<VoceFiltro[]>();
+  private subjectFiltriGeneriMezzo$ = new Subject<VoceFiltro[]>();
+  private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
+    
   constructor(
-    private posizioneFlottaService: PosizioneFlottaService
+    private posizioneFlottaService: PosizioneFlottaService,
+    private gestioneFiltriService: GestioneFiltriService
+    
   ) { 
 
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
@@ -95,10 +113,80 @@ export class FlottaDispatcherService {
 
     this.timer = Observable.interval(9000).timeout(120000);
     this.timer = Observable.timer(9000,9000).timeout(120000);
+    // schedula con un timer l'aggiornamento periodio della Situazione flotta
     this.timerSubcribe = this.timer.subscribe(t => 
       this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
+
+    // attende una eventuale modifica delle opzioni
+    //
+  
+    // attende una eventuale modifica dei filtri
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriStatiMezzo()
+      //.debounceTime(3000)
+      .subscribe( vocifiltro => {
+          console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
+          this.vociFiltroStatiMezzo = vocifiltro;
+          this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
+          this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+          
+        })
+      );   
+    
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriSedi()
+      //.debounceTime(3000)
+      .subscribe( vocifiltro => {
+          console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
+          this.vociFiltroSedi = vocifiltro;
+          this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
+          this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriGeneriMezzo()
+      //.debounceTime(3000)
+      .subscribe( vocifiltro => {
+          console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
+          this.vociFiltroGeneriMezzo = vocifiltro;
+          this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);                    
+          this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriDestinazioneUso()
+      //.debounceTime(3000)
+      .subscribe( vocifiltro => {
+          console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
+          this.vociFiltroDestinazioneUso = vocifiltro;
+          this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
+          this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
+        })
+      );   
+
+          
   }
 
+
+  public getFiltriStatiMezzo(): Observable<VoceFiltro[]> {
+    return this.subjectFiltriStatiMezzo$.asObservable();
+  }
+
+  public getFiltriSedi(): Observable<VoceFiltro[]> {
+    return this.subjectFiltriSedi$.asObservable();
+  }
+
+  public getFiltriGeneriMezzo(): Observable<VoceFiltro[]> {
+    return this.subjectFiltriGeneriMezzo$.asObservable();
+  }
+  
+  public getFiltriDestinazioneUso(): Observable<VoceFiltro[]> {
+    return this.subjectFiltriDestinazioneUso$.asObservable();
+  }
+   
   public getIstanteUltimoAggiornamento(): 
       Observable<Date> {
         return this.subjectIstanteUltimoAggiornamento$.asObservable();                
@@ -286,8 +374,9 @@ export class FlottaDispatcherService {
             JSON.stringify(this.elencoPosizioniNuove)));                        
         }
   
-      //console.log("flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove );
+      this.impostaPosizioneMezziVisibili(this.elencoPosizioniNuove);
 
+      //console.log("flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove );
 
       /*
       // estra le posizioni dei Mezzi rientrati
@@ -335,6 +424,9 @@ export class FlottaDispatcherService {
          );
       //console.log("flotta-dispatcher.service - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata );
 
+      this.impostaPosizioneMezziVisibili(this.elencoPosizioniLocalizzazioneModificata);
+
+
       // individua le posizioni con il solo stato Modificato
       this.elencoPosizioniStatoModificato = this.elencoPosizioniDaElaborare.
         filter( (item) => {
@@ -360,7 +452,10 @@ export class FlottaDispatcherService {
                 return item}
           else {return null}  }
          );
-      //console.log("flotta-dispatcher.service - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato );
+
+      this.impostaPosizioneMezziVisibili(this.elencoPosizioniLocalizzazioneModificata);
+
+         //console.log("flotta-dispatcher.service - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato );
 
       /*
       // modifica nel DataStore le posizioni con variazioni
@@ -417,6 +512,59 @@ export class FlottaDispatcherService {
  */ 
       // salva l'elenco delle posizioni Mostrate attualmente
       this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
-      
+
+      // riesegue il setup dei filtri per mostrare eventuali nuovi valori non presenti
+      // in precedenza
+      this.gestioneFiltriService.setupFiltri(this.elencoPosizioniMostrate);
+
+
     }
+
+    public putVisibleStatiMezzo(vociFiltroSelezionate : String[]): void {
+      this.gestioneFiltriService.setVisibleStatiMezzo(vociFiltroSelezionate);
+    }
+    public putVisibleSedi(vociFiltroSelezionate : String[]): void {
+      this.gestioneFiltriService.setVisibleSedi(vociFiltroSelezionate);
+    }
+    public putVisibleGeneriMezzo(vociFiltroSelezionate : String[]): void {
+      this.gestioneFiltriService.setVisibleGeneriMezzo(vociFiltroSelezionate);
+    }
+    public putVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
+      this.gestioneFiltriService.setVisibleDestinazioneUso(vociFiltroSelezionate);
+    }
+    
+    setVisiblePosizioneMezzoSelezionato( posizione: PosizioneMezzo,
+       elencoMezziSelezionati: PosizioneMezzo[]) { 
+        //var r : boolean ;
+        //r = (elencoMezziSelezionati.find( i => i.codiceMezzo === posizione.codiceMezzo) == null) ? false : true;
+        if (elencoMezziSelezionati.
+              find( i => i.codiceMezzo === posizione.codiceMezzo) != null) 
+        {  this.elencoPosizioniMostrate.
+          find( i => i.codiceMezzo === posizione.codiceMezzo).visibile = true;
+        }
+    }
+
+    setVisiblePosizioneMezzo(p: PosizioneMezzo) { 
+      var pp : number = this.elencoPosizioniMostrate.
+        findIndex( i => i.codiceMezzo === p.codiceMezzo);
+      if ( pp != 0)
+      { var r : boolean ;
+        r = (r? true: this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
+          some(filtro => filtro.codice === p.infoSO115.stato )
+          && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
+          some(filtro => filtro.codice === p.sedeMezzo )
+          && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
+          some(filtro => p.classiMezzo.some( item => item === filtro.codice))
+          && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
+          some(filtro => filtro.codice === p.destinazioneUso )
+          );
+
+          this.elencoPosizioniMostrate[pp].visibile = r;
+      }
+    }
+    
+    private impostaPosizioneMezziVisibili(elenco: PosizioneMezzo[]): void  { 
+      elenco.forEach( p  => this.setVisiblePosizioneMezzo(p) );
+    }
+       
 }

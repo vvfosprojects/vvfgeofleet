@@ -101,6 +101,7 @@ export class PosizioneFlottaService {
               e.toolTipText = this.toolTipText(e);
               e.classiMezzoDepurata = this.classiMezzoDepurata(e);
               e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";            
+              e.visibile = true;
               let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
               return Object.assign(posizioneMezzo, e);
             }

@@ -32,6 +32,7 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() filtriDestinazioneUso: string[] = [];
   */
  
+  /*
   @Input() filtriStatiMezzoObj: Object;
   @Input() filtriSediObj: Object;
   @Input() filtriGeneriMezzoObj : Object ;
@@ -41,7 +42,8 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() filtriSediCardinalita: number ;
   @Input() filtriGeneriMezzoCardinalita: number ;
   @Input() filtriDestinazioneUsoCardinalita: number;
-
+  */
+ 
   @Input() isSeguiMezzo: boolean ;
 
   
@@ -196,6 +198,7 @@ export class PosizioneMezzoComponent implements OnInit {
 
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||
+      this.posizioneMezzo.visibile);
       /*
       (this.filtriStatiMezzo.
           some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
@@ -209,6 +212,7 @@ export class PosizioneMezzoComponent implements OnInit {
       && this.filtriDestinazioneUso.
           some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
       */
+      /*
       ( (this.filtriStatiMezzoObj[this.posizioneMezzo.infoSO115.stato] == this.posizioneMezzo.infoSO115.stato)
         && 
         (this.filtriSediObj[this.posizioneMezzo.sedeMezzo] == this.posizioneMezzo.sedeMezzo)
@@ -218,6 +222,7 @@ export class PosizioneMezzoComponent implements OnInit {
         && 
         this.filtriDestinazioneUsoObj[this.posizioneMezzo.destinazioneUso] == this.posizioneMezzo.destinazioneUso)       
       );
+      */
   }
 
 

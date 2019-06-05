@@ -117,7 +117,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     this.flottaDispatcherService.getNuovePosizioniFlotta()
     //.debounceTime(3000)
     .subscribe( posizioni => {
-        console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
+        console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
         //console.log("posizioneFlottaService.length: ", posizioni.length);
         this.aggiungiNuovePosizioniFlotta(posizioni);
         //this.controllaCentraSuUltimaPosizione();
@@ -128,7 +128,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
+          console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
           //console.log("posizioneFlottaService.length: ", posizioni.length);
           this.modificaPosizioniFlotta(posizioni);
           //this.controllaCentraSuUltimaPosizione();
@@ -139,7 +139,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
+          console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
           //console.log("posizioneFlottaService.length: ", posizioni.length);
           this.modificaPosizioniFlotta(posizioni);
           //this.controllaCentraSuUltimaPosizione();
@@ -388,8 +388,10 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
        
 
-        var r : boolean ;
+        var r : boolean = false;
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
+
+        r = (r? true: p.visibile);
 
         /*
         r = (r? true: this.filtriStatiMezzo.
@@ -404,6 +406,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           );        
         */
         
+        /*
         r = (r? true: 
               ( (this.filtriStatiMezzoObj[p.infoSO115.stato] == p.infoSO115.stato)
               && 
@@ -414,7 +417,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
               && 
               this.filtriDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
             );
-  
+        */
         /*
         var r : boolean = 
         (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
