@@ -117,8 +117,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     this.flottaDispatcherService.getNuovePosizioniFlotta()
     //.debounceTime(3000)
     .subscribe( posizioni => {
-        console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
-        //console.log("posizioneFlottaService.length: ", posizioni.length);
+        //console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
         this.aggiungiNuovePosizioniFlotta(posizioni);
         //this.controllaCentraSuUltimaPosizione();
       })
@@ -128,8 +127,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
-          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
           //this.controllaCentraSuUltimaPosizione();
         })
@@ -139,8 +137,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
-          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
           //this.controllaCentraSuUltimaPosizione();
         })
@@ -440,8 +437,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
 
       } 
-      else { console.log(p, moment().toString()); 
-
+      else { 
+        //console.log(p, moment().toString()); 
         return false;      
       }
       
@@ -482,7 +479,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       */
     
       this.nuovaSelezioneArea.emit(e);
-      console.log("areaChanged",e);
+      //console.log("areaChanged",e);
 
     }
   }

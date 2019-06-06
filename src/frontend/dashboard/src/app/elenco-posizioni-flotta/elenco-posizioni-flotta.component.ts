@@ -145,7 +145,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getFiltriStatiMezzo()
       //.debounceTime(3000)
       .subscribe( vocifiltro => {
-          console.log("ElencoPosizioniFlottaComponent, getFiltriStatiMezzo:", vocifiltro);
+          //console.log("ElencoPosizioniFlottaComponent, getFiltriStatiMezzo:", vocifiltro);
           this.vociFiltroStatiMezzo = vocifiltro;
         })
       );   
@@ -154,7 +154,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getFiltriSedi()
       //.debounceTime(3000)
       .subscribe( vocifiltro => {
-          console.log("ElencoPosizioniFlottaComponent, getFiltriSedi:", vocifiltro);
+          //console.log("ElencoPosizioniFlottaComponent, getFiltriSedi:", vocifiltro);
           this.vociFiltroSedi = vocifiltro;
         })
       );   
@@ -163,7 +163,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getFiltriGeneriMezzo()
       //.debounceTime(3000)
       .subscribe( vocifiltro => {
-          console.log("ElencoPosizioniFlottaComponent, getFiltriGeneriMezzo:", vocifiltro);
+          //console.log("ElencoPosizioniFlottaComponent, getFiltriGeneriMezzo:", vocifiltro);
           this.vociFiltroGeneriMezzo = vocifiltro;
         })
       );   
@@ -172,7 +172,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getFiltriDestinazioneUso()
       //.debounceTime(3000)
       .subscribe( vocifiltro => {
-          console.log("ElencoPosizioniFlottaComponent, getFiltriDestinazioneUso:", vocifiltro);
+          //console.log("ElencoPosizioniFlottaComponent, getFiltriDestinazioneUso:", vocifiltro);
           this.vociFiltroDestinazioneUso = vocifiltro;
         })
       );   
@@ -182,8 +182,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getNuovePosizioniFlotta()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
-          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
           this.aggiungiNuovePosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
         })
@@ -193,8 +192,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
-          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
         })
@@ -204,8 +202,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
       //.debounceTime(3000)
       .subscribe( posizioni => {
-          console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
-          //console.log("posizioneFlottaService.length: ", posizioni.length);
+          //console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
         })
@@ -215,7 +212,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.flottaDispatcherService.getIstanteUltimoAggiornamento()
       .subscribe( istante => {
           this.istanteUltimoAggiornamento = istante; 
-          console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
+          //console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
           this.nuovoIstanteUltimoAggiornamento.emit(this.istanteUltimoAggiornamento);
 
         })
