@@ -9,22 +9,32 @@ import 'rxjs/add/observable/throw';
 import * as moment from 'moment';
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+//import { Opzioni } from '../shared/model/opzioni.model';
+
+
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { PosizioneFlottaService } from '../service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flotta.service.fake';
 
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
+
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
 //import { observable } from 'rxjs';
 //import { toObservable } from '@angular/forms/src/validators';
 
-@Injectable(/*{
+// i dati del Dispatcher vengono condivisi in tutta l'applicazione
+@Injectable({
   providedIn: 'root'
-}*/)
+})
 export class FlottaDispatcherService {
 
   public parametriGeoFleetWS : ParametriGeoFleetWS;
+  /*
+  public opzioni: Opzioni;
+  public opzioniPrecedenti: Opzioni;
+  */
   
     //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
   
@@ -95,22 +105,43 @@ export class FlottaDispatcherService {
   public vociFiltroSedi: VoceFiltro[] = [];
   public vociFiltroGeneriMezzo: VoceFiltro[] = [];
   public vociFiltroDestinazioneUso: VoceFiltro[] = [];
-  
+  /*
   private subjectFiltriStatiMezzo$ = new Subject<VoceFiltro[]>();
   private subjectFiltriSedi$ = new Subject<VoceFiltro[]>();
   private subjectFiltriGeneriMezzo$ = new Subject<VoceFiltro[]>();
   private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
-    
+  */
+
   constructor(
     private posizioneFlottaService: PosizioneFlottaService,
-    private gestioneFiltriService: GestioneFiltriService
-    
+    private gestioneFiltriService: GestioneFiltriService,
+    private gestioneOpzioniService: GestioneOpzioniService    
   ) { 
 
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+    //this.opzioni = new Opzioni();
+
     this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
     this.parametriGeoFleetWS.attSec = this.defaultAttSec;
 
+    /*
+    this.subscription.add(
+      this.gestioneOpzioniService.getOpzioni()
+      //.debounceTime(3000)
+      .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
+      );   
+    */
+
+    this.subscription.add(
+      this.gestioneOpzioniService.getParametriGeoFleetWS()
+      //.debounceTime(3000)
+      .subscribe( parm => { this.gestisciModificaParametri(parm) })
+      );   
+
+  
+    //this.gestioneOpzioniService.reset();
+  
+  
     //this.timer = Observable.interval(9000).timeout(120000);
     this.timer = Observable.timer(0,9000).timeout(120000);
     // schedula con un timer l'aggiornamento periodio della Situazione flotta
@@ -130,7 +161,7 @@ export class FlottaDispatcherService {
           this.vociFiltroStatiMezzo = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);        
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+          //this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
           
         })
       );   
@@ -143,7 +174,7 @@ export class FlottaDispatcherService {
           this.vociFiltroSedi = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+          //this.subjectFiltriSedi$.next(this.vociFiltroSedi);
         })
       );   
 
@@ -155,7 +186,7 @@ export class FlottaDispatcherService {
           this.vociFiltroGeneriMezzo = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);                    
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
+          //this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
         })
       );   
 
@@ -167,14 +198,14 @@ export class FlottaDispatcherService {
           this.vociFiltroDestinazioneUso = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
+          //this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
         })
       );   
 
           
   }
 
-
+/*
   public getFiltriStatiMezzo(): Observable<VoceFiltro[]> {
     return this.subjectFiltriStatiMezzo$.asObservable();
   }
@@ -190,7 +221,8 @@ export class FlottaDispatcherService {
   public getFiltriDestinazioneUso(): Observable<VoceFiltro[]> {
     return this.subjectFiltriDestinazioneUso$.asObservable();
   }
-   
+*/
+
   public getIstanteUltimoAggiornamento(): 
       Observable<Date> {
         return this.subjectIstanteUltimoAggiornamento$.asObservable();                
@@ -521,7 +553,7 @@ export class FlottaDispatcherService {
       } )
  */ 
 
-
+/*
     public putVisibleStatiMezzo(vociFiltroSelezionate : String[]): void {
       this.gestioneFiltriService.setVisibleStatiMezzo(vociFiltroSelezionate);
     }
@@ -534,7 +566,7 @@ export class FlottaDispatcherService {
     public putVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
       this.gestioneFiltriService.setVisibleDestinazioneUso(vociFiltroSelezionate);
     }
-    
+*/    
     setVisiblePosizioneMezzoSelezionato( posizione: PosizioneMezzo,
        elencoMezziSelezionati: PosizioneMezzo[]) { 
         //var r : boolean ;
@@ -571,5 +603,17 @@ export class FlottaDispatcherService {
        { elenco.forEach( p  => this.setVisiblePosizioneMezzo(p) ); }
       
     }
-       
-}
+
+
+
+    private gestisciModificaParametri(parm : ParametriGeoFleetWS) : void {
+    
+      this.parametriGeoFleetWS = parm;
+
+      this.timer = Observable.timer(0,9000).timeout(120000);
+      // schedula con un timer l'aggiornamento periodio della Situazione flotta
+      this.timerSubcribe = this.timer.subscribe(t => 
+        this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
+      
+    }
+  }

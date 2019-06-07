@@ -1,0 +1,14 @@
+<p>
+    <app-filtri [titolo]="titoloFiltroStatiMezzo" 
+    [vociFiltro]="vociFiltroStatiMezzo" 
+    (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
+    <app-filtro-multi-select-dd [titolo]="titoloFiltroSedi" 
+    [vociFiltro]="vociFiltroSedi" 
+    (nuovaSelezione)="nuovaSelezioneSedi($event)"></app-filtro-multi-select-dd>
+    <app-filtro-multi-select-dd [titolo]="titoloFiltroGeneriMezzo" 
+    [vociFiltro]="vociFiltroGeneriMezzo" 
+    (nuovaSelezione)="nuovaSelezioneGeneriMezzo($event)"></app-filtro-multi-select-dd>
+    <app-filtro-multi-select-dd [titolo]="titoloFiltroDestinazioneUso" 
+    [vociFiltro]="vociFiltroDestinazioneUso" 
+    (nuovaSelezione)="nuovaSelezioneDestinazioneUso($event)"></app-filtro-multi-select-dd>
+</p>

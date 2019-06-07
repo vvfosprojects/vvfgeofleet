@@ -4,12 +4,52 @@ import { Observable, Subject, of } from "rxjs";
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
-@Injectable(/*{
+// i Filtri vengono condivisi in tutta l'applicazione
+@Injectable({
   providedIn: 'root'
-}*/)
+})
 
 export class GestioneFiltriService {
 
+
+  /*
+  public titoloFiltroStatiMezzo: string = "Stati Mezzo";
+  public vociFiltroStatiMezzo: VoceFiltro[] = [
+    new VoceFiltro(
+      "1", "In viaggio verso l'intervento ", 0, true, "", "badge-info", 
+      "assets/images/mm_20_red.png"
+    ),
+    new VoceFiltro(
+      "2", "Arrivato sull'intervento", 0, true, "", "badge-info", 
+      "assets/images/mm_20_blue.png"
+    ),
+    new VoceFiltro(
+      "3", "In rientro dall'intervento", 0, true, "", "badge-info", 
+      "assets/images/mm_20_green.png"
+    ),
+    new VoceFiltro(
+      "5", "Fuori per motivi di Istituto", 0, false, "", "badge-info", "assets/images/mm_20_yellow.png"
+    ),
+    new VoceFiltro(
+      "0", "Stato operativo Sconosciuto", 0, false, "", "badge-info", "assets/images/mm_20_black.png"
+    ),
+    // posizione inviata da una radio non associata a nessun Mezzo
+    new VoceFiltro(
+      "6", "Posizioni Radio senza Mezzo", 0, false, "", "badge-info", "assets/images/mm_20_orange.png"
+    ),
+    // posizione inviata da un Mezzo fuori servizio  
+    new VoceFiltro(
+      "7", "Mezzi fuori servizio", 0, false, "","badge-info", "assets/images/mm_20_cyan.png"
+    ),
+    new VoceFiltro(
+      "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
+    )
+    ];
+
+    //vociFiltroStatiMezzoDefault: VoceFiltro[];  
+    public filtriStatiMezzo: string[] = [];
+    public filtriStatiMezzoObj: Object;
+*/
 
   private titoloFiltroStatiMezzo: string = "Stati Mezzo";
   private vociFiltroStatiMezzo: VoceFiltro[] = [

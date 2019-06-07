@@ -12,7 +12,10 @@ import { Options } from 'selenium-webdriver/ie';
 import { Subject, Observable } from 'rxjs';
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import { Opzioni } from '../shared/model/opzioni.model';
+
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 import { Subscription } from 'rxjs';
 
@@ -65,16 +68,20 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriGeneriMezzoCardinalita: number ;
   @Input() filtriDestinazioneUsoCardinalita: number;
 
+  @Input() mezzoSelezionato: PosizioneMezzo ;
+  
+  /*
   @Input() mapLat: number ;
   @Input() mapLon: number ;
   @Input() mapZoom: number ;
 
-  @Input() mezzoSelezionato: PosizioneMezzo ;
   @Input() reset: Boolean ;  
   @Input() optOnlyMap: Boolean ;  
-
+  
   @Output() nuovaSelezioneArea: EventEmitter<LatLngLiteral> = new EventEmitter();
-   
+  */
+ 
+  
   //lat: number = 51.678418;
   //lon: number = 7.809007;
   timeout : any;
@@ -103,25 +110,38 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private areaChangedDebounceTime = new Subject();
 
-  public parametriGeoFleetWS : ParametriGeoFleetWS;
-
+  //public parametriGeoFleetWS : ParametriGeoFleetWS;
+  public opzioni: Opzioni;
+  public opzioniPrecedenti: Opzioni;
+  
   subscription = new Subscription();
   
   constructor( 
-    private flottaDispatcherService: FlottaDispatcherService
-  ) {     
-    this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-    this.parametriGeoFleetWS.reset();    
+    private flottaDispatcherService: FlottaDispatcherService,
+    private gestioneOpzioniService: GestioneOpzioniService
+  ) 
+  {     
+    //this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+    //this.parametriGeoFleetWS.reset();    
 
-   this.subscription.add(
-    this.flottaDispatcherService.getNuovePosizioniFlotta()
-    //.debounceTime(3000)
-    .subscribe( posizioni => {
-        //console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
-        this.aggiungiNuovePosizioniFlotta(posizioni);
-        //this.controllaCentraSuUltimaPosizione();
-      })
-    );   
+    this.opzioni = new Opzioni();
+    //this.gestioneOpzioniService.reset();
+
+    this.subscription.add(
+      this.gestioneOpzioniService.getOpzioni()
+      //.debounceTime(3000)
+      .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
+      );   
+    
+    this.subscription.add(
+      this.flottaDispatcherService.getNuovePosizioniFlotta()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          //console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
+          this.aggiungiNuovePosizioniFlotta(posizioni);
+          //this.controllaCentraSuUltimaPosizione();
+        })
+      );   
 
     this.subscription.add(
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
@@ -184,10 +204,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     ]    ;    
     this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
     
+    /*
     if ( this.mapLat == null ) { this.mapLat = this.start_lat; }
     if ( this.mapLon == null ) { this.mapLon = this.start_lon; }
     if ( this.mapZoom == null ) { this.mapZoom = this.start_zoom; }
-
+    */
+   if ( this.opzioni.startLat == null ) { this.opzioni.startLat = this.start_lat; }
+   if ( this.opzioni.startLon == null ) { this.opzioni.startLon = this.start_lon; }
+   if ( this.opzioni.startZoom == null ) { this.opzioni.startZoom  = this.start_zoom; }
+  
     /*
     Observable.fromEvent(document, 'boundsChange')
     .debounceTime(3000)
@@ -329,9 +354,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     //this.clicked_label = this.elencoPosizioniMostrate[index].codiceMezzo;
     //this.clicked_label = mezzo.codiceMezzo;
     this.mezzoSelezionato.codiceMezzo = mezzo.codiceMezzo;
-    this.mapLat = Number(mezzo.localizzazione.lat);
-    this.mapLon = Number(mezzo.localizzazione.lon);
-    this.mapZoom = 12;    
+    this.opzioni.startLat = Number(mezzo.localizzazione.lat);
+    this.opzioni.startLon = Number(mezzo.localizzazione.lon);
+    this.opzioni.startZoom = 12;    
 
     //console.log('clicked the marker: ', mezzo, index);
   }
@@ -468,20 +493,69 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
   areaChanged(e) {
+    /* 
     //this.timeout = setTimeout("areaChanged();",1000);
     if (this.optOnlyMap) {
-      /*
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.nuovaSelezioneArea.emit(e);
-        clearTimeout(this.timeout);
-      }, 3000);      
-      */
-    
       this.nuovaSelezioneArea.emit(e);
       //console.log("areaChanged",e);
+    }
+    */
+
+    if (this.opzioni.onlyMap) {
+      //this.aggiornaArea(e);
+      this.gestioneOpzioniService.setRettangoloRicerca(e);
+    }
+
+  }
+
+  /*
+  selezioneArea(e) {    
+    //this.nuovaSelezioneAreaPos.emit(e)
+    this.aggiornaArea(e)
+  }
+
+  aggiornaArea(evento) {
+    //console.log("aggiornaArea", evento);
+    if (evento != null) {
+      
+      var vv = Object.values(evento);
+      var vv1 = Object.values(vv[0]);
+      var vv2 = Object.values(vv[1]);
+      //console.log("aggiornaArea  vv",vv);
+      this.parametriGeoFleetWS.reset();
+      this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
+      this.parametriGeoFleetWS.setAttSec(null);
+      this.parametriGeoFleetWS.setLat1(vv1[1]);
+      this.parametriGeoFleetWS.setLon1(vv2[0]);
+      this.parametriGeoFleetWS.setLat2(vv1[0]);
+      this.parametriGeoFleetWS.setLon2(vv2[1]);
+
+      //this.timerSubcribe.unsubscribe();
+      //this.reset = true;
+      //this.aggiorna(this.parametriGeoFleetWS, true);
 
     }
+  }    
+  */
+
+
+
+  private gestisciModificaOpzioni(opt : Opzioni) : void {
+    if (this.opzioni.ggMaxPos != opt.ggMaxPos)
+    { 
+      this.gestioneOpzioniService.resetParametriGeoFleetWS();
+      this.gestioneOpzioniService.setGgMaxPos(opt.ggMaxPos);
+
+      /*
+      this.parametriGeoFleetWS.reset();
+      this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
+      this.parametriGeoFleetWS.setAttSec( opt.ggMaxPos*24*60*60 );
+      this.parametriGeoFleetWS.setDefaultAttSec( opt.ggMaxPos*24*60*60 );          
+      */
+    }
+
+    this.opzioniPrecedenti = this.opzioni ;       
+    this.opzioni = opt; 
   }
   
 }

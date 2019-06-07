@@ -66,6 +66,9 @@
             </p-accordionTab>
             <p-accordionTab header="Filtri">
                     <div>
+                        <app-pannello-filtri>                            
+                        </app-pannello-filtri>
+                        <!--
                             <app-filtri [titolo]="titoloFiltroStatiMezzo" 
                             [vociFiltro]="vociFiltroStatiMezzo" 
                             (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
@@ -78,9 +81,15 @@
                             <app-filtro-multi-select-dd [titolo]="titoloFiltroDestinazioneUso" 
                             [vociFiltro]="vociFiltroDestinazioneUso" 
                             (nuovaSelezione)="nuovaSelezioneDestinazioneUso($event)"></app-filtro-multi-select-dd>
+                        -->
                     </div>
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
+                <div>
+                    <app-pannello-opzioni>                            
+                    </app-pannello-opzioni>
+                </div>
+                <!--
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11">
                         <label>Estrai solo le posizioni presenti sul riquadro della mappa</label>
@@ -122,6 +131,7 @@
                         </p-slider>
                     </div>
                 </div>
+                -->
             </p-accordionTab>
         </p-accordion>
     </div>
@@ -137,7 +147,7 @@
                                 <!--[filtriSediCardinalita]="vociFiltroSedi.length"-->
                                 <!--[filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"-->
                                 <!--[filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"-->                            
-        
+        <!--
         <app-mappa-posizioni-flotta            
             [elencoMezziDaSeguire]="seguiMezziSelezionati"
             [mapLat]="startLat"
@@ -149,6 +159,12 @@
             (nuovaSelezioneArea)="selezioneArea($event)"
         >
         </app-mappa-posizioni-flotta>
+        -->
+        <app-mappa-posizioni-flotta            
+            [elencoMezziDaSeguire]="seguiMezziSelezionati"
+            [mezzoSelezionato]="mezzoSelezionato"
+        >
+        </app-mappa-posizioni-flotta>        
         <!--
         <app-gmaps-posizioni-flotta
             [elencoPosizioni]="elencoPosizioni" 

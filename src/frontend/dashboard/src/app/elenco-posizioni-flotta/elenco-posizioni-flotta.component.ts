@@ -8,9 +8,14 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import {AccordionModule} from 'primeng/accordion';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
+
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import { Opzioni } from '../shared/model/opzioni.model';
+
+
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 import { Subscription } from 'rxjs';
 
@@ -53,6 +58,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   @Output() nuovoIstanteUltimoAggiornamento: EventEmitter<Date> = new EventEmitter();
   
   public parametriGeoFleetWS : ParametriGeoFleetWS;
+  public opzioni: Opzioni;
 
   private geolocationPosition : Position;
   private modalitaPrecedente: number = 0;
@@ -71,68 +77,20 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   startZoom: number = 6;
   */
 
-  
+  /*
   centerOnLast: boolean = true;
   centerOnMezzo: boolean = false;
   isSeguiMezzo: boolean = true;
   onlyMap: boolean = false;
 
-  //ggMaxPos: number = 7;
   ggMaxPos: number = 3;
-
-  /*
-  public titoloFiltroStatiMezzo: string = "Stati Mezzo";
-  public vociFiltroStatiMezzo: VoceFiltro[] = [
-    new VoceFiltro(
-      "1", "In viaggio verso l'intervento ", 0, true, "", "badge-info", 
-      "assets/images/mm_20_red.png"
-    ),
-    new VoceFiltro(
-      "2", "Arrivato sull'intervento", 0, true, "", "badge-info", 
-      "assets/images/mm_20_blue.png"
-    ),
-    new VoceFiltro(
-      "3", "In rientro dall'intervento", 0, true, "", "badge-info", 
-      "assets/images/mm_20_green.png"
-    ),
-    new VoceFiltro(
-      "5", "Fuori per motivi di Istituto", 0, false, "", "badge-info", "assets/images/mm_20_yellow.png"
-    ),
-    new VoceFiltro(
-      "0", "Stato operativo Sconosciuto", 0, false, "", "badge-info", "assets/images/mm_20_black.png"
-    ),
-    // posizione inviata da una radio non associata a nessun Mezzo
-    new VoceFiltro(
-      "6", "Posizioni Radio senza Mezzo", 0, false, "", "badge-info", "assets/images/mm_20_orange.png"
-    ),
-    // posizione inviata da un Mezzo fuori servizio  
-    new VoceFiltro(
-      "7", "Mezzi fuori servizio", 0, false, "","badge-info", "assets/images/mm_20_cyan.png"
-    ),
-    new VoceFiltro(
-      "4", "Mezzi rientrati dall'intervento", 0, false, "", "badge-info", "assets/images/mm_20_gray.png"
-    )
-    ];
-
-    //vociFiltroStatiMezzoDefault: VoceFiltro[];  
-    public filtriStatiMezzo: string[] = [];
-    public filtriStatiMezzoObj: Object;
-*/
-
-    public titoloFiltroStatiMezzo: string = "Stati Mezzo";
-    public vociFiltroStatiMezzo: VoceFiltro[] = [];
-    public titoloFiltroSedi: string = "Sedi";
-    public vociFiltroSedi: VoceFiltro[] = [];
-    public titoloFiltroGeneriMezzo: string = "Generi Mezzo";
-    public vociFiltroGeneriMezzo: VoceFiltro[] = [];
-    public titoloFiltroDestinazioneUso: string = "Destinazione d'uso";
-    public vociFiltroDestinazioneUso: VoceFiltro[] = [];
-        
+  */     
 
    subscription = new Subscription();
       
     constructor(
-      private flottaDispatcherService: FlottaDispatcherService
+      private flottaDispatcherService: FlottaDispatcherService,
+      private gestioneOpzioniService: GestioneOpzioniService
     )    
     {
     this.seguiMezziSelezionati = [];
@@ -140,44 +98,18 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
     this.parametriGeoFleetWS.reset();    
 
-
-    this.subscription.add(
-      this.flottaDispatcherService.getFiltriStatiMezzo()
-      //.debounceTime(3000)
-      .subscribe( vocifiltro => {
-          //console.log("ElencoPosizioniFlottaComponent, getFiltriStatiMezzo:", vocifiltro);
-          this.vociFiltroStatiMezzo = vocifiltro;
-        })
-      );   
+    this.opzioni = new Opzioni();
+    this.opzioni.reset();
     
-    this.subscription.add(
-      this.flottaDispatcherService.getFiltriSedi()
-      //.debounceTime(3000)
-      .subscribe( vocifiltro => {
-          //console.log("ElencoPosizioniFlottaComponent, getFiltriSedi:", vocifiltro);
-          this.vociFiltroSedi = vocifiltro;
-        })
-      );   
+    this.impostaLocalizzazioneUtente();
 
     this.subscription.add(
-      this.flottaDispatcherService.getFiltriGeneriMezzo()
+      this.gestioneOpzioniService.getOpzioni()
       //.debounceTime(3000)
-      .subscribe( vocifiltro => {
-          //console.log("ElencoPosizioniFlottaComponent, getFiltriGeneriMezzo:", vocifiltro);
-          this.vociFiltroGeneriMezzo = vocifiltro;
-        })
+      .subscribe( opt => { this.opzioni = opt; })
       );   
 
-    this.subscription.add(
-      this.flottaDispatcherService.getFiltriDestinazioneUso()
-      //.debounceTime(3000)
-      .subscribe( vocifiltro => {
-          //console.log("ElencoPosizioniFlottaComponent, getFiltriDestinazioneUso:", vocifiltro);
-          this.vociFiltroDestinazioneUso = vocifiltro;
-        })
-      );   
-
-
+    
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
       //.debounceTime(3000)
@@ -250,7 +182,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         this.draggedPosizioneMezzo = null;
       }
 
-      this.centerOnMezzo = true;
+      //this.centerOnMezzo = true;
+      this.gestioneOpzioniService.setCenterOnMezzo(true);
     }
     //console.log("seguiMezzo", evento);
   }
@@ -266,7 +199,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         this.seguiMezziSelezionati = this.seguiMezziSelezionati.concat(evento[0]);        
       }
 
-      this.centerOnMezzo = true;
+      //this.centerOnMezzo = true;
+      this.gestioneOpzioniService.setCenterOnMezzo(true);
+      
     }
     //console.log("seguiMezzo", evento);
   }
@@ -282,7 +217,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.seguiMezziSelezionati.splice(i,1);
 
       if (this.seguiMezziSelezionati.length == 0 ) {
-        this.centerOnMezzo = false;
+        //this.centerOnMezzo = false;
+        this.gestioneOpzioniService.setCenterOnMezzo(false);
       }
     }
     //console.log("rimuoviSeguiMezzo", evento);
@@ -299,12 +235,41 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       this.seguiMezziSelezionati.splice(i,1);
 
       if (this.seguiMezziSelezionati.length == 0 ) {
-        this.centerOnMezzo = false;
+        //this.centerOnMezzo = false;
+        this.gestioneOpzioniService.setCenterOnMezzo(false);        
       }
     }
     //console.log("rimuoviSeguiMezzo", evento);
   }
 
+
+  impostaLocalizzazioneUtente() {
+    if (window.navigator && window.navigator.geolocation) {
+      window.navigator.geolocation.getCurrentPosition(
+          position => {
+              this.geolocationPosition = position;
+              //console.log(position);                
+              this.startLat = this.geolocationPosition.coords.latitude;
+              this.startLon = this.geolocationPosition.coords.longitude;
+          },
+          error => {
+              switch (error.code) {
+                  case 1:
+                      console.log('Permission Denied');
+                      break;
+                  case 2:
+                      console.log('Position Unavailable');
+                      break;
+                  case 3:
+                      console.log('Timeout');
+                      break;
+              }
+          }
+      );
+    };
+  }
+
+  /*    
   testModalitaCambiata () {
     if (this.modalita != this.modalitaPrecedente) {
       this.cambiaModalita ();
@@ -318,30 +283,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log(this.modalita, this.modalitaPrecedente);
     //if (this.modalita != this.modalitaPrecedente) {
       this.modalitaPrecedente = this.modalita;
-      if (window.navigator && window.navigator.geolocation) {
-        window.navigator.geolocation.getCurrentPosition(
-            position => {
-                this.geolocationPosition = position;
-                //console.log(position);                
-                this.startLat = this.geolocationPosition.coords.latitude;
-                this.startLon = this.geolocationPosition.coords.longitude;
-            },
-            error => {
-                switch (error.code) {
-                    case 1:
-                        console.log('Permission Denied');
-                        break;
-                    case 2:
-                        console.log('Position Unavailable');
-                        break;
-                    case 3:
-                        console.log('Timeout');
-                        break;
-                }
-            }
-        );
-      //};
-  
       switch (this.modalita ) {
         // Modalità Comando
         case 1:
@@ -405,9 +346,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       }
     }
   }
+  */
 
   aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
-    this.testModalitaCambiata();
+    //this.testModalitaCambiata();
     var p : PosizioneMezzo[];
     p = nuovePosizioniMezzo.filter(r => r.infoSO115 != null); 
     if (p.length  > 0) 
@@ -449,7 +391,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
   modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
-    this.testModalitaCambiata();
+    //this.testModalitaCambiata();
     var p : PosizioneMezzo[];
     p = posizioniMezzoModificate.filter(r => r.infoSO115 != null); 
 
@@ -508,8 +450,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         
   }
   
-
-
  
   controllaMezzoDaSeguire(p: PosizioneMezzo) {
     var v = this.seguiMezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
@@ -518,25 +458,28 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         // modifica anche la posizione tra i Mezzi da seguire se è presente
         this.seguiMezziSelezionati[v] = p; 
         // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
-        if (this.centerOnMezzo ) {
+        if (this.opzioni.centerOnMezzo ) {
           this.mezzoSelezionato = p;
+          /*
           this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
           this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
           this.startZoom = 12;
+          */
+          this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
+          this.gestioneOpzioniService.setStartLon(Number(this.mezzoSelezionato.localizzazione.lon));
+          this.gestioneOpzioniService.setStartZoom(12);
         }
-
-
-    }
+      }
   }
 
   controllaCentraSuUltimaPosizione() {
-    if (!this.centerOnMezzo && 
-      (this.mezzoSelezionato == null || this.centerOnLast) ) 
+    if (!this.opzioni.centerOnMezzo && 
+      (this.mezzoSelezionato == null || this.opzioni.centerOnLast) ) 
     {
       this.mezzoSelezionato = this.elencoPosizioni[0];
     }
   }
-
+/*
   nuovaSelezioneStatiMezzo(event) {
     //console.log('event: ', event);
     //this.filtriStatiMezzo = event;
@@ -561,14 +504,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //this.filtriDestinazioneUso = event;
     this.flottaDispatcherService.putVisibleDestinazioneUso(event);
   }
-  
+*/  
   centraSuMappa(evento) {
     var tipoevento: string = evento[1];
     if (tipoevento == "click") {
       this.mezzoSelezionato = evento[0];
+      /*
       this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
       this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
       this.startZoom = 12;
+      */
+     this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
+     this.gestioneOpzioniService.setStartLon(Number(this.mezzoSelezionato.localizzazione.lon));
+     this.gestioneOpzioniService.setStartZoom(12);     
     }
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
@@ -581,6 +529,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
 
+  /*
   changeOptSeguiMezzo() {
     if (!this.centerOnMezzo) {
       this.seguiMezziSelezionati[0] = this.elencoPosizioni [0];}
@@ -601,15 +550,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
     this.aggiornaAttSec(this.ggMaxPos);
   }
+  */
   
-  selezioneArea(e) {    
-    //this.nuovaSelezioneAreaPos.emit(e)
-    this.aggiornaArea(e)
-  }
 
-
-
-
+/* spostato in DispatcherService
   aggiornaAttSec(evento) {
     //console.log("aggiornaAttSec", evento);
 
@@ -625,6 +569,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     }      
 
   }      
+*/
+
+/* spostato in Mappa-posizioni-flotta component
+  selezioneArea(e) {    
+    //this.nuovaSelezioneAreaPos.emit(e)
+    this.aggiornaArea(e)
+  }
 
   aggiornaArea(evento) {
     //console.log("aggiornaArea", evento);
@@ -648,5 +599,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     }
   }    
+*/
 
 }
