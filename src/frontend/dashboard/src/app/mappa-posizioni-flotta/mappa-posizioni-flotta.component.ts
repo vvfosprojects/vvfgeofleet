@@ -16,6 +16,7 @@ import { Opzioni } from '../shared/model/opzioni.model';
 
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
+import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
 
 import { Subscription } from 'rxjs';
 
@@ -118,7 +119,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   
   constructor( 
     private flottaDispatcherService: FlottaDispatcherService,
-    private gestioneOpzioniService: GestioneOpzioniService
+    private gestioneOpzioniService: GestioneOpzioniService,
+    private gestioneParametriService: GestioneParametriService
   ) 
   {     
     //this.parametriGeoFleetWS = new ParametriGeoFleetWS();
@@ -132,7 +134,9 @@ export class MappaPosizioniFlottaComponent implements OnInit {
       //.debounceTime(3000)
       .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
       );   
-    
+
+
+            
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
       //.debounceTime(3000)
@@ -503,7 +507,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     if (this.opzioni.onlyMap) {
       //this.aggiornaArea(e);
-      this.gestioneOpzioniService.setRettangoloRicerca(e);
+      this.gestioneParametriService.setRettangoloRicerca(e);
     }
 
   }
@@ -543,7 +547,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private gestisciModificaOpzioni(opt : Opzioni) : void {
     if (this.opzioni.ggMaxPos != opt.ggMaxPos)
     { 
-      this.gestioneOpzioniService.resetParametriGeoFleetWS();
+      this.gestioneParametriService.resetParametriGeoFleetWS();
       this.gestioneOpzioniService.setGgMaxPos(opt.ggMaxPos);
 
       /*

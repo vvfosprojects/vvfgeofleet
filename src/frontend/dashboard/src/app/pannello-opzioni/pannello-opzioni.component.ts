@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Opzioni } from '../shared/model/opzioni.model';
-import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 import { Subscription } from 'rxjs';
+
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
+import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
 
 @Component({
   selector: 'app-pannello-opzioni',
@@ -15,7 +17,8 @@ export class PannelloOpzioniComponent implements OnInit {
   subscription = new Subscription();
      
   constructor(
-    private gestioneOpzioniService: GestioneOpzioniService
+    private gestioneOpzioniService: GestioneOpzioniService,
+    private gestioneParametriService: GestioneParametriService    
   ) { 
     this.opzioni = new Opzioni();
     
@@ -60,6 +63,8 @@ export class PannelloOpzioniComponent implements OnInit {
   fineSelezioneGgMaxPos(e) {    
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
     this.gestioneOpzioniService.setGgMaxPos(this.opzioni.ggMaxPos);
+    this.gestioneParametriService.setAttSec(this.opzioni.ggMaxPos);
+    
   }
 
 }

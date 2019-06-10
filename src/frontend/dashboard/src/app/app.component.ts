@@ -8,6 +8,7 @@ import { Observable, Subscription } from "rxjs/Rx";
 import * as moment from 'moment';
 
 
+import { GestioneOpzioniService } from './service-opzioni/gestione-opzioni.service';
 
 @Component({
   selector: 'app-root',
@@ -52,6 +53,7 @@ export class AppComponent {
      
   constructor(
           //private flottaDispatcherService: FlottaDispatcherService
+          private gestioneOpzioniService: GestioneOpzioniService
         ) { 
 
           //this.parametriGeoFleetWS = new ParametriGeoFleetWS();
@@ -130,7 +132,9 @@ export class AppComponent {
 
         }
 
-
+        ngOnChanges() {
+          this.gestioneOpzioniService.setModalita(this.modalita);
+        }
         /*
         aggiornaAttSec(evento) {
           //console.log("aggiornaAttSec", evento);

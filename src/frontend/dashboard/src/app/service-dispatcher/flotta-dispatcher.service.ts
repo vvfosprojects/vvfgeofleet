@@ -17,7 +17,6 @@ import { PosizioneFlottaService } from '../service-VVFGeoFleet/posizione-flotta.
 import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flotta.service.fake';
 
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
-import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
@@ -30,7 +29,6 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 })
 export class FlottaDispatcherService {
 
-  public parametriGeoFleetWS : ParametriGeoFleetWS;
   /*
   public opzioni: Opzioni;
   public opzioniPrecedenti: Opzioni;
@@ -41,6 +39,8 @@ export class FlottaDispatcherService {
   private timer;
   private timerSubcribe: PushSubscription;
 
+  private istanteUltimoAggiornamento: Date;
+/*  
   public istanteUltimoAggiornamento: Date;
   private istanteAggiornamentoPrecedente: Date = null;
 
@@ -48,11 +48,7 @@ export class FlottaDispatcherService {
   private maxIstanteAcquisizionePrecedente: Date = null;
 
   private trimSec: Number = 0;
-  private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
-  //private defaultAttSec: Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
-  private defaultrichiestaAPI: string = 'posizioneFlotta';
-  //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
-
+*/
   private geolocationPosition : Position;
 
   public reset : Boolean = false;
@@ -115,42 +111,26 @@ export class FlottaDispatcherService {
   constructor(
     private posizioneFlottaService: PosizioneFlottaService,
     private gestioneFiltriService: GestioneFiltriService,
-    private gestioneOpzioniService: GestioneOpzioniService    
   ) { 
 
-    this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-    //this.opzioni = new Opzioni();
-
-    this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
-    this.parametriGeoFleetWS.attSec = this.defaultAttSec;
-
-    /*
-    this.subscription.add(
-      this.gestioneOpzioniService.getOpzioni()
-      //.debounceTime(3000)
-      .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
-      );   
-    */
-
-    this.subscription.add(
-      this.gestioneOpzioniService.getParametriGeoFleetWS()
-      //.debounceTime(3000)
-      .subscribe( parm => { this.gestisciModificaParametri(parm) })
-      );   
-
-  
-    //this.gestioneOpzioniService.reset();
-  
   
     //this.timer = Observable.interval(9000).timeout(120000);
     this.timer = Observable.timer(0,9000).timeout(120000);
     // schedula con un timer l'aggiornamento periodio della Situazione flotta
     this.timerSubcribe = this.timer.subscribe(t => 
-      this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
+      //this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
+      this.aggiornaSituazioneFlotta());
 
-    // attende una eventuale modifica delle opzioni
-    //
-  
+    this.subscription.add(
+      this.posizioneFlottaService.getIstanteUltimoAggiornamento()
+      //.debounceTime(3000)
+      .subscribe( istante => {
+          this.istanteUltimoAggiornamento = istante;
+          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
+          
+        })
+      ); 
+    
     // attende una eventuale modifica dei filtri
 
     this.subscription.add(
@@ -223,10 +203,6 @@ export class FlottaDispatcherService {
   }
 */
 
-  public getIstanteUltimoAggiornamento(): 
-      Observable<Date> {
-        return this.subjectIstanteUltimoAggiornamento$.asObservable();                
-      }  
 
   /*
   public getSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): 
@@ -235,6 +211,10 @@ export class FlottaDispatcherService {
         return this.subjectPosizioniMezzo$.asObservable();
       }
   */
+  public getIstanteUltimoAggiornamento(): 
+  Observable<Date> {
+    return this.subjectIstanteUltimoAggiornamento$.asObservable();                
+  }  
 
   public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
@@ -254,10 +234,11 @@ export class FlottaDispatcherService {
     return this.subjectPosizioniMezzoLocalizzazioneModificata$.asObservable();
   }
       
-  private aggiornaSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): void {
+  //private aggiornaSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): void {
+  private aggiornaSituazioneFlotta(): void {
 
     //var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
-
+/*
     // memorizza l'istante di inizio di questa operazione di aggiornamento
     this.istanteUltimoAggiornamento = moment().toDate();      
   
@@ -275,8 +256,9 @@ export class FlottaDispatcherService {
     //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
     if (all) { this.maxIstanteAcquisizionePrecedente = null; }
-
-    this.posizioneFlottaService.getPosizioneFlotta(parm).debounceTime(3000)
+*/
+    //this.posizioneFlottaService.getPosizioneFlotta(parm).debounceTime(3000)
+    this.posizioneFlottaService.getPosizioneFlotta().debounceTime(3000)
     .subscribe( posizioni => 
       {
         //console.log("posizioneFlottaService: ", posizioni);
@@ -289,8 +271,14 @@ export class FlottaDispatcherService {
           }
         );
 
-        //console.log("this.elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
+        this.elencoPosizioniDaElaborare = this.elencoPosizioniMezzo;
 
+          // elabora le posizioni ricevute in modo da attivare i subject specifici
+          // delle posizioni Nuove, Modificate e d Eliminate
+          this.elaboraPosizioniRicevute();
+        
+        //console.log("this.elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
+/*
         if (this.elencoPosizioniMezzo.length > 0) {
           //l'attSec deve essere calcolato in relazione all'istante 
           //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
@@ -341,25 +329,19 @@ export class FlottaDispatcherService {
           this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
           //console.log("trimSec adj", this.trimSec);
 
-          /*
-          //obsPosizioniMezzo = Observable.of( this.elencoPosizioniDaElaborare);
-          this.subjectPosizioniMezzo$.next(this.elencoPosizioniDaElaborare);
-          */
-
           // elabora le posizioni ricevute in modo da attivare i subject specifici
           // delle posizioni Nuove, Modificate e d Eliminate
           this.elaboraPosizioniRicevute();
 
-    
           // restituisce l'istante di inizio di questa operazione di aggiornamento
           this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
                 
           if (elencoPosizioniMezzoDepurate.length > 0) {
             this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
           }
-                   
+          
         }      
-    
+        */
 
       
       });
@@ -606,14 +588,5 @@ export class FlottaDispatcherService {
 
 
 
-    private gestisciModificaParametri(parm : ParametriGeoFleetWS) : void {
-    
-      this.parametriGeoFleetWS = parm;
 
-      this.timer = Observable.timer(0,9000).timeout(120000);
-      // schedula con un timer l'aggiornamento periodio della Situazione flotta
-      this.timerSubcribe = this.timer.subscribe(t => 
-        this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
-      
-    }
   }

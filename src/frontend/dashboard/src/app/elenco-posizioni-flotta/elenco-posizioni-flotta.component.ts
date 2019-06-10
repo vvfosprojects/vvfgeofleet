@@ -50,7 +50,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   public startLon: number = 12.490689;
   public startZoom: number = 6;
   
-  @Input() modalita: number ;
+  //@Input() modalita: number ;
   
   @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
   @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
@@ -61,7 +61,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   public opzioni: Opzioni;
 
   private geolocationPosition : Position;
-  private modalitaPrecedente: number = 0;
+  //private modalitaPrecedente: number = 0;
   //private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
