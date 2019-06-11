@@ -52,14 +52,22 @@ export class AppComponent {
   subscription = new Subscription();
      
   constructor(
-          //private flottaDispatcherService: FlottaDispatcherService
+          private flottaDispatcherService: FlottaDispatcherService,
           private gestioneOpzioniService: GestioneOpzioniService
         ) { 
 
           //this.parametriGeoFleetWS = new ParametriGeoFleetWS();
           //this.parametriGeoFleetWS.reset();
         
-
+          
+          this.subscription.add(
+            this.flottaDispatcherService.getIstanteUltimoAggiornamento()
+            .subscribe( istante => {
+                this.istanteUltimoAggiornamento = istante; 
+                console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
+              })
+            );
+          
         }
 
         ngOnInit() { 
@@ -92,15 +100,7 @@ export class AppComponent {
           };
 
 
-          /*
-          this.subscription.add(
-            this.flottaDispatcherService.getIstanteUltimoAggiornamento()
-            .subscribe( istante => {
-                this.istanteUltimoAggiornamento = istante; 
-                console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
-              })
-            );
-          */            
+         
         }   
 
         
@@ -124,13 +124,14 @@ export class AppComponent {
           //console.log("Destroy timer");
       
         }
-
+/*
         aggiornaIstanteUltimoAggiornamento(evento) {
           //console.log("aggiornaAttSec", evento);
           var dd: Date = evento;
           this.istanteUltimoAggiornamento = dd;
 
         }
+*/
 
         ngOnChanges() {
           this.gestioneOpzioniService.setModalita(this.modalita);

@@ -3,7 +3,6 @@ import { Opzioni } from '../shared/model/opzioni.model';
 import { Subscription } from 'rxjs';
 
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
-import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
 
 @Component({
   selector: 'app-pannello-opzioni',
@@ -17,8 +16,7 @@ export class PannelloOpzioniComponent implements OnInit {
   subscription = new Subscription();
      
   constructor(
-    private gestioneOpzioniService: GestioneOpzioniService,
-    private gestioneParametriService: GestioneParametriService    
+    private gestioneOpzioniService: GestioneOpzioniService
   ) { 
     this.opzioni = new Opzioni();
     
@@ -34,7 +32,7 @@ export class PannelloOpzioniComponent implements OnInit {
   }
 
   changeOptOnlyMap(e) {
-    if (!this.opzioni.onlyMap && e != '-') 
+    if (!this.opzioni.getOnlyMap() && e != '-') 
       //this.nuovaSelezioneAreaPos.emit(e)
       this.gestioneOpzioniService.setOnlyMap(true)      ;
       //this.aggiornaArea(e)
@@ -45,14 +43,14 @@ export class PannelloOpzioniComponent implements OnInit {
   }
 
   changeCenterOnLast() {
-    if (!this.opzioni.centerOnMezzo) 
+    if (!this.opzioni.getCenterOnMezzo()) 
       this.gestioneOpzioniService.setCenterOnLast(true)
     else 
       this.gestioneOpzioniService.setCenterOnLast(false)    
   }  
 
   changeOptSeguiMezzo() {
-    if (!this.opzioni.centerOnMezzo) 
+    if (!this.opzioni.getCenterOnMezzo()) 
       this.gestioneOpzioniService.setIsSeguiMezzo(true)
       //this.seguiMezziSelezionati[0] = this.elencoPosizioni [0];}
     else 
@@ -62,9 +60,10 @@ export class PannelloOpzioniComponent implements OnInit {
 
   fineSelezioneGgMaxPos(e) {    
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
-    this.gestioneOpzioniService.setGgMaxPos(this.opzioni.ggMaxPos);
-    this.gestioneParametriService.setAttSec(this.opzioni.ggMaxPos);
-    
+    this.gestioneOpzioniService.setGgMaxPos(this.opzioni.getGgMaxPos());
+  
   }
 
+
+    
 }

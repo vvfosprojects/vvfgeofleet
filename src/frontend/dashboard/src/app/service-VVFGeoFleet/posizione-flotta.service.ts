@@ -1,12 +1,8 @@
 
 import { Injectable } from '@angular/core';
-//import { Observable } from "rxjs/Observable";
-//import { TimerObservable } from "rxjs/Observable/TimerObservable";
 import { Observable, Subscription, Subject, of } from "rxjs";
 
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
+import { catchError, retry, map, filter } from 'rxjs/operators';
 
 import * as moment from 'moment';
 
@@ -54,8 +50,10 @@ export class PosizioneFlottaService {
   public parametriGeoFleetWS : ParametriGeoFleetWS;
 
   private elencoPosizioni: PosizioneMezzo[] = [];
-  private obsPosizioniMezzo$ : Observable<PosizioneMezzo[]>;
+  private obsPosizioniMezzo$ : Observable<PosizioneMezzo[]> ;
+  private subjectPosizioniMezzo$ = new Subject<PosizioneMezzo[]>() ;
 
+  private rispostaURL : Observable<Response> ;
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   subscription = new Subscription();
@@ -68,85 +66,70 @@ export class PosizioneFlottaService {
       this.timer = Observable.interval(9000).timeout(120000);
       this.obsPosizioniMezzo$ = Observable.of(this.elencoPosizioni);
       */
-     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-     this.parametriGeoFleetWS.richiestaAPI = this.defaultrichiestaAPI;
-     this.parametriGeoFleetWS.attSec = this.defaultAttSec;
+      this.parametriGeoFleetWS = new ParametriGeoFleetWS();
+      this.parametriGeoFleetWS.setRichiestaAPI(this.defaultrichiestaAPI);
+      this.parametriGeoFleetWS.setAttSec(this.defaultAttSec);
 
-     this.subscription.add(
+      this.subscription.add(
       this.gestioneParametriService.getParametriGeoFleetWS()
       //.debounceTime(3000)
       .subscribe( parm => { this.parametriGeoFleetWS = parm; })
       );   
 
-       
+        
       
     }
-    //constructor(private http: HttpClient) { }
-    
-    //public getPosizioneFlotta(attSec: Number ): Observable<PosizioneMezzo[]> {
-    //public getPosizioneFlotta(parm: ParametriGeoFleetWS ): Observable<PosizioneMezzo[]> {
-    public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
 
+    
+    public getURL(): Observable<PosizioneMezzo[]> {
       var parm = this.parametriGeoFleetWS;
-      //console.log(API_URL + richiestaWS);
 
-
-    // memorizza l'istante di inizio di questa operazione di aggiornamento
-    this.istanteUltimoAggiornamento = moment().toDate();      
-  
-    // aggiungere sempre X secondi per essere sicuri di perdersi
-    // meno posizioni possibili, a causa della distanza di tempo tra
-    // l'invio della richiesta dal client e la sua ricezione dal ws
-    // Per essere certi, è necessaria un API che restituisca i messaggi
-    // acquisiti successivamente ad un certo istante
-    
-    //if (!all && this.maxIstanteAcquisizionePrecedente != null) 
-    if (this.maxIstanteAcquisizionePrecedente != null) 
-    {parm.attSec = moment(this.istanteUltimoAggiornamento).
-      diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
-      this.trimSec.valueOf() ; }
-
-    //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
-
-    //if (all) { this.maxIstanteAcquisizionePrecedente = null; }
+      // aggiungere sempre X secondi per essere sicuri di perdersi
+      // meno posizioni possibili, a causa della distanza di tempo tra
+      // l'invio della richiesta dal client e la sua ricezione dal ws
+      // Per essere certi, è necessaria un API che restituisca i messaggi
+      // acquisiti successivamente ad un certo istante
       
-        var parametri : string = '';
-        var richiestaWS : string = '';
-        if (parm.attSec != null) { parametri = parametri+ 
-          (parametri == '' ? '?': '&') + 'attSec='+ String(parm.attSec); }
-        if (parm.lat1 != null) { parametri = parametri+
-          (parametri == '' ? '?': '&') + 'lat1='+ String(parm.lat1); }
-        if (parm.lon1 != null) { parametri = parametri+
-          (parametri == '' ? '?': '&') + 'lon1='+ String(parm.lon1); }
-        if (parm.lat2 != null) { parametri = parametri+
-          (parametri == '' ? '?': '&') + 'lat2='+ String(parm.lat2); }
-        if (parm.lon2 != null) { parametri = parametri+
-          (parametri == '' ? '?': '&') + 'lon2='+ String(parm.lon2); }
+      //if (!all && this.maxIstanteAcquisizionePrecedente != null) 
+      if (this.maxIstanteAcquisizionePrecedente != null) 
+      {parm.setAttSec(moment(this.istanteUltimoAggiornamento).
+        diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
+        this.trimSec.valueOf() ); }
 
-        if (parametri != '' ) 
-          { richiestaWS = parm.richiestaAPI + parametri; }
-        else 
-          { richiestaWS = parm.richiestaAPI; }
+      //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
 
-            
-        var observable: Observable<Response> = this.http.get(API_URL + richiestaWS);
-
+      //if (all) { this.maxIstanteAcquisizionePrecedente = null; }
         
-        /*
-        var observable: Observable<Response>;
-        observable = this.http.get(API_URL + richiestaWS);
-        */
-        var posizioniMezzo : PosizioneMezzo[];
+      var parametri : string = '';
+      var richiestaWS : string = '';
+      if (parm.getAttSec() != null) { parametri = parametri+ 
+        (parametri == '' ? '?': '&') + 'attSec='+ String(parm.getAttSec()); }
+      if (parm.getLat1() != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lat1='+ String(parm.getLat1()); }
+      if (parm.getLon1() != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lon1='+ String(parm.getLon1()); }
+      if (parm.getLat2() != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lat2='+ String(parm.getLat2()); }
+      if (parm.getLon2() != null) { parametri = parametri+
+        (parametri == '' ? '?': '&') + 'lon2='+ String(parm.getLon2()); }
 
-        //return this.http.get(API_URL + 'posizioneFlotta').      
-        if ( parm.richiestaAPI == 'posizioneFlotta')
-        {
-        this.obsPosizioniMezzo$ = observable.      
-        map((r : Response) => 
+      if (parametri != '' ) 
+        { richiestaWS = parm.getRichiestaAPI() + parametri; }
+      else 
+        { richiestaWS = parm.getRichiestaAPI(); }
+
+          
+      var observable: Observable<Response> = this.http.get(API_URL + richiestaWS);
+
+      if ( this.parametriGeoFleetWS.getRichiestaAPI() == 'posizioneFlotta')
+      {        
+          this.obsPosizioniMezzo$ = observable.
+          map((r : Response) => 
           {  
           return r.json().
           map((e : PosizioneMezzo) => 
-            { if (e.infoSO115 == null) { 
+            { if (e.infoSO115 == null) 
+              { 
                 e.infoSO115 = Object.create( {stato: String}); 
                 e.infoSO115.stato = "0";
               }
@@ -163,19 +146,19 @@ export class PosizioneFlottaService {
               e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";            
               e.visibile = false;
               let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
-              return Object.assign(posizioneMezzo, e);
+              Object.assign(posizioneMezzo, e);
+              return posizioneMezzo;
             }
-          )
-          })
-        .catch(this.handleError);    
-        };
+          )           
+          }),
+          catchError(this.handleError)
+        ;  
+      }
 
-        if ( parm.richiestaAPI == 'inRettangolo')
-        {
+      if ( this.parametriGeoFleetWS.getRichiestaAPI() == 'inRettangolo')
+      {
 
-
-        //obsPosizioniMezzo$ = observable.      
-        this.obsPosizioniMezzo$ = observable.      
+        this.obsPosizioniMezzo$ = observable.
         map((r : Response) => 
           {
             //var risp : RispostaMezziInRettangolo = r.json();
@@ -204,16 +187,37 @@ export class PosizioneFlottaService {
 
               });
               //return Observable.of(posizioniMezzo);
-          })
-        .catch(this.handleError);      
+          }),
+        catchError(this.handleError);      
 
-        };
+      };
 
-        var elencoPosizioniWS : PosizioneMezzo[] = [];
-        this.obsPosizioniMezzo$.map( obj => 
-          elencoPosizioniWS =  JSON.parse( JSON.stringify(obj))
-        );
-        
+      return this.obsPosizioniMezzo$;
+    }
+    
+    public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
+
+        this.getURL().subscribe( (r : PosizioneMezzo[]) => {
+
+          this.subjectPosizioniMezzo$.next(r); 
+          this.setIstanteUltimoAggiornamento(r);
+        });
+
+        return this.subjectPosizioniMezzo$.asObservable();
+    };
+  
+    private handleError(error: Response | any) {
+      if (error != null)
+      { console.error('ApiService::handleError', error);
+        return Observable.throw(error);
+      }
+    }
+
+    private setIstanteUltimoAggiornamento(elencoPosizioniWS: PosizioneMezzo[])
+    {       
+        // memorizza l'istante di inizio di questa operazione di aggiornamento
+        this.istanteUltimoAggiornamento = moment().toDate();      
+     
         if (elencoPosizioniWS.length > 0) {
           //l'attSec deve essere calcolato in relazione all'istante 
           //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
@@ -270,21 +274,9 @@ export class PosizioneFlottaService {
           }
                    
         }      
-    
+    }      
         
-        return this.obsPosizioniMezzo$;
-
-    };
-  
-    private handleError(error: Response | any) {
-      if (error != null)
-      { console.error('ApiService::handleError', error);
-        return Observable.throw(error);
-      }
-    }
-
-    public getIstanteUltimoAggiornamento(): 
-    Observable<Date> {
+    public getIstanteUltimoAggiornamento(): Observable<Date> {
       return this.subjectIstanteUltimoAggiornamento$.asObservable();                
     }  
   

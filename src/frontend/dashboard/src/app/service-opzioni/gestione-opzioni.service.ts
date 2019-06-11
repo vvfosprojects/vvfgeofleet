@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, of } from "rxjs";
 import { Opzioni } from '../shared/model/opzioni.model';
 
+import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
+
 // le opzioni vengono condivise in tutta l'applicazione
 @Injectable({
   providedIn: 'root'
@@ -9,10 +11,15 @@ import { Opzioni } from '../shared/model/opzioni.model';
 export class GestioneOpzioniService {
 
   private subjectOpzioni$ = new Subject<Opzioni>();
-  public opzioni : Opzioni;
+  private opzioni : Opzioni;
+  private opzioniPrecedenti : Opzioni;
 
-  constructor( ) {  
+  constructor(private gestioneParametriService: GestioneParametriService
+  ) {  
     this.opzioni = new Opzioni(); 
+
+    this.opzioniPrecedenti = new Opzioni();    
+    this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
    }
 
   public getOpzioni(): Observable<Opzioni> {
@@ -46,8 +53,19 @@ export class GestioneOpzioniService {
   }
 
   public setGgMaxPos(value : number): void { 
-    this.opzioni.setGgMaxPos(value); 
-    this.subjectOpzioni$.next(this.opzioni);
+    // in questo caso verifica che effettivamente l'opzione sia stata modificata 
+    // in quanto comporta una nuova richiesta integrale al ws
+    // 
+    if (this.opzioniPrecedenti.getGgMaxPos() != value)
+    { 
+      this.gestioneParametriService.setAttSec(value);
+      
+      this.opzioni.setGgMaxPos(value); 
+
+      this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
+      
+      this.subjectOpzioni$.next(this.opzioni);
+    }
   }
   
   public setStartLat(value : number): void { 
@@ -57,6 +75,16 @@ export class GestioneOpzioniService {
 
   public setStartLon(value : number): void { 
     this.opzioni.setStartLon(value); 
+    this.subjectOpzioni$.next(this.opzioni);
+  }
+
+  public setUsertLat(value : number): void { 
+    this.opzioni.setUsertLat(value); 
+    this.subjectOpzioni$.next(this.opzioni);
+  }
+
+  public setUserLon(value : number): void { 
+    this.opzioni.setUserLon(value); 
     this.subjectOpzioni$.next(this.opzioni);
   }
 
@@ -70,5 +98,6 @@ export class GestioneOpzioniService {
     this.subjectOpzioni$.next(this.opzioni);
   }
 
+   
 }
 

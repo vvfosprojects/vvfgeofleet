@@ -261,6 +261,8 @@ export class FlottaDispatcherService {
     this.posizioneFlottaService.getPosizioneFlotta().debounceTime(3000)
     .subscribe( posizioni => 
       {
+        if (posizioni === null) { return; }
+        
         //console.log("posizioneFlottaService: ", posizioni);
         //console.log("posizioneFlottaService.length: ", posizioni.length);
         this.elencoPosizioniMezzo = posizioni.sort( 

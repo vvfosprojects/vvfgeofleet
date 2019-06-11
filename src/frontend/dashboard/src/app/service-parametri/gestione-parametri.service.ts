@@ -8,12 +8,13 @@ import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model
 export class GestioneParametriService {
 
   private subjectParametriGeoFleetWS$ = new Subject<ParametriGeoFleetWS>();
-  public parametriGeoFleetWS : ParametriGeoFleetWS;
+  private parametriGeoFleetWS : ParametriGeoFleetWS;
   
   constructor() { 
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
     
   }
+
 
   public getParametriGeoFleetWS(): Observable<ParametriGeoFleetWS> {
     return this.subjectParametriGeoFleetWS$.asObservable();
@@ -25,8 +26,8 @@ export class GestioneParametriService {
   }
 
   public setAttSec(value : number): void { 
-    this.parametriGeoFleetWS.setAttSec( value*24*60*60 );
-    this.parametriGeoFleetWS.setDefaultAttSec( value*24*60*60 );    
+    this.parametriGeoFleetWS.reset();    
+    this.parametriGeoFleetWS.setAttSec(value*24*60*60);
     this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
   
     this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);    
@@ -49,6 +50,7 @@ export class GestioneParametriService {
 
       this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);    
 
+      console.log('setRettangoloRicerca',this.parametriGeoFleetWS);
     }
   }
     

@@ -31,60 +31,19 @@ import * as moment from 'moment';
 })
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
-  //@Input() elencoUltimePosizioni : PosizioneMezzo[] = [];
   public elencoUltimePosizioni : PosizioneMezzo[] = [];
-  //@Input() istanteUltimoAggiornamento: Date;
-  public istanteUltimoAggiornamento: Date;
-  //@Input() maxIstanteAcquisizione: Date ;
-  /*
-  @Input() reset: Boolean ;  
 
-  @Input() startLat: number ;
-  @Input() startLon: number ;
-  @Input() startZoom: number ;
-  */
-
-  public reset : Boolean = false;
-
-  public startLat: number = 41.889777;
-  public startLon: number = 12.490689;
-  public startZoom: number = 6;
-  
-  //@Input() modalita: number ;
-  
-  @Output() nuovaSelezioneGgMaxPos: EventEmitter<number> = new EventEmitter();
-  @Output() nuovaSelezioneAreaPos: EventEmitter<Object[]> = new EventEmitter();
-
-  @Output() nuovoIstanteUltimoAggiornamento: EventEmitter<Date> = new EventEmitter();
-  
   public parametriGeoFleetWS : ParametriGeoFleetWS;
   public opzioni: Opzioni;
 
   private geolocationPosition : Position;
-  //private modalitaPrecedente: number = 0;
-  //private maxIstanteAcquisizionePrecedente: Date = new Date("01/01/1900 00:00:00");
 
   public elencoPosizioni : PosizioneMezzo[] = [];
- // public elencoPosizioniDaElaborare: PosizioneMezzo[] = [];
   public mezzoSelezionato: PosizioneMezzo ;
 
   public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
 
   private draggedPosizioneMezzo: PosizioneMezzo;
-  /*
-  startLat: number = 41.889777;
-  startLon: number = 12.490689;
-  startZoom: number = 6;
-  */
-
-  /*
-  centerOnLast: boolean = true;
-  centerOnMezzo: boolean = false;
-  isSeguiMezzo: boolean = true;
-  onlyMap: boolean = false;
-
-  ggMaxPos: number = 3;
-  */     
 
    subscription = new Subscription();
       
@@ -140,16 +99,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         })
       );   
 
-    this.subscription.add(
-      this.flottaDispatcherService.getIstanteUltimoAggiornamento()
-      .subscribe( istante => {
-          this.istanteUltimoAggiornamento = istante; 
-          //console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
-          this.nuovoIstanteUltimoAggiornamento.emit(this.istanteUltimoAggiornamento);
-
-        })
-      );
-       
    }    
 
 
@@ -249,8 +198,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           position => {
               this.geolocationPosition = position;
               //console.log(position);                
-              this.startLat = this.geolocationPosition.coords.latitude;
-              this.startLon = this.geolocationPosition.coords.longitude;
+              this.gestioneOpzioniService.setUsertLat(this.geolocationPosition.coords.latitude);
+              this.gestioneOpzioniService.setUserLon(this.geolocationPosition.coords.longitude);
           },
           error => {
               switch (error.code) {
@@ -268,85 +217,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       );
     };
   }
-
-  /*    
-  testModalitaCambiata () {
-    if (this.modalita != this.modalitaPrecedente) {
-      this.cambiaModalita ();
-    }
-    else { 
-      this.reset = false; 
-    }
-  }
-
-  cambiaModalita () {
-    //console.log(this.modalita, this.modalitaPrecedente);
-    //if (this.modalita != this.modalitaPrecedente) {
-      this.modalitaPrecedente = this.modalita;
-      switch (this.modalita ) {
-        // Modalità Comando
-        case 1:
-        {
-          if (this.vociFiltroStatiMezzo.length > 0) {
-            this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
-            this.startZoom = 10;        
-            this.onlyMap = true;   
-            this.reset = true;
-          }
-          //this.nuovaSelezioneAreaPos.emit(e);
-          break;     
-        }
-        // Modalità Direzione Regionale
-        case 2:
-        {
-          if (this.vociFiltroStatiMezzo.length > 0) {
-            this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
-            this.startZoom = 8;                
-            this.onlyMap = true;  
-            this.reset = true;
-          }
-          //this.nuovaSelezioneAreaPos.emit(e);
-          break;                     
-        }
-        // Modalità CON
-        case 3:
-        {
-          if (this.vociFiltroStatiMezzo.length > 0) {
-            this.vociFiltroStatiMezzo.find( item => item.codice == "1").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "2").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "3").selezionato = true;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "5").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "0").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "6").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "7").selezionato = false;
-            this.vociFiltroStatiMezzo.find( item => item.codice == "4").selezionato = false;
-            this.startZoom = 6;                
-            this.onlyMap = false;        
-            this.reset = true;
-            
-            //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);            
-            this.aggiornaAttSec(this.ggMaxPos);
-          }
-          break;               
-        }
-      }
-    }
-  }
-  */
 
   aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
     //this.testModalitaCambiata();
@@ -458,13 +328,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         // modifica anche la posizione tra i Mezzi da seguire se è presente
         this.seguiMezziSelezionati[v] = p; 
         // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
-        if (this.opzioni.centerOnMezzo ) {
+        if (this.opzioni.getCenterOnMezzo() ) {
           this.mezzoSelezionato = p;
-          /*
-          this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
-          this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
-          this.startZoom = 12;
-          */
+          
           this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
           this.gestioneOpzioniService.setStartLon(Number(this.mezzoSelezionato.localizzazione.lon));
           this.gestioneOpzioniService.setStartZoom(12);
@@ -473,50 +339,22 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
   controllaCentraSuUltimaPosizione() {
-    if (!this.opzioni.centerOnMezzo && 
-      (this.mezzoSelezionato == null || this.opzioni.centerOnLast) ) 
+    if (!this.opzioni.getCenterOnMezzo() && 
+      (this.mezzoSelezionato == null || this.opzioni.getCenterOnLast()) ) 
     {
       this.mezzoSelezionato = this.elencoPosizioni[0];
     }
   }
-/*
-  nuovaSelezioneStatiMezzo(event) {
-    //console.log('event: ', event);
-    //this.filtriStatiMezzo = event;
-    this.flottaDispatcherService.putVisibleStatiMezzo(event);    
-  } 
-  
-  nuovaSelezioneSedi(event) {
-    //console.log('event: ', event);
-    //this.filtriSedi = event;
-    this.flottaDispatcherService.putVisibleSedi(event);
 
-  }
-
-  nuovaSelezioneGeneriMezzo(event) {
-    //console.log('event: ', event);
-    //this.filtriGeneriMezzo = event;
-    this.flottaDispatcherService.putVisibleGeneriMezzo(event);
-  }
-  
-  nuovaSelezioneDestinazioneUso(event) {
-    //console.log('event: ', event);
-    //this.filtriDestinazioneUso = event;
-    this.flottaDispatcherService.putVisibleDestinazioneUso(event);
-  }
-*/  
+   
   centraSuMappa(evento) {
     var tipoevento: string = evento[1];
     if (tipoevento == "click") {
       this.mezzoSelezionato = evento[0];
-      /*
-      this.startLat = Number(this.mezzoSelezionato.localizzazione.lat);
-      this.startLon = Number(this.mezzoSelezionato.localizzazione.lon);
-      this.startZoom = 12;
-      */
-     this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
-     this.gestioneOpzioniService.setStartLon(Number(this.mezzoSelezionato.localizzazione.lon));
-     this.gestioneOpzioniService.setStartZoom(12);     
+
+      this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
+      this.gestioneOpzioniService.setStartLon(Number(this.mezzoSelezionato.localizzazione.lon));
+      this.gestioneOpzioniService.setStartZoom(12);     
     }
     //console.log("centraSuMappa", this.mezzoSelezionato);
   }
@@ -526,79 +364,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     if (tipoevento == "mouseover") {
       this.mezzoSelezionato = evento[0];
     }
-    //console.log("centraSuMappa", this.mezzoSelezionato);
+    //console.log("evidenziaSuMappa", this.mezzoSelezionato);
   }
 
-  /*
-  changeOptSeguiMezzo() {
-    if (!this.centerOnMezzo) {
-      this.seguiMezziSelezionati[0] = this.elencoPosizioni [0];}
-    else {
-      this.seguiMezziSelezionati = []; }
-  }
 
-  changeOptOnlyMap(e) {
-    if (!this.onlyMap && e != '-') 
-      //this.nuovaSelezioneAreaPos.emit(e)
-      this.aggiornaArea(e)
-    else
-    //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
-      this.aggiornaAttSec(this.ggMaxPos);
-  }
-
-  fineSelezioneGgMaxPos(e) {    
-    //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
-    this.aggiornaAttSec(this.ggMaxPos);
-  }
-  */
-  
-
-/* spostato in DispatcherService
-  aggiornaAttSec(evento) {
-    //console.log("aggiornaAttSec", evento);
-
-    if (evento != null) {
-      var gg: number = evento;
-      this.parametriGeoFleetWS.reset();
-      this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
-      this.parametriGeoFleetWS.setAttSec( gg*24*60*60 );
-      this.parametriGeoFleetWS.setDefaultAttSec( gg*24*60*60 );
-
-      //this.reset = true;
-      //this.aggiorna(this.parametriGeoFleetWS, true);
-    }      
-
-  }      
-*/
-
-/* spostato in Mappa-posizioni-flotta component
-  selezioneArea(e) {    
-    //this.nuovaSelezioneAreaPos.emit(e)
-    this.aggiornaArea(e)
-  }
-
-  aggiornaArea(evento) {
-    //console.log("aggiornaArea", evento);
-    if (evento != null) {
-      
-      var vv = Object.values(evento);
-      var vv1 = Object.values(vv[0]);
-      var vv2 = Object.values(vv[1]);
-      //console.log("aggiornaArea  vv",vv);
-      this.parametriGeoFleetWS.reset();
-      this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
-      this.parametriGeoFleetWS.setAttSec(null);
-      this.parametriGeoFleetWS.setLat1(vv1[1]);
-      this.parametriGeoFleetWS.setLon1(vv2[0]);
-      this.parametriGeoFleetWS.setLat2(vv1[0]);
-      this.parametriGeoFleetWS.setLon2(vv2[1]);
-
-      //this.timerSubcribe.unsubscribe();
-      //this.reset = true;
-      //this.aggiorna(this.parametriGeoFleetWS, true);
-
-    }
-  }    
-*/
 
 }
