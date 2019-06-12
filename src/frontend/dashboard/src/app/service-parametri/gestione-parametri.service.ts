@@ -17,6 +17,7 @@ export class GestioneParametriService {
 
 
   public getParametriGeoFleetWS(): Observable<ParametriGeoFleetWS> {
+    console.log('GestioneParametriService - getParametriGeoFleetWS()',this.subjectParametriGeoFleetWS$);
     return this.subjectParametriGeoFleetWS$.asObservable();
   }
 

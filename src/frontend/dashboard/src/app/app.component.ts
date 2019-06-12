@@ -64,7 +64,7 @@ export class AppComponent {
             this.flottaDispatcherService.getIstanteUltimoAggiornamento()
             .subscribe( istante => {
                 this.istanteUltimoAggiornamento = istante; 
-                console.log("this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
+                //console.log("AppComponent - this.istanteUltimoAggiornamento:", this.istanteUltimoAggiornamento);
               })
             );
           
@@ -104,19 +104,6 @@ export class AppComponent {
         }   
 
         
-        /*
-        aggiorna(parm : ParametriGeoFleetWS, all: boolean) {
-
-         
-          this.flottaDispatcherService.getSituazioneFlotta(parm, all).debounceTime(3000)
-          .subscribe( posizioni => {
-              console.log("app.component.aggiorna() - posizioni:", posizioni);
-              //console.log("posizioneFlottaService.length: ", posizioni.length);
-              this.elencoPosizioniMezzo = posizioni;
-            }      
-          );
-        }
-        */
 
    
         ngOnDestroy() {
@@ -124,63 +111,17 @@ export class AppComponent {
           //console.log("Destroy timer");
       
         }
-/*
-        aggiornaIstanteUltimoAggiornamento(evento) {
-          //console.log("aggiornaAttSec", evento);
-          var dd: Date = evento;
-          this.istanteUltimoAggiornamento = dd;
 
-        }
-*/
 
+        /*
         ngOnChanges() {
+          console.log('AppComponent - ngOnChanges()', this.modalita);
           this.gestioneOpzioniService.setModalita(this.modalita);
         }
-        /*
-        aggiornaAttSec(evento) {
-          //console.log("aggiornaAttSec", evento);
-
-          if (evento != null) {
-            //var gg: number = evento.value;
-            var gg: number = evento;
-
-            this.parametriGeoFleetWS.reset();
-            this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
-            this.parametriGeoFleetWS.setAttSec( gg*24*60*60 );
-            this.parametriGeoFleetWS.setDefaultAttSec( gg*24*60*60 );
-
-
-
-            this.reset = true;
-            this.aggiorna(this.parametriGeoFleetWS, true);
-
-          }
-
-        }
         */
 
-        /*
-        aggiornaArea(evento) {
-          //console.log("aggiornaArea", evento);
-          if (evento != null) {
-            
-            var vv = Object.values(evento);
-            var vv1 = Object.values(vv[0]);
-            var vv2 = Object.values(vv[1]);
-            //console.log("aggiornaArea  vv",vv);
-            this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
-            this.parametriGeoFleetWS.setAttSec(null);
-            this.parametriGeoFleetWS.setLat1(vv1[1]);
-            this.parametriGeoFleetWS.setLon1(vv2[0]);
-            this.parametriGeoFleetWS.setLat2(vv1[0]);
-            this.parametriGeoFleetWS.setLon2(vv2[1]);
-
-            //this.timerSubcribe.unsubscribe();
-            this.reset = true;
-            this.aggiorna(this.parametriGeoFleetWS, true);
-
-          }
+        public cambiaModalita($event,modalita) {
+          //console.log('AppComponent - cambiaModalita()', $event,modalita);
+          this.gestioneOpzioniService.setModalita(modalita);
         }
-        */
-
 }

@@ -59,7 +59,7 @@
                   <span class="h8 text-white text-left pt-2 pr-1" style="font-size:80%;">
                   Modalità di visualizzazione:</span> 
                   <div class="btn-group btn-group-toggle text-right " ngbRadioGroup name="radioBasic" 
-                  [(ngModel)]="modalita">
+                  [(ngModel)]="modalita" (click)="cambiaModalita($event,modalita)">
                     <label ngbButtonLabel class="btn-primary btn-sm">
                       <input ngbButton type="radio" [value]="1"> Comando
                     </label>
@@ -85,17 +85,6 @@
       </div>
   </nav>
   <div class="container-fluid">
-      <!--[elencoUltimePosizioni]="elencoPosizioniMezzo"-->      
-      <!--[maxIstanteAcquisizione]="maxIstanteAcquisizione"-->
-      <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->
-      <!--(nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)"-->
-      <!--(nuovaSelezioneAreaPos)="aggiornaArea($event)"-->
-      <!--[reset]="reset"-->
-      <!--[startLat]="startLat"-->
-      <!--[startLon]="startLon" -->
-      <!--[startZoom]="startZoom"  --> 
-      <!--[modalita]="modalita"-->
-      <!--(nuovoIstanteUltimoAggiornamento)="aggiornaIstanteUltimoAggiornamento($event)">-->
     <app-elenco-posizioni-flotta>
     </app-elenco-posizioni-flotta>
   </div>

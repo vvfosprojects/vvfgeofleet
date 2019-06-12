@@ -19,10 +19,10 @@ export class GestioneOpzioniService {
     this.opzioni = new Opzioni(); 
 
     this.opzioniPrecedenti = new Opzioni();    
-    this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
    }
 
   public getOpzioni(): Observable<Opzioni> {
+    console.log('GestioneOpzioniService - getOpzioni()',this.subjectOpzioni$);
     return this.subjectOpzioni$.asObservable();
   }
 
@@ -56,7 +56,8 @@ export class GestioneOpzioniService {
     // in questo caso verifica che effettivamente l'opzione sia stata modificata 
     // in quanto comporta una nuova richiesta integrale al ws
     // 
-    if (this.opzioniPrecedenti.getGgMaxPos() != value)
+    var k = this.opzioniPrecedenti.getGgMaxPos();
+    if ( k != value)
     { 
       this.gestioneParametriService.setAttSec(value);
       
@@ -94,8 +95,20 @@ export class GestioneOpzioniService {
   }
 
   public setModalita(value : number): void { 
-    this.opzioni.setModalita(value); 
-    this.subjectOpzioni$.next(this.opzioni);
+    // in questo caso verifica che effettivamente l'opzione sia stata modificata 
+    // in quanto comporta una nuova richiesta integrale al ws
+    // 
+    var k = this.opzioniPrecedenti.getModalita();
+    if ( k != value)
+    { 
+      this.opzioni.setModalita(value); 
+      if (value == 1 || value == 2)
+      { this.opzioni.setOnlyMap(true); }
+
+      this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
+      
+      this.subjectOpzioni$.next(this.opzioni);
+    }
   }
 
    

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscription, Subject, of } from "rxjs";
-//import { Observable, Subject } from "rxjs/Rx";
+
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
@@ -9,7 +9,6 @@ import 'rxjs/add/observable/throw';
 import * as moment from 'moment';
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
-//import { Opzioni } from '../shared/model/opzioni.model';
 
 
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
@@ -29,26 +28,14 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 })
 export class FlottaDispatcherService {
 
-  /*
-  public opzioni: Opzioni;
-  public opzioniPrecedenti: Opzioni;
-  */
   
-    //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
+  //private elencoPosizioniMezzoPrec : PosizioneMezzo[] = [];
   
   private timer;
   private timerSubcribe: PushSubscription;
 
   private istanteUltimoAggiornamento: Date;
-/*  
-  public istanteUltimoAggiornamento: Date;
-  private istanteAggiornamentoPrecedente: Date = null;
 
-  public maxIstanteAcquisizione: Date;
-  private maxIstanteAcquisizionePrecedente: Date = null;
-
-  private trimSec: Number = 0;
-*/
   private geolocationPosition : Position;
 
   public reset : Boolean = false;
@@ -101,12 +88,7 @@ export class FlottaDispatcherService {
   public vociFiltroSedi: VoceFiltro[] = [];
   public vociFiltroGeneriMezzo: VoceFiltro[] = [];
   public vociFiltroDestinazioneUso: VoceFiltro[] = [];
-  /*
-  private subjectFiltriStatiMezzo$ = new Subject<VoceFiltro[]>();
-  private subjectFiltriSedi$ = new Subject<VoceFiltro[]>();
-  private subjectFiltriGeneriMezzo$ = new Subject<VoceFiltro[]>();
-  private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
-  */
+
 
   constructor(
     private posizioneFlottaService: PosizioneFlottaService,
@@ -114,11 +96,9 @@ export class FlottaDispatcherService {
   ) { 
 
   
-    //this.timer = Observable.interval(9000).timeout(120000);
     this.timer = Observable.timer(0,9000).timeout(120000);
     // schedula con un timer l'aggiornamento periodio della Situazione flotta
     this.timerSubcribe = this.timer.subscribe(t => 
-      //this.aggiornaSituazioneFlotta(this.parametriGeoFleetWS, false));
       this.aggiornaSituazioneFlotta());
 
     this.subscription.add(
@@ -126,8 +106,7 @@ export class FlottaDispatcherService {
       //.debounceTime(3000)
       .subscribe( istante => {
           this.istanteUltimoAggiornamento = istante;
-          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
-          
+          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);          
         })
       ); 
     
@@ -141,8 +120,6 @@ export class FlottaDispatcherService {
           this.vociFiltroStatiMezzo = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);        
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          //this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
-          
         })
       );   
     
@@ -154,7 +131,6 @@ export class FlottaDispatcherService {
           this.vociFiltroSedi = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          //this.subjectFiltriSedi$.next(this.vociFiltroSedi);
         })
       );   
 
@@ -166,7 +142,6 @@ export class FlottaDispatcherService {
           this.vociFiltroGeneriMezzo = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);                    
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          //this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
         })
       );   
 
@@ -178,39 +153,13 @@ export class FlottaDispatcherService {
           this.vociFiltroDestinazioneUso = vocifiltro;
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniMostrate);          
           this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniMostrate);
-          //this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
         })
       );   
 
           
   }
 
-/*
-  public getFiltriStatiMezzo(): Observable<VoceFiltro[]> {
-    return this.subjectFiltriStatiMezzo$.asObservable();
-  }
 
-  public getFiltriSedi(): Observable<VoceFiltro[]> {
-    return this.subjectFiltriSedi$.asObservable();
-  }
-
-  public getFiltriGeneriMezzo(): Observable<VoceFiltro[]> {
-    return this.subjectFiltriGeneriMezzo$.asObservable();
-  }
-  
-  public getFiltriDestinazioneUso(): Observable<VoceFiltro[]> {
-    return this.subjectFiltriDestinazioneUso$.asObservable();
-  }
-*/
-
-
-  /*
-  public getSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): 
-      Observable<PosizioneMezzo[]> {
-
-        return this.subjectPosizioniMezzo$.asObservable();
-      }
-  */
   public getIstanteUltimoAggiornamento(): 
   Observable<Date> {
     return this.subjectIstanteUltimoAggiornamento$.asObservable();                
@@ -234,30 +183,8 @@ export class FlottaDispatcherService {
     return this.subjectPosizioniMezzoLocalizzazioneModificata$.asObservable();
   }
       
-  //private aggiornaSituazioneFlotta(parm : ParametriGeoFleetWS, all: boolean): void {
   private aggiornaSituazioneFlotta(): void {
 
-    //var obsPosizioniMezzo : Observable<PosizioneMezzo[]>;
-/*
-    // memorizza l'istante di inizio di questa operazione di aggiornamento
-    this.istanteUltimoAggiornamento = moment().toDate();      
-  
-    // aggiungere sempre X secondi per essere sicuri di perdersi
-    // meno posizioni possibili, a causa della distanza di tempo tra
-    // l'invio della richiesta dal client e la sua ricezione dal ws
-    // Per essere certi, è necessaria un API che restituisca i messaggi
-    // acquisiti successivamente ad un certo istante
-    
-    if (!all && this.maxIstanteAcquisizionePrecedente != null) 
-    {parm.attSec = moment(this.istanteUltimoAggiornamento).
-      diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
-      this.trimSec.valueOf() ; }
-
-    //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
-
-    if (all) { this.maxIstanteAcquisizionePrecedente = null; }
-*/
-    //this.posizioneFlottaService.getPosizioneFlotta(parm).debounceTime(3000)
     this.posizioneFlottaService.getPosizioneFlotta().debounceTime(3000)
     .subscribe( posizioni => 
       {
@@ -280,71 +207,6 @@ export class FlottaDispatcherService {
           this.elaboraPosizioniRicevute();
         
         //console.log("this.elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
-/*
-        if (this.elencoPosizioniMezzo.length > 0) {
-          //l'attSec deve essere calcolato in relazione all'istante 
-          //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
-          //eventuali messaggi "futuri", che potrebbero essere ricevuti dagli adapter SO115
-          //a seguito di errata impostazione della data di sistema sui server dei Comandi Provinciali
-
-          var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
-          elencoPosizioniMezzoDepurate = this.elencoPosizioniMezzo.filter(
-            i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
-          );            
-
-          // imposta maxIstanteAcquisizione filtrando le posizioni precedenti all'
-          // istanteUltimoAggiornamento
-          if (elencoPosizioniMezzoDepurate.length > 0) {
-            this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
-              reduce( function (a,b) 
-              { var bb : Date = new Date(b.istanteAcquisizione);
-                var aa : Date  = new Date(a.istanteAcquisizione);
-                return aa>bb ? a : b ;
-              }).istanteAcquisizione);
-
-            }
-
-          //console.log("elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
-          //console.log("elencoPosizioniMezzoDepurate.length", elencoPosizioniMezzoDepurate.length);
-          //console.log("maxIstanteAcquisizione", this.maxIstanteAcquisizione);
-
-          // imposta trimSec calcolando la differenza di tempo tra l'
-          // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
-          // purchè succesive a istanteUltimoAggiornamento
-          this.trimSec = 0;
-
-          this.elencoPosizioniDaElaborare = this.elencoPosizioniMezzo.filter(
-            i => (new Date(i.istanteAcquisizione) >= new Date(this.maxIstanteAcquisizionePrecedente) )
-            );
-
-          //console.log("elencoPosizioniDaElaborare", this.elencoPosizioniDaElaborare);
-          if (this.elencoPosizioniDaElaborare.length > 0) {
-              this.trimSec = moment(
-                new Date(this.elencoPosizioniDaElaborare.
-                    reduce( function (a,b) 
-                    { var bb : Date = new Date(b.istanteAcquisizione);
-                      var aa : Date  = new Date(a.istanteAcquisizione);
-                      return aa>bb ? a : b ;
-                    }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
-            }
-          //console.log("trimSec", this.trimSec);
-          this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
-          //console.log("trimSec adj", this.trimSec);
-
-          // elabora le posizioni ricevute in modo da attivare i subject specifici
-          // delle posizioni Nuove, Modificate e d Eliminate
-          this.elaboraPosizioniRicevute();
-
-          // restituisce l'istante di inizio di questa operazione di aggiornamento
-          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
-                
-          if (elencoPosizioniMezzoDepurate.length > 0) {
-            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
-          }
-          
-        }      
-        */
-
       
       });
 
@@ -537,20 +399,7 @@ export class FlottaDispatcherService {
       } )
  */ 
 
-/*
-    public putVisibleStatiMezzo(vociFiltroSelezionate : String[]): void {
-      this.gestioneFiltriService.setVisibleStatiMezzo(vociFiltroSelezionate);
-    }
-    public putVisibleSedi(vociFiltroSelezionate : String[]): void {
-      this.gestioneFiltriService.setVisibleSedi(vociFiltroSelezionate);
-    }
-    public putVisibleGeneriMezzo(vociFiltroSelezionate : String[]): void {
-      this.gestioneFiltriService.setVisibleGeneriMezzo(vociFiltroSelezionate);
-    }
-    public putVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
-      this.gestioneFiltriService.setVisibleDestinazioneUso(vociFiltroSelezionate);
-    }
-*/    
+  
     setVisiblePosizioneMezzoSelezionato( posizione: PosizioneMezzo,
        elencoMezziSelezionati: PosizioneMezzo[]) { 
         //var r : boolean ;
