@@ -104,8 +104,12 @@ export class GestioneOpzioniService {
       this.opzioni.setModalita(value); 
       if (value == 1 || value == 2)
       { this.opzioni.setOnlyMap(true); }
+      else 
+      { this.opzioni.setOnlyMap(false); }
+      
 
-      this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
+      //this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
+      this.opzioniPrecedenti = this.opzioni;
       
       this.subjectOpzioni$.next(this.opzioni);
     }

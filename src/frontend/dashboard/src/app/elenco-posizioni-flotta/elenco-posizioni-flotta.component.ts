@@ -60,7 +60,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.opzioni = new Opzioni();
     this.opzioni.reset();
     
-    this.impostaLocalizzazioneUtente();
 
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
@@ -192,31 +191,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   }
 
 
-  impostaLocalizzazioneUtente() {
-    if (window.navigator && window.navigator.geolocation) {
-      window.navigator.geolocation.getCurrentPosition(
-          position => {
-              this.geolocationPosition = position;
-              //console.log(position);                
-              this.gestioneOpzioniService.setUsertLat(this.geolocationPosition.coords.latitude);
-              this.gestioneOpzioniService.setUserLon(this.geolocationPosition.coords.longitude);
-          },
-          error => {
-              switch (error.code) {
-                  case 1:
-                      console.log('Permission Denied');
-                      break;
-                  case 2:
-                      console.log('Position Unavailable');
-                      break;
-                  case 3:
-                      console.log('Timeout');
-                      break;
-              }
-          }
-      );
-    };
-  }
 
   aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
     //this.testModalitaCambiata();

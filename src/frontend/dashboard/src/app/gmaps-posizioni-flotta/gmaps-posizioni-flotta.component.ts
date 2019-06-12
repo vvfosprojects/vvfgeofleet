@@ -24,7 +24,7 @@ import { Options } from 'selenium-webdriver/ie';
 })
 export class GmapsPosizioniFlottaComponent implements OnInit {
 
-  @ViewChild('gmap') gmapElement: any;
+  @ViewChild('gmap', {static: true} ) gmapElement: any;
   public map: google.maps.Map;
   public markers: google.maps.Marker[] = [];
   public markersAggiunti: google.maps.Marker[] = [];

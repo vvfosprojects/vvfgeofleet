@@ -2,7 +2,7 @@ import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 
 import { Inject, HostListener } from "@angular/core";
-import { DOCUMENT } from "@angular/platform-browser";
+//import { DOCUMENT } from "@angular/platform-browser";
 import { MapType } from '@angular/compiler';
 
 import * as moment from 'moment';

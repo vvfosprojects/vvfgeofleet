@@ -29,7 +29,7 @@ import { GoogleMap } from '@agm/core/services/google-maps-types';
 declare var google :any;
 
 import { Inject, HostListener } from "@angular/core";
-import { DOCUMENT } from "@angular/platform-browser";
+//import { DOCUMENT } from "@angular/platform-browser";
 
 @Component({
   selector: 'app-mappa-posizioni-flotta',
@@ -59,6 +59,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriDestinazioneUso: string[] = [];
   */
 
+  /*
   @Input() filtriStatiMezzoObj: Object;
   @Input() filtriSediObj: Object;
   @Input() filtriGeneriMezzoObj : Object ;
@@ -68,7 +69,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriSediCardinalita: number ;
   @Input() filtriGeneriMezzoCardinalita: number ;
   @Input() filtriDestinazioneUsoCardinalita: number;
-
+  */
   @Input() mezzoSelezionato: PosizioneMezzo ;
   
   /*
