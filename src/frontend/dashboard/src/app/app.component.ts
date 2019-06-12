@@ -121,7 +121,7 @@ export class AppComponent {
         */
 
         public cambiaModalita($event,modalita) {
-          //console.log('AppComponent - cambiaModalita()', $event,modalita);
-          this.gestioneOpzioniService.setModalita(modalita);
+          console.log('AppComponent - cambiaModalita()', $event,modalita);
+          //this.gestioneOpzioniService.setModalita(modalita);
         }
 }
