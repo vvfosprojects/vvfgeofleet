@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, of } from "rxjs";
+import { Observable, Subscription, Subject, of } from "rxjs";
+
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 
 @Injectable({
@@ -9,15 +10,16 @@ export class GestioneParametriService {
 
   private subjectParametriGeoFleetWS$ = new Subject<ParametriGeoFleetWS>();
   private parametriGeoFleetWS : ParametriGeoFleetWS;
-  
+
+
+
   constructor() { 
     this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-    
   }
 
 
   public getParametriGeoFleetWS(): Observable<ParametriGeoFleetWS> {
-    console.log('GestioneParametriService - getParametriGeoFleetWS()',this.subjectParametriGeoFleetWS$);
+    console.log('GestioneParametriService - getParametriGeoFleetWS()',this.parametriGeoFleetWS);
     return this.subjectParametriGeoFleetWS$.asObservable();
   }
 
@@ -26,11 +28,14 @@ export class GestioneParametriService {
     this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);
   }
 
-  public setAttSec(value : number): void { 
-    this.parametriGeoFleetWS.reset();    
-    this.parametriGeoFleetWS.setAttSec(value*24*60*60);
-    this.parametriGeoFleetWS.setRichiestaAPI('posizioneFlotta');
+  public setRichiestaAPI(value : string): void { 
+    this.parametriGeoFleetWS.setRichiestaAPI(value);
+    this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);    
+  }
   
+  public setAttSec(value : number): void { 
+    this.parametriGeoFleetWS.setAttSec(value);
+
     this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);    
   }
 
@@ -41,9 +46,6 @@ export class GestioneParametriService {
       var vv1 = Object.values(vv[0]);
       var vv2 = Object.values(vv[1]);
 
-      this.parametriGeoFleetWS.reset();
-      this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
-      this.parametriGeoFleetWS.setAttSec(null);
       this.parametriGeoFleetWS.setLat1(vv1[1]);
       this.parametriGeoFleetWS.setLon1(vv2[0]);
       this.parametriGeoFleetWS.setLat2(vv1[0]);

@@ -11,12 +11,15 @@ import { Http, Response, RequestOptions, Headers, RequestMethod  } from '@angula
 //import { HttpClient, HttpHeaders, HttpClientModule, HttpResponse } from '@angular/common/http';
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
+import { Opzioni } from '../shared/model/opzioni.model';
+
 import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-import { environment } from "../../environments/environment";
 import { RispostaMezziInRettangolo } from '../shared/model/risultati-mezzi-in-rettangolo.model';
 
+import { environment } from "../../environments/environment";
 
 const API_URL = environment.apiUrl;
 
@@ -41,13 +44,11 @@ export class PosizioneFlottaService {
 
 
   private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
-  //private defaultAttSec: Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
   private defaultrichiestaAPI: string = 'posizioneFlotta';
-  //private attSec : Number = 604800; // 1 settimana (7 * 24 * 60 * 60)
-  
-  //private timer;
-  //private timerSubcribe: PushSubscription;
-  public parametriGeoFleetWS : ParametriGeoFleetWS;
+
+  private parametriGeoFleetWS : ParametriGeoFleetWS;
+  private parametriGeoFleetWSprecedenti: ParametriGeoFleetWS;
+  private opzioni : Opzioni;
 
   private elencoPosizioni: PosizioneMezzo[] = [];
   private obsPosizioniMezzo$ : Observable<PosizioneMezzo[]> ;
@@ -56,62 +57,107 @@ export class PosizioneFlottaService {
   private rispostaURL : Observable<Response> ;
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
+  private subjectReset$ = new Subject<Boolean>();
+
   subscription = new Subscription();
   
     constructor(private http: Http,
-      private gestioneParametriService: GestioneParametriService    
+      private gestioneParametriService: GestioneParametriService,
+      private gestioneOpzioniService: GestioneOpzioniService
     ) { 
-      //this.timer = Observable.timer(9000,9000).timeout(120000);
-      /*
-      this.timer = Observable.interval(9000).timeout(120000);
-      this.obsPosizioniMezzo$ = Observable.of(this.elencoPosizioni);
-      */
+
       this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-      this.parametriGeoFleetWS.setRichiestaAPI(this.defaultrichiestaAPI);
-      this.parametriGeoFleetWS.setAttSec(this.defaultAttSec);
+      this.parametriGeoFleetWS.reset();
+
+      this.parametriGeoFleetWSprecedenti = new ParametriGeoFleetWS();
+      this.parametriGeoFleetWSprecedenti.reset();
+
+      this.opzioni = new Opzioni();
 
       this.subscription.add(
-      this.gestioneParametriService.getParametriGeoFleetWS()
-      //.debounceTime(3000)
-      .subscribe( parm => { this.parametriGeoFleetWS = parm; })
+        this.gestioneParametriService.getParametriGeoFleetWS()
+        .subscribe( parm => { 
+          // se è  stato modificato il tipo di estrazione dal ws o le coordinate del riquadro
+          // allora resetta l'istante di acquisizione precedente
+          // in quanto deve effettuare una nuova estrazione senza limite temporale.
+          //if (this.opzioni.getOnlyMap() &&
+          //console.log('PosizioneFlottaService.getParametriGeoFleetWS()', parm);
+          if  (parm.getRichiestaAPI() != this.parametriGeoFleetWS.getRichiestaAPI()
+              || parm.getClassiMezzo() != this.parametriGeoFleetWS.getClassiMezzo()
+              || 
+                (this.opzioni.getOnlyMap() && 
+                  ( parm.getLat1() != this.parametriGeoFleetWS.getLat1()
+                    || parm.getLon1() != this.parametriGeoFleetWS.getLon1()
+                    || parm.getLat2() != this.parametriGeoFleetWS.getLat2()
+                    || parm.getLon2() != this.parametriGeoFleetWS.getLon2()
+                  )
+                )
+              )
+          { 
+            console.log('PosizioneFlottaService.getParametriGeoFleetWS() - reset');
+            this.maxIstanteAcquisizionePrecedente = null; 
+            this.subjectReset$.next(true);
+
+            //deve rieseguire subito l'interrogazione al ws
+
+          }
+          this.parametriGeoFleetWSprecedenti = Object.assign({}, this.parametriGeoFleetWS);
+          this.parametriGeoFleetWS = Object.assign({}, parm);
+        })
       );   
 
-        
+      this.subscription.add(
+        this.gestioneOpzioniService.getOpzioni()
+        .subscribe( opt => { this.opzioni = opt; })
+      );   
+  
       
     }
 
     
     public getURL(): Observable<PosizioneMezzo[]> {
-      var parm = this.parametriGeoFleetWS;
+      // onde evitare eventuali problemi di sincronizzazione con il servizio 
+      // per la gestione dei parametri del WS, salvo i parametri in una var locale
+      
+      var parm : ParametriGeoFleetWS = new ParametriGeoFleetWS();
+      parm = Object.assign({},this.parametriGeoFleetWS);
 
+      console.log("PosizioneFlottaService.getURL() - istanteUltimoAggiornamento, parm",
+          this.istanteUltimoAggiornamento, parm);
+      
       // aggiungere sempre X secondi per essere sicuri di perdersi
       // meno posizioni possibili, a causa della distanza di tempo tra
       // l'invio della richiesta dal client e la sua ricezione dal ws
       // Per essere certi, è necessaria un API che restituisca i messaggi
       // acquisiti successivamente ad un certo istante
       
-      //if (!all && this.maxIstanteAcquisizionePrecedente != null) 
       if (this.maxIstanteAcquisizionePrecedente != null) 
-      {parm.setAttSec(moment(this.istanteUltimoAggiornamento).
+      {
+        var attSec = moment(this.istanteUltimoAggiornamento).
         diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
-        this.trimSec.valueOf() ); }
+        this.trimSec.valueOf() ; 
+        parm.setAttSec(attSec);
+        // aggiorno l'intervallo temporale estratto nel servizio
+        // per la gestione dei parametri del WS
+        this.gestioneParametriService.setAttSec(attSec);
+      }
 
-      //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - istanti",this.istanteUltimoAggiornamento, this.maxIstanteAcquisizionePrecedente);
-
-      //if (all) { this.maxIstanteAcquisizionePrecedente = null; }
-        
       var parametri : string = '';
       var richiestaWS : string = '';
       if (parm.getAttSec() != null) { parametri = parametri+ 
         (parametri == '' ? '?': '&') + 'attSec='+ String(parm.getAttSec()); }
-      if (parm.getLat1() != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lat1='+ String(parm.getLat1()); }
-      if (parm.getLon1() != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lon1='+ String(parm.getLon1()); }
-      if (parm.getLat2() != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lat2='+ String(parm.getLat2()); }
-      if (parm.getLon2() != null) { parametri = parametri+
-        (parametri == '' ? '?': '&') + 'lon2='+ String(parm.getLon2()); }
+
+      // se viene inviata la richiesta 'inRettangolo' aggiunge i relativi parametri
+      if ( parm.getRichiestaAPI() == 'inRettangolo') {          
+        if (parm.getLat1() != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lat1='+ String(parm.getLat1()); }
+        if (parm.getLon1() != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lon1='+ String(parm.getLon1()); }
+        if (parm.getLat2() != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lat2='+ String(parm.getLat2()); }
+        if (parm.getLon2() != null) { parametri = parametri+
+          (parametri == '' ? '?': '&') + 'lon2='+ String(parm.getLon2()); }
+      }
 
       if (parametri != '' ) 
         { richiestaWS = parm.getRichiestaAPI() + parametri; }
@@ -121,7 +167,7 @@ export class PosizioneFlottaService {
           
       var observable: Observable<Response> = this.http.get(API_URL + richiestaWS);
 
-      if ( this.parametriGeoFleetWS.getRichiestaAPI() == 'posizioneFlotta')
+      if ( parm.getRichiestaAPI() == 'posizioneFlotta')
       {        
           this.obsPosizioniMezzo$ = observable.
           map((r : Response) => 
@@ -155,14 +201,12 @@ export class PosizioneFlottaService {
         ;  
       }
 
-      if ( this.parametriGeoFleetWS.getRichiestaAPI() == 'inRettangolo')
+      if ( parm.getRichiestaAPI() == 'inRettangolo')
       {
 
         this.obsPosizioniMezzo$ = observable.
         map((r : Response) => 
           {
-            //var risp : RispostaMezziInRettangolo = r.json();
-            //var posizioniMezzo = risp.risultati.forEach( 
             return r.json().risultati.map( 
             (e : PosizioneMezzo) => 
 
@@ -174,7 +218,6 @@ export class PosizioneFlottaService {
                 {
                   e.infoSO115.stato = "0";              
                 }
-                //e.tooltipText = Object.create(String.prototype);
                 e.sedeMezzo = this.sedeMezzo(e);
                 e.destinazioneUso = this.destinazioneUso(e);
                 e.selezionato = false;
@@ -186,7 +229,6 @@ export class PosizioneFlottaService {
                 return Object.assign(posizioneMezzo, e);
 
               });
-              //return Observable.of(posizioniMezzo);
           }),
         catchError(this.handleError);      
 
@@ -195,12 +237,16 @@ export class PosizioneFlottaService {
       return this.obsPosizioniMezzo$;
     }
     
+    public getReset(): Observable<Boolean> {      
+      return this.subjectReset$.asObservable();
+    }
+
     public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
 
         this.getURL().subscribe( (r : PosizioneMezzo[]) => {
 
-          this.subjectPosizioniMezzo$.next(r); 
           this.setIstanteUltimoAggiornamento(r);
+          this.subjectPosizioniMezzo$.next(r); 
         });
 
         return this.subjectPosizioniMezzo$.asObservable();
@@ -266,15 +312,16 @@ export class PosizioneFlottaService {
           //console.log("trimSec adj", this.trimSec);
 
    
-          // restituisce l'istante di inizio di questa operazione di aggiornamento
-          this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
                 
           if (elencoPosizioniMezzoDepurate.length > 0) {
             this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
           }
                    
         }      
-    }      
+
+        // restituisce l'istante di inizio di questa operazione di aggiornamento
+        this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);
+    }
         
     public getIstanteUltimoAggiornamento(): Observable<Date> {
       return this.subjectIstanteUltimoAggiornamento$.asObservable();                

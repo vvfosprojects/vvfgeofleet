@@ -31,16 +31,16 @@ export class PannelloOpzioniComponent implements OnInit {
   ngOnInit() {
   }
 
-  changeOptOnlyMap(e) {
-    if (!this.opzioni.getOnlyMap() && e != '-') 
-      //this.nuovaSelezioneAreaPos.emit(e)
-      this.gestioneOpzioniService.setOnlyMap(true)      ;
-      //this.aggiornaArea(e)
+  //changeOptOnlyMap(e) {
+  changeOptOnlyMap() {
+    //console.log('changeOptOnlyMap - prima',this.opzioni);
+    //if (!this.opzioni.getOnlyMap()) && e != '-') 
+    if (!this.opzioni.getOnlyMap()) 
+      {this.gestioneOpzioniService.setOnlyMap(true);}
     else
-      //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
-      this.gestioneOpzioniService.setOnlyMap(false)      ;
-      //this.aggiornaAttSec(this.opzioni.ggMaxPos);
-  }
+      {this.gestioneOpzioniService.setOnlyMap(false);}
+    //console.log('changeOptOnlyMap - dopo',this.opzioni);
+    }
 
   changeCenterOnLast() {
     if (!this.opzioni.getCenterOnMezzo()) 

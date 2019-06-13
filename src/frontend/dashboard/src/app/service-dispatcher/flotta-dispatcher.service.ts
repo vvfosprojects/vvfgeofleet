@@ -96,25 +96,35 @@ export class FlottaDispatcherService {
   ) { 
 
   
-    this.timer = Observable.timer(0,9000).timeout(120000);
     // schedula con un timer l'aggiornamento periodio della Situazione flotta
+    this.timer = Observable.timer(0,9000).timeout(120000);
     this.timerSubcribe = this.timer.subscribe(t => 
       this.aggiornaSituazioneFlotta());
 
+    // attende di ricevere l'istante dell'ultimo aggiornamento
     this.subscription.add(
       this.posizioneFlottaService.getIstanteUltimoAggiornamento()
-      //.debounceTime(3000)
       .subscribe( istante => {
           this.istanteUltimoAggiornamento = istante;
           this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);          
         })
       ); 
-    
-    // attende una eventuale modifica dei filtri
 
+    // in caso di estrazione dei dati senza limite temporale
+    // effettua lo svuotamento dello storage delle posizioni
+    this.subscription.add(
+      this.posizioneFlottaService.getReset()
+      .subscribe( value => { if (value) {
+          this.elencoPosizioniMostrate = [];
+          this.elencoPosizioniMostratePrecedenti = [];
+          }
+        })
+      ); 
+    
+      
+    // attende una eventuale modifica dei filtri
     this.subscription.add(
       this.gestioneFiltriService.getFiltriStatiMezzo()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
           this.vociFiltroStatiMezzo = vocifiltro;
@@ -125,7 +135,6 @@ export class FlottaDispatcherService {
     
     this.subscription.add(
       this.gestioneFiltriService.getFiltriSedi()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
           this.vociFiltroSedi = vocifiltro;
@@ -136,7 +145,6 @@ export class FlottaDispatcherService {
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriGeneriMezzo()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
           this.vociFiltroGeneriMezzo = vocifiltro;
@@ -147,7 +155,6 @@ export class FlottaDispatcherService {
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriDestinazioneUso()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
           this.vociFiltroDestinazioneUso = vocifiltro;

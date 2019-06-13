@@ -72,20 +72,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   */
   @Input() mezzoSelezionato: PosizioneMezzo ;
   
-  /*
-  @Input() mapLat: number ;
-  @Input() mapLon: number ;
-  @Input() mapZoom: number ;
 
-  @Input() reset: Boolean ;  
-  @Input() optOnlyMap: Boolean ;  
-  
-  @Output() nuovaSelezioneArea: EventEmitter<LatLngLiteral> = new EventEmitter();
-  */
- 
-  
-  //lat: number = 51.678418;
-  //lon: number = 7.809007;
   timeout : any;
 
   clicked_label: string;
@@ -120,19 +107,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     private gestioneParametriService: GestioneParametriService
   ) 
   {     
-    //this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-    //this.parametriGeoFleetWS.reset();    
 
     this.opzioni = new Opzioni();
-    //this.gestioneOpzioniService.reset();
 
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
       //.debounceTime(3000)
       .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
       );   
-
-
             
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
@@ -205,16 +187,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     ]    ;    
     this.mapIconeSelezionato = new Map(this.iconeStatiSelezionato);    
     
-    /*
-    if ( this.mapLat == null ) { this.mapLat = this.start_lat; }
-    if ( this.mapLon == null ) { this.mapLon = this.start_lon; }
-    if ( this.mapZoom == null ) { this.mapZoom = this.start_zoom; }
-    */
-   /*
-   if ( this.opzioni.startLat == null ) { this.opzioni.startLat = this.start_lat; }
-   if ( this.opzioni.startLon == null ) { this.opzioni.startLon = this.start_lon; }
-   if ( this.opzioni.startZoom == null ) { this.opzioni.startZoom  = this.start_zoom; }
-    */
+
     /*
     Observable.fromEvent(document, 'boundsChange')
     .debounceTime(3000)
@@ -250,12 +223,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     });
     */
 }
-
-
-  ngOnChanges() {
-    //this.elaboraPosizioniRicevute();
-    return;
-  }
 
   aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
     var p : PosizioneMezzo[];
@@ -479,13 +446,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   indiceMezzoSelezionato(m: PosizioneMezzo) {
     //console.log("mezzo Selezionato", this.mezzoSelezionato, "mezzo corrente", m);
 
-    /*
-    if (m == this.mezzoSelezionato) {
-      this.iconaStatoMezzoCorrente = 'assets/images/car.png'; }
-    else
-    {
-    */ 
-   if (this.mezzoSelezionato != null && m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
+    if (this.mezzoSelezionato != null && m.codiceMezzo == this.mezzoSelezionato.codiceMezzo) 
       { return 2; } else {return 1; }
   }
 
@@ -495,50 +456,16 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
   areaChanged(e) {
-    /* 
-    //this.timeout = setTimeout("areaChanged();",1000);
-    if (this.optOnlyMap) {
-      this.nuovaSelezioneArea.emit(e);
-      //console.log("areaChanged",e);
-    }
-    */
-
+    // imposta le coordinate del rettangolo da utilizzare per l'estrazione dei dati
+    // se verrà attivata l'opzione dall'utente
+    this.gestioneParametriService.setRettangoloRicerca(e);
     if (this.opzioni.getOnlyMap()) {
-      //this.aggiornaArea(e);
-      this.gestioneParametriService.setRettangoloRicerca(e);
+      // se è stata attivata l'opzione dall'utente ed è cambiato il rettangolo,
+      // reimposta il limite temporale con il valore indicato nelle opzioni
+      this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);
     }
 
-  }
-
-  /*
-  selezioneArea(e) {    
-    //this.nuovaSelezioneAreaPos.emit(e)
-    this.aggiornaArea(e)
-  }
-
-  aggiornaArea(evento) {
-    //console.log("aggiornaArea", evento);
-    if (evento != null) {
-      
-      var vv = Object.values(evento);
-      var vv1 = Object.values(vv[0]);
-      var vv2 = Object.values(vv[1]);
-      //console.log("aggiornaArea  vv",vv);
-      this.parametriGeoFleetWS.reset();
-      this.parametriGeoFleetWS.setRichiestaAPI('inRettangolo');
-      this.parametriGeoFleetWS.setAttSec(null);
-      this.parametriGeoFleetWS.setLat1(vv1[1]);
-      this.parametriGeoFleetWS.setLon1(vv2[0]);
-      this.parametriGeoFleetWS.setLat2(vv1[0]);
-      this.parametriGeoFleetWS.setLon2(vv2[1]);
-
-      //this.timerSubcribe.unsubscribe();
-      //this.reset = true;
-      //this.aggiorna(this.parametriGeoFleetWS, true);
-
-    }
-  }    
-  */
+  }  
 
   gestisciModificaOpzioni(opt : Opzioni) {
     if (this.opzioni != opt) {

@@ -10,17 +10,6 @@ export class ParametriGeoFleetWS {
     constructor() {
         this.reset();
     }
-/*
-    constructor(
-        public richiestaAPI: string,
-        public attSec:  Number,
-        public lat1:    Number,
-        public lon1:    Number,
-        public lat2:    Number,
-        public lon2:    Number,
-        public classiMezzo: String[]
-    ) {}
-*/
 
     private defaultAttSecStandard: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
     private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
@@ -28,8 +17,8 @@ export class ParametriGeoFleetWS {
     private defaultrichiestaAPI: string = 'posizioneFlotta';
 
     public reset() {
-        this.richiestaAPI = this.defaultrichiestaAPI;
-        this.attSec = this.defaultAttSec;
+        this.setRichiestaAPI(this.defaultrichiestaAPI);
+        this.setAttSec(this.defaultAttSec);
         this.lat1 = null;
         this.lon1 = null;
         this.lat2 = null;
@@ -41,21 +30,21 @@ export class ParametriGeoFleetWS {
 
     public setRichiestaAPI(richiestaAPI : string) {
         if ( richiestaAPI != null) {this.richiestaAPI = richiestaAPI;} 
-        else {this.richiestaAPI = this.defaultrichiestaAPI; }
+        else {this.richiestaAPI = this.defaultrichiestaAPI.valueOf(); }
     }
 
     public getAttSec() : Number { return this.attSec; }
 
     public setAttSec(attSec : Number) {
         if ( attSec != null) {this.attSec = attSec;} 
-        else {this.attSec = this.defaultAttSec; }
+        else {this.attSec = this.defaultAttSec.valueOf(); }
     }
 
     public getDefaultAttSec() : Number { return this.defaultAttSec; }
 
     public setDefaultAttSec(attSec : Number) {
         if ( attSec != null) {this.defaultAttSec = attSec;} 
-        else {this.defaultAttSec = this.defaultAttSecStandard; }
+        else {this.defaultAttSec = this.defaultAttSecStandard.valueOf(); }
     }
         
     public getLat1() : Number { return this.lat1; }
@@ -71,6 +60,7 @@ export class ParametriGeoFleetWS {
     public setLon2(lon2 : Number) { this.lon2 = lon2; }
 
     public getClassiMezzo() : String[] { return this.classiMezzo; }
-    public setClassiMezzo(classiMezzo : String[]) { this.classiMezzo = classiMezzo; }
+    public setClassiMezzo(classiMezzo : String[]) { 
+        this.classiMezzo = classiMezzo; }
 
 }

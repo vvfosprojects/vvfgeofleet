@@ -22,7 +22,7 @@ export class GestioneOpzioniService {
    }
 
   public getOpzioni(): Observable<Opzioni> {
-    console.log('GestioneOpzioniService - getOpzioni()',this.subjectOpzioni$);
+    console.log('GestioneOpzioniService - getOpzioni()',this.opzioni);    
     return this.subjectOpzioni$.asObservable();
   }
 
@@ -48,8 +48,22 @@ export class GestioneOpzioniService {
   }
 
   public setOnlyMap(value : boolean): void { 
-    this.opzioni.setOnlyMap(value);
-    this.subjectOpzioni$.next(this.opzioni);
+    var k = this.opzioniPrecedenti.getOnlyMap();
+    if ( k != value)
+    { 
+      this.opzioni.setOnlyMap(value);
+      if (!value) {
+        this.gestioneParametriService.setRichiestaAPI('posizioneFlotta');
+      }
+      else {
+        this.gestioneParametriService.setRichiestaAPI('inRettangolo');
+      }
+      this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);    
+     
+      this.opzioniPrecedenti = Object.assign({},this.opzioni);
+      
+      this.subjectOpzioni$.next(this.opzioni);
+    }      
   }
 
   public setGgMaxPos(value : number): void { 
@@ -59,11 +73,10 @@ export class GestioneOpzioniService {
     var k = this.opzioniPrecedenti.getGgMaxPos();
     if ( k != value)
     { 
-      this.gestioneParametriService.setAttSec(value);
-      
+      this.gestioneParametriService.setAttSec(value*24*60*60);            
       this.opzioni.setGgMaxPos(value); 
 
-      this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
+      this.opzioniPrecedenti = Object.assign({},this.opzioni);
       
       this.subjectOpzioni$.next(this.opzioni);
     }
@@ -103,13 +116,16 @@ export class GestioneOpzioniService {
     { 
       this.opzioni.setModalita(value); 
       if (value == 1 || value == 2)
-      { this.opzioni.setOnlyMap(true); }
+      { this.opzioni.setOnlyMap(true); 
+        this.gestioneParametriService.setRichiestaAPI('inRettangolo');
+      }
       else 
-      { this.opzioni.setOnlyMap(false); }
-      
+      { this.opzioni.setOnlyMap(false); 
+        this.gestioneParametriService.setRichiestaAPI('posizioneFlotta');
+      }
+      this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);
 
-      //this.opzioniPrecedenti = JSON.parse(JSON.stringify( this.opzioni));
-      this.opzioniPrecedenti = this.opzioni;
+      this.opzioniPrecedenti = Object.assign({},this.opzioni);
       
       this.subjectOpzioni$.next(this.opzioni);
     }
