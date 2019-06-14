@@ -3,6 +3,7 @@ import { Observable, Subject, of } from "rxjs";
 import { Opzioni } from '../shared/model/opzioni.model';
 
 import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
 
 // le opzioni vengono condivise in tutta l'applicazione
 @Injectable({
@@ -14,7 +15,8 @@ export class GestioneOpzioniService {
   private opzioni : Opzioni;
   private opzioniPrecedenti : Opzioni;
 
-  constructor(private gestioneParametriService: GestioneParametriService
+  constructor(private gestioneParametriService: GestioneParametriService,
+    private gestioneFiltriService: GestioneFiltriService
   ) {  
     this.opzioni = new Opzioni(); 
 
@@ -22,7 +24,7 @@ export class GestioneOpzioniService {
    }
 
   public getOpzioni(): Observable<Opzioni> {
-    console.log('GestioneOpzioniService - getOpzioni()',this.opzioni);    
+    //console.log('GestioneOpzioniService - getOpzioni()',this.opzioni);    
     return this.subjectOpzioni$.asObservable();
   }
 
@@ -111,6 +113,10 @@ export class GestioneOpzioniService {
     // in questo caso verifica che effettivamente l'opzione sia stata modificata 
     // in quanto comporta una nuova richiesta integrale al ws
     // 
+    // value:
+    // 1 - Comando
+    // 2 - Dir.Reg.
+    // 3 - CON
     var k = this.opzioniPrecedenti.getModalita();
     if ( k != value)
     { 
@@ -118,10 +124,19 @@ export class GestioneOpzioniService {
       if (value == 1 || value == 2)
       { this.opzioni.setOnlyMap(true); 
         this.gestioneParametriService.setRichiestaAPI('inRettangolo');
+        this.opzioni.setStartLat(this.opzioni.getUserLat());
+        this.opzioni.setStartLon(this.opzioni.getUserLon());
+        this.opzioni.setStartZoom(value == 1 ? 10: 8);
+        // imposta gli stessi filtri sullo stato Mezzo in entrambi i casi
+        this.gestioneFiltriService.setVisibleStatiMezzo(['0','1','2','3','5','6']);
       }
       else 
       { this.opzioni.setOnlyMap(false); 
         this.gestioneParametriService.setRichiestaAPI('posizioneFlotta');
+        this.opzioni.setStartLat(this.opzioni.getUserLat());
+        this.opzioni.setStartLon(this.opzioni.getUserLon());
+        this.opzioni.setStartZoom(6);
+        this.gestioneFiltriService.setVisibleStatiMezzo(['1','2','3']);
       }
       this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);
 

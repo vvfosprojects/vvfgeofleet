@@ -1,11 +1,19 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-
 import { Inject, HostListener } from "@angular/core";
 //import { DOCUMENT } from "@angular/platform-browser";
 import { MapType } from '@angular/compiler';
 
+import { Observable, Subscription, Subject, of } from "rxjs";
+
 import * as moment from 'moment';
+
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
+
+import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
+
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { VoceFiltro } from "../filtri/voce-filtro.model";
+
 
 //import { EventEmitter } from 'events';
 
@@ -23,7 +31,8 @@ export class PosizioneMezzoComponent implements OnInit {
   //private filtriGeneriMezzoObj : Object ;
 
   @Input() posizioneMezzo: PosizioneMezzo;
-  //@Input() istanteUltimoAggiornamento: Date;
+  @Input() isSeguiMezzo: boolean ;
+
   public  istanteUltimoAggiornamento: Date;
   /*
   @Input() filtriStatiMezzo: string[] = [];
@@ -44,9 +53,7 @@ export class PosizioneMezzoComponent implements OnInit {
   @Input() filtriDestinazioneUsoCardinalita: number;
   */
  
-  @Input() isSeguiMezzo: boolean ;
-
-  
+ 
   //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   @Output() mezzoDaSeguire = new EventEmitter<Object[]>();
@@ -63,7 +70,17 @@ export class PosizioneMezzoComponent implements OnInit {
 
   private istanteAcquisizionePosizioneMezzo: Date;
 
-  constructor() { 
+  private vociFiltroStatiMezzo: VoceFiltro[] = [];
+  private vociFiltroSedi: VoceFiltro[] = [];
+  private vociFiltroGeneriMezzo: VoceFiltro[] = [];
+  private vociFiltroDestinazioneUso: VoceFiltro[] = [];
+
+  subscription = new Subscription();
+
+  constructor(
+    private gestioneFiltriService: GestioneFiltriService,
+    private flottaDispatcherService: FlottaDispatcherService)
+  { 
 
     /*
     var arr = [{a:{b:1}},{c:{d:2}}] 
@@ -117,6 +134,46 @@ export class PosizioneMezzoComponent implements OnInit {
     ] ;
 
     this.mapIconeFonte = new Map(this.defIconeFonte);        
+
+    this.subscription.add(
+      this.flottaDispatcherService.getIstanteUltimoAggiornamento()
+      .subscribe( istante => {
+          this.istanteUltimoAggiornamento = istante; 
+        })
+      );
+        
+    // attende una eventuale modifica dei filtri
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriStatiMezzo()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
+          this.vociFiltroStatiMezzo = vocifiltro;
+        })
+      );   
+    
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriSedi()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
+          this.vociFiltroSedi = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriGeneriMezzo()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
+          this.vociFiltroGeneriMezzo = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriDestinazioneUso()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
+          this.vociFiltroDestinazioneUso = vocifiltro;
+        })
+      );   
     
   }
   /*
@@ -133,7 +190,7 @@ export class PosizioneMezzoComponent implements OnInit {
   }
 
   ngOnChanges() {
-    this.istanteUltimoAggiornamento = moment().toDate();
+    //this.istanteUltimoAggiornamento = moment().toDate();
 /*
     this.filtriSediObj = undefined;  
     this.filtriGeneriMezzoObj = undefined;
@@ -195,11 +252,34 @@ export class PosizioneMezzoComponent implements OnInit {
       filter( i =>  (i.substr(0,5) != "PROV:") )
   }
 
+  posizioneMezzoSelezionata() : boolean
+  { 
+    var r = this.isSeguiMezzo ||
+    (
+    this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
+    some(filtro => filtro.codice === this.posizioneMezzo.infoSO115.stato )
+    && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
+    some(filtro => filtro.codice === this.posizioneMezzo.sedeMezzo )
+    && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
+    some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro.codice))
+    && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
+    some(filtro => filtro.codice === this.posizioneMezzo.destinazioneUso )
+    );
 
+    return r;
+    
+  }
+  /*
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||
       this.posizioneMezzo.visibile);
-      /*
+    }
+    */
+
+  /*
+  posizioneMezzoSelezionata() 
+  { 
+    return ( this.isSeguiMezzo ||
       (this.filtriStatiMezzo.
           some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
       &&       
@@ -211,7 +291,11 @@ export class PosizioneMezzoComponent implements OnInit {
             some( gm => gm === filtro))  
       && this.filtriDestinazioneUso.
           some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
-      */
+          )
+        );
+  }
+  */
+  
       /*
       ( (this.filtriStatiMezzoObj[this.posizioneMezzo.infoSO115.stato] == this.posizioneMezzo.infoSO115.stato)
         && 
@@ -223,8 +307,6 @@ export class PosizioneMezzoComponent implements OnInit {
         this.filtriDestinazioneUsoObj[this.posizioneMezzo.destinazioneUso] == this.posizioneMezzo.destinazioneUso)       
       );
       */
-  }
-
 
 
   /*
@@ -268,19 +350,4 @@ export class PosizioneMezzoComponent implements OnInit {
     this.mezzoDaSeguire.emit([this.posizioneMezzo, "dblclick"] );
   }
 
-  private toolTipText() {
-    var testo : String;
-    testo = this.classiMezzoDepurata() + " " + this.posizioneMezzo.codiceMezzo +
-    " (" + this.posizioneMezzo.sedeMezzo + ") del " + 
-    new Date(this.posizioneMezzo.istanteAcquisizione).toLocaleString()  + 
-    " (da " + this.posizioneMezzo.fonte.classeFonte + ":" + this.posizioneMezzo.fonte.codiceFonte + ")";
-
-    if (this.posizioneMezzo.infoSO115 != null && 
-        this.posizioneMezzo.infoSO115.codiceIntervento != null &&
-        new Number(this.posizioneMezzo.infoSO115.codiceIntervento) != 0) {
-      testo = testo + " - Intervento " + this.posizioneMezzo.infoSO115.codiceIntervento + " del " +
-      new Date(this.posizioneMezzo.infoSO115.dataIntervento).toLocaleDateString() ;
-    }
-    return testo;
-  }
 }

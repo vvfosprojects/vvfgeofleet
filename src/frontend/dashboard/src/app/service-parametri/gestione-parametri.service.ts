@@ -19,7 +19,7 @@ export class GestioneParametriService {
 
 
   public getParametriGeoFleetWS(): Observable<ParametriGeoFleetWS> {
-    console.log('GestioneParametriService - getParametriGeoFleetWS()',this.parametriGeoFleetWS);
+    //console.log('GestioneParametriService - getParametriGeoFleetWS()',this.parametriGeoFleetWS);
     return this.subjectParametriGeoFleetWS$.asObservable();
   }
 
@@ -53,7 +53,7 @@ export class GestioneParametriService {
 
       this.subjectParametriGeoFleetWS$.next(this.parametriGeoFleetWS);    
 
-      console.log('setRettangoloRicerca',this.parametriGeoFleetWS);
+      //console.log('setRettangoloRicerca',this.parametriGeoFleetWS);
     }
   }
     

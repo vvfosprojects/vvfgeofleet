@@ -18,6 +18,9 @@ import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
 
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { VoceFiltro } from "../filtri/voce-filtro.model";
+
 import { Subscription } from 'rxjs';
 
 //import {  } from '@types/google-maps';
@@ -48,9 +51,6 @@ import { Inject, HostListener } from "@angular/core";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  public elencoPosizioni : PosizioneMezzo[] = [];
-
-  @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   
   /*
   @Input() filtriStatiMezzo: string[] = [];
@@ -70,8 +70,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   @Input() filtriGeneriMezzoCardinalita: number ;
   @Input() filtriDestinazioneUsoCardinalita: number;
   */
+
+  @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   @Input() mezzoSelezionato: PosizioneMezzo ;
   
+  public elencoPosizioniMostrate : PosizioneMezzo[] = [];
+
 
   timeout : any;
 
@@ -88,32 +92,80 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private clusterManager: ClusterManager;
   //private markers: AgmMarker;
 
-  public elencoPosizioniMostrate : PosizioneMezzo[] = [];
-
 
   private sedeMezzoCorrente : string;
 
   private areaChangedDebounceTime = new Subject();
 
   //public parametriGeoFleetWS : ParametriGeoFleetWS;
-  public opzioni: Opzioni;
-  public opzioniPrecedenti: Opzioni;
+  private opzioni: Opzioni;
+  private opzioniPrecedenti: Opzioni;
+
+  private vociFiltroStatiMezzo: VoceFiltro[] = [];
+  private vociFiltroSedi: VoceFiltro[] = [];
+  private vociFiltroGeneriMezzo: VoceFiltro[] = [];
+  private vociFiltroDestinazioneUso: VoceFiltro[] = [];
   
   subscription = new Subscription();
   
   constructor( 
     private flottaDispatcherService: FlottaDispatcherService,
     private gestioneOpzioniService: GestioneOpzioniService,
-    private gestioneParametriService: GestioneParametriService
+    private gestioneParametriService: GestioneParametriService,
+    private gestioneFiltriService: GestioneFiltriService    
   ) 
   {     
 
     this.opzioni = new Opzioni();
+    this.opzioniPrecedenti = new Opzioni();
 
+    
+    // attende una eventuale modifica dei filtri
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriStatiMezzo()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
+          this.vociFiltroStatiMezzo = vocifiltro;
+        })
+      );   
+    
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriSedi()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
+          this.vociFiltroSedi = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriGeneriMezzo()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
+          this.vociFiltroGeneriMezzo = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriDestinazioneUso()
+      .subscribe( vocifiltro => {
+          //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
+          this.vociFiltroDestinazioneUso = vocifiltro;
+        })
+      );   
+      
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
       //.debounceTime(3000)
       .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
+      );   
+
+    this.subscription.add(
+      this.flottaDispatcherService.getReset()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          // svuota l'elenco delle posizioni elencate
+          this.elencoPosizioniMostrate = [];
+        })
       );   
             
     this.subscription.add(
@@ -372,17 +424,26 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }
 
 
-  posizioneMezzoSelezionata(p : PosizioneMezzo) { 
+  posizioneMezzoSelezionata(p : PosizioneMezzo) : boolean { 
 
-    
-    if (p.infoSO115 != null) {
+    var r : boolean = false;
 
-       
-
-        var r : boolean = false;
+    if (p.infoSO115 != null) 
+    {
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
-
-        r = (r? true: p.visibile);
+        r = (r? true:
+          (
+            this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.infoSO115.stato )
+            && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.sedeMezzo )
+            && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
+            some(filtro => p.classiMezzo.some( item => item === filtro.codice))
+            && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.destinazioneUso )
+            )          
+        );          
+        //r = (r? true: p.visibile);
 
         /*
         r = (r? true: this.filtriStatiMezzo.
@@ -426,15 +487,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         */
 
 
-        return r;
 
         //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
 
-      } 
-      else { 
-        //console.log(p, moment().toString()); 
-        return false;      
-      }
+    } 
+
+    return r;
       
   }
 
@@ -468,10 +526,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   }  
 
   gestisciModificaOpzioni(opt : Opzioni) {
+    //console.log('MappaPosizioniFlottaComponent - gestisciModificaOpzioni', opt, this.opzioni);
     if (this.opzioni != opt) {
-      this.opzioniPrecedenti = this.opzioni;
-      this.opzioni = opt;
+      this.opzioniPrecedenti.set(this.opzioni);
+      this.opzioni.set(opt);
     }
+
        
   }
 

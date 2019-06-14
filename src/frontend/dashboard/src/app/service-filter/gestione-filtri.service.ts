@@ -558,6 +558,16 @@ export class GestioneFiltriService {
     ;
     this.filtriStatiMezzo.forEach( item => { this.filtriStatiMezzoObj[item] = item; } ); 
     */
+
+    // azzera le selezioni precedenti
+    //
+    // NOTA: è stato necessario in quanto quando questo metodo viene richiamato
+    // da GestioneOpzioniService.setModalita() non li resettava a false.
+    // Vengono resettati automaticamente quando viene richiamata dal componente 
+    // PannelloFiltriComponentnuovaSelezioneStatiMezzo()
+
+    this.vociFiltroStatiMezzo.forEach( ii => { ii.selezionato = false;});
+
     vociFiltroSelezionate.forEach( ii => { 
       this.vociFiltroStatiMezzo.find( item => item.codice == ii).selezionato = true;
       });

@@ -94,12 +94,9 @@ export class PosizioneFlottaService {
                 )
               )
           { 
-            console.log('PosizioneFlottaService.getParametriGeoFleetWS() - reset');
+            //console.log('PosizioneFlottaService.getParametriGeoFleetWS() - reset');
             this.maxIstanteAcquisizionePrecedente = null; 
             this.subjectReset$.next(true);
-
-            //deve rieseguire subito l'interrogazione al ws
-
           }
           this.parametriGeoFleetWSprecedenti.set(this.parametriGeoFleetWS);
           this.parametriGeoFleetWS.set(parm);
@@ -122,8 +119,7 @@ export class PosizioneFlottaService {
       var parm : ParametriGeoFleetWS = new ParametriGeoFleetWS();
       parm.set(this.parametriGeoFleetWS);
 
-      console.log("PosizioneFlottaService.getURL() - istanteUltimoAggiornamento, parm",
-          this.istanteUltimoAggiornamento, parm);
+      //console.log("PosizioneFlottaService.getURL() - istanteUltimoAggiornamento, parm", this.istanteUltimoAggiornamento, parm);
       
       // aggiungere sempre X secondi per essere sicuri di perdersi
       // meno posizioni possibili, a causa della distanza di tempo tra
@@ -164,6 +160,7 @@ export class PosizioneFlottaService {
       else 
         { richiestaWS = parm.getRichiestaAPI(); }
 
+      //console.log("PosizioneFlottaService.getURL() - richiestaWS",API_URL + richiestaWS);
           
       var observable: Observable<Response> = this.http.get(API_URL + richiestaWS);
 
@@ -373,5 +370,6 @@ export class PosizioneFlottaService {
       }
       return testo;
     }  
+
 
   }

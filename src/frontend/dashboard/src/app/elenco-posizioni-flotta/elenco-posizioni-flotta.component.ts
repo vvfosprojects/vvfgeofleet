@@ -9,12 +9,10 @@ import {AccordionModule} from 'primeng/accordion';
 import {DropdownModule} from 'primeng/dropdown';
 import {SliderModule} from 'primeng/slider';
 
-import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import { Opzioni } from '../shared/model/opzioni.model';
 
 
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
-import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 import { Subscription } from 'rxjs';
@@ -31,17 +29,17 @@ import * as moment from 'moment';
 })
 export class ElencoPosizioniFlottaComponent implements OnInit {
 
-  public elencoUltimePosizioni : PosizioneMezzo[] = [];
-
-  public parametriGeoFleetWS : ParametriGeoFleetWS;
+  public elencoPosizioni : PosizioneMezzo[] = [];
   public opzioni: Opzioni;
+
+  // PASSATI IN INPUT AL COMPONENTE MAPPA
+  // NOTA: gestirli nel servizio MapService (da creare)
+  public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
+  public mezzoSelezionato: PosizioneMezzo ;
+  //
 
   private geolocationPosition : Position;
 
-  public elencoPosizioni : PosizioneMezzo[] = [];
-  public mezzoSelezionato: PosizioneMezzo ;
-
-  public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
 
   private draggedPosizioneMezzo: PosizioneMezzo;
 
@@ -54,9 +52,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     {
     this.seguiMezziSelezionati = [];
    
-    this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-    this.parametriGeoFleetWS.reset();    
-
     this.opzioni = new Opzioni();
     this.opzioni.reset();
     
@@ -64,10 +59,20 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
       //.debounceTime(3000)
-      .subscribe( opt => { this.opzioni = opt; })
+      .subscribe( opt => { 
+        this.opzioni.set(opt); })
       );   
 
     
+    this.subscription.add(
+      this.flottaDispatcherService.getReset()
+      //.debounceTime(3000)
+      .subscribe( posizioni => {
+          // svuota l'elenco delle posizioni elencate
+          this.elencoPosizioni = [];
+        })
+      );   
+      
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
       //.debounceTime(3000)

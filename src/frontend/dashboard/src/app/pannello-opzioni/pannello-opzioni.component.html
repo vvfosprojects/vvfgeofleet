@@ -33,7 +33,7 @@
             <label>Estrai le posizioni fino a {{opzioni.ggMaxPos}} giorni fa</label>
         </div>
         <div class="p-2">
-            <p-slider [(ngModel)]="ggMaxPos"
+            <p-slider [(ngModel)]="opzioni.ggMaxPos"
                     [style]="{'width':'200px'}" [min]="1" [max]="30" [animate]="true"
                     (onSlideEnd)="fineSelezioneGgMaxPos($event)">
             </p-slider>
