@@ -101,8 +101,8 @@ export class PosizioneFlottaService {
             //deve rieseguire subito l'interrogazione al ws
 
           }
-          this.parametriGeoFleetWSprecedenti = Object.assign({}, this.parametriGeoFleetWS);
-          this.parametriGeoFleetWS = Object.assign({}, parm);
+          this.parametriGeoFleetWSprecedenti.set(this.parametriGeoFleetWS);
+          this.parametriGeoFleetWS.set(parm);
         })
       );   
 
@@ -120,7 +120,7 @@ export class PosizioneFlottaService {
       // per la gestione dei parametri del WS, salvo i parametri in una var locale
       
       var parm : ParametriGeoFleetWS = new ParametriGeoFleetWS();
-      parm = Object.assign({},this.parametriGeoFleetWS);
+      parm.set(this.parametriGeoFleetWS);
 
       console.log("PosizioneFlottaService.getURL() - istanteUltimoAggiornamento, parm",
           this.istanteUltimoAggiornamento, parm);

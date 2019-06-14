@@ -12,10 +12,17 @@ export class Opzioni {
     private userLat: number ;
     private userLon: number ;
 
-    constructor() {
-      this.reset();
+    constructor()
+    constructor(obj?: Opzioni)
+     {
+      if (obj) {
+        this.set(obj);
+      }
+      else
+        {this.reset();}
     }    
 
+    
     public reset(): void { 
         this.centerOnLast = true; 
         this.centerOnMezzo = false; 
@@ -28,6 +35,19 @@ export class Opzioni {
         this.modalita = 3; 
       }  
 
+    public set(obj: Opzioni): void {       
+      this.setCenterOnLast(obj.getCenterOnLast());
+      this.setCenterOnMezzo(obj.getCenterOnMezzo());
+      this.setGgMaxPos(obj.getGgMaxPos());
+      this.setIsSeguiMezzo(obj.getIsSeguiMezzo());
+      this.setModalita(obj.getModalita());
+      this.setOnlyMap(obj.getOnlyMap());
+      this.setStartLat(obj.getStartLat());
+      this.setStartLon(obj.getStartLon());
+      this.setStartZoom(obj.getStartZoom());
+      this.setUserLat(obj.getUserLat());
+      this.setUserLon(obj.getUserLon());
+    }
 
     public getCenterOnLast() : boolean { return this.centerOnLast;}
     public setCenterOnLast(value : boolean): void { 
@@ -65,7 +85,7 @@ export class Opzioni {
     }
   
     public getUserLat() : number { return this.userLat;}
-    public setUsertLat(value : number): void { 
+    public setUserLat(value : number): void { 
       this.userLat = value; 
     }
   

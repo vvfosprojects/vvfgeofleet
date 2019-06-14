@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
                 position => {
                     this.geolocationPosition = position;
                     //console.log(position);                
-                    this.gestioneOpzioniService.setUsertLat(this.geolocationPosition.coords.latitude);
+                    this.gestioneOpzioniService.setUserLat(this.geolocationPosition.coords.latitude);
                     this.gestioneOpzioniService.setUserLon(this.geolocationPosition.coords.longitude);
                 },
                 error => {

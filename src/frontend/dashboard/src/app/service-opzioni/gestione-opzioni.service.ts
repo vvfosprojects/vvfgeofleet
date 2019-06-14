@@ -60,7 +60,7 @@ export class GestioneOpzioniService {
       }
       this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);    
      
-      this.opzioniPrecedenti = Object.assign({},this.opzioni);
+      this.opzioniPrecedenti.set(this.opzioni);
       
       this.subjectOpzioni$.next(this.opzioni);
     }      
@@ -76,7 +76,7 @@ export class GestioneOpzioniService {
       this.gestioneParametriService.setAttSec(value*24*60*60);            
       this.opzioni.setGgMaxPos(value); 
 
-      this.opzioniPrecedenti = Object.assign({},this.opzioni);
+      this.opzioniPrecedenti.set(this.opzioni);
       
       this.subjectOpzioni$.next(this.opzioni);
     }
@@ -92,8 +92,8 @@ export class GestioneOpzioniService {
     this.subjectOpzioni$.next(this.opzioni);
   }
 
-  public setUsertLat(value : number): void { 
-    this.opzioni.setUsertLat(value); 
+  public setUserLat(value : number): void { 
+    this.opzioni.setUserLat(value); 
     this.subjectOpzioni$.next(this.opzioni);
   }
 
@@ -125,7 +125,7 @@ export class GestioneOpzioniService {
       }
       this.gestioneParametriService.setAttSec(this.opzioni.getGgMaxPos()*24*60*60);
 
-      this.opzioniPrecedenti = Object.assign({},this.opzioni);
+      this.opzioniPrecedenti.set(this.opzioni);
       
       this.subjectOpzioni$.next(this.opzioni);
     }

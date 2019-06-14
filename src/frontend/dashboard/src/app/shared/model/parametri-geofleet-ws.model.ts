@@ -7,9 +7,15 @@ export class ParametriGeoFleetWS {
     private lat2:    Number;
     private lon2:    Number;
     private classiMezzo: String[];
-    constructor() {
-        this.reset();
-    }
+    constructor() 
+    constructor(obj?: ParametriGeoFleetWS)
+     {
+      if (obj) {
+        this.set(obj);
+      }
+      else
+        {this.reset();}
+    }    
 
     private defaultAttSecStandard: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
     private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
@@ -24,6 +30,17 @@ export class ParametriGeoFleetWS {
         this.lat2 = null;
         this.lon2 = null;
         this.classiMezzo = null;
+    }
+
+    public set(obj: ParametriGeoFleetWS): void {       
+        this.setAttSec(obj.getAttSec());
+        this.setClassiMezzo(obj.getClassiMezzo());
+        this.setDefaultAttSec(obj.getDefaultAttSec());
+        this.setLat1(obj.getLat1());
+        this.setLat2(obj.getLat2());
+        this.setLon1(obj.getLon1());
+        this.setLon2(obj.getLon2());
+        this.setRichiestaAPI(obj.getRichiestaAPI());
     }
 
     public getRichiestaAPI() : string { return this.richiestaAPI; }
