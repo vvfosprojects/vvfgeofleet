@@ -34,6 +34,9 @@ let options = new RequestOptions( { headers:  headers , method: RequestMethod.Ge
 @Injectable()
 export class PosizioneFlottaService {
 
+  private timer;
+  private timerSubcribe: PushSubscription;
+  
   private istanteUltimoAggiornamento: Date;
   private istanteAggiornamentoPrecedente: Date = null;
 
@@ -65,6 +68,10 @@ export class PosizioneFlottaService {
       private gestioneParametriService: GestioneParametriService,
       private gestioneOpzioniService: GestioneOpzioniService
     ) { 
+
+      // schedula con un timer che si attiva ogni 9 secondi
+      this.timer = Observable.timer(0,9000).timeout(120000);
+
 
       this.parametriGeoFleetWS = new ParametriGeoFleetWS();
       this.parametriGeoFleetWS.reset();
@@ -240,14 +247,21 @@ export class PosizioneFlottaService {
 
     public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
 
-        this.getURL().subscribe( (r : PosizioneMezzo[]) => {
+        // subscribe al timer per l'aggiornamento periodico della Situazione flotta
+        this.timerSubcribe = this.timer.subscribe(t => 
+          {
+            this.getURL().subscribe( (r : PosizioneMezzo[]) => {
+              //console.log('PosizioneFlottaService.getPosizioneFlotta() - r',r);
+              this.setIstanteUltimoAggiornamento(r);
+              this.subjectPosizioniMezzo$.next(r); 
+              });
 
-          this.setIstanteUltimoAggiornamento(r);
-          this.subjectPosizioniMezzo$.next(r); 
-        });
+          }
+        );
 
+        //console.log('PosizioneFlottaService.getPosizioneFlotta() - subjectPosizioniMezzo$',this.subjectPosizioniMezzo$);
         return this.subjectPosizioniMezzo$.asObservable();
-    };
+      };
   
     private handleError(error: Response | any) {
       if (error != null)

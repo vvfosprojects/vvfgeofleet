@@ -228,7 +228,7 @@ export class PosizioneMezzoComponent implements OnInit {
     }
 
     if (this.defStatoMezzoCorrente == null )
-    { console.log(this.posizioneMezzo); }
+    { console.log('this.defStatoMezzoCorrente == null',this.posizioneMezzo); }
 
     this.badgeStatoMezzoCorrente = this.defStatoMezzoCorrente[1];
     this.testoStatoMezzoCorrente = this.defStatoMezzoCorrente[0];

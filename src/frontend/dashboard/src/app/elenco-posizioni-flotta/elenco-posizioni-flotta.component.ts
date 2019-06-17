@@ -214,12 +214,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           return aa>bb ? -1 : aa<bb ? 1 : 0;
         });
 
-      // ordina l'array nuovePosizioniMezzo per istanteAcquisizione ascendente
+      // ordina l'array nuovePosizioniMezzo per istanteAcquisizione discendente
       nuovePosizioniMezzo = nuovePosizioniMezzo.sort( 
         function(a,b) 
         { var bb : Date = new Date(b.istanteAcquisizione);
           var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? 1 : aa<bb ? -1 : 0;
+          return aa>bb ? -1 : aa<bb ? 1 : 0;
         });
 
       // controlla se la posizione ricevuta è relativa ad un Mezzo da seguire
@@ -244,12 +244,12 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     var p : PosizioneMezzo[];
     p = posizioniMezzoModificate.filter(r => r.infoSO115 != null); 
 
-    // ordina l'array posizioniMezzoModificate per istanteAcquisizione ascendente
+    // ordina l'array posizioniMezzoModificate per istanteAcquisizione discendente
     p = p.sort( 
       function(a,b) 
       { var bb : Date = new Date(b.istanteAcquisizione);
         var aa : Date  = new Date(a.istanteAcquisizione);
-        return aa>bb ? 1 : aa<bb ? -1 : 0;
+        return aa>bb ? -1 : aa<bb ? 1 : 0;
       });
       
     

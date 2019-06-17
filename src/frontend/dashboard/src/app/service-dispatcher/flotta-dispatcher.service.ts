@@ -28,9 +28,6 @@ import { GestioneFiltriService } from '../service-filter/gestione-filtri.service
 })
 export class FlottaDispatcherService {
 
-  private timer;
-  private timerSubcribe: PushSubscription;
-
   private istanteUltimoAggiornamento: Date;
 
 
@@ -43,7 +40,7 @@ export class FlottaDispatcherService {
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   // elenco delle posizioni ricevute
-  private elencoPosizioniMezzo : PosizioneMezzo[] = [];
+  //private elencoPosizioniMezzo : PosizioneMezzo[] = [];
 
   // elenco delle posizioni da elaborare, ovvero quelle ricevute dal service e 
   // successive all'ultimo istante di aggiornamento 
@@ -83,13 +80,8 @@ export class FlottaDispatcherService {
     private gestioneFiltriService: GestioneFiltriService,
   ) { 
 
+    //console.log('FlottaDispatcherService.constructor()');
   
-    // schedula con un timer che si attiva ogni 9 secondi
-    this.timer = Observable.timer(0,9000).timeout(120000);
-    // subscribe al timer per l'aggiornamento periodio della Situazione flotta
-    this.timerSubcribe = this.timer.subscribe(t => 
-      this.aggiornaSituazioneFlotta());
-
     // attende di ricevere l'istante dell'ultimo aggiornamento
     this.subscription.add(
       this.posizioneFlottaService.getIstanteUltimoAggiornamento()
@@ -112,14 +104,11 @@ export class FlottaDispatcherService {
             this.elencoPosizioniMostratePrecedenti = [];
             this.subjectReset$.next(true);  
 
-            //deve rieseguire subito l'interrogazione al ws
-            this.timerSubcribe.unsubscribe();
-            this.timerSubcribe = this.timer.subscribe(t => 
-              this.aggiornaSituazioneFlotta());
           }
         })
       ); 
     
+    this.aggiornaSituazioneFlotta();
     /*
     // attende una eventuale modifica dei filtri
     this.subscription.add(
@@ -177,19 +166,19 @@ export class FlottaDispatcherService {
 
   public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
-
+    //console.log("FlottaDispatcherService.getNuovePosizioniFlotta()", this.subjectNuovePosizioniMezzo$);
     return this.subjectNuovePosizioniMezzo$.asObservable();
   }
 
   public getPosizioniFlottaStatoModificato(): 
   Observable<PosizioneMezzo[]> {
-
+    //console.log("FlottaDispatcherService.getPosizioniFlottaStatoModificato()", this.subjectPosizioniMezzoStatoModificato$);
     return this.subjectPosizioniMezzoStatoModificato$.asObservable();
   }
   
   public getPosizioniFlottaLocalizzazioneModificata(): 
   Observable<PosizioneMezzo[]> {
-
+    //console.log("FlottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()", this.subjectPosizioniMezzoLocalizzazioneModificata$);
     return this.subjectPosizioniMezzoLocalizzazioneModificata$.asObservable();
   }
       
@@ -200,24 +189,20 @@ export class FlottaDispatcherService {
       {
         if (posizioni === null) { return; }
         
-        //console.log("posizioneFlottaService: ", posizioni);
-        //console.log("posizioneFlottaService.length: ", posizioni.length);
-        this.elencoPosizioniMezzo = posizioni.sort( 
-          function(a,b) 
+        //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - posizioni", posizioni);
+        //console.log("FlottaDispatcherService.length: ", posizioni.length);
+        this.elencoPosizioniDaElaborare = posizioni.sort( 
+            function(a,b) 
           { var bb : Date = new Date(b.istanteAcquisizione);
             var aa : Date  = new Date(a.istanteAcquisizione);
             return aa>bb ? -1 : aa<bb ? 1 : 0;
           }
         );
 
-        this.elencoPosizioniDaElaborare = this.elencoPosizioniMezzo;
-
         // elabora le posizioni ricevute in modo da attivare i subject specifici
         // delle posizioni Nuove, Modificate e d Eliminate
         this.elaboraPosizioniRicevute();
       
-        //console.log("this.elencoPosizioniMezzo.length", this.elencoPosizioniMezzo.length);
-
         // riordina l'elenco aggiornato
         this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.sort( 
           function(a,b) 
@@ -235,9 +220,9 @@ export class FlottaDispatcherService {
 
 
     elaboraPosizioniRicevute(){
-      this.elaboraPosizioniNuove(this.elencoPosizioniDaElaborare);
-      this.elaboraPosizioniLocalizzazioneModificata(this.elencoPosizioniDaElaborare);
-      this.elaboraPosizioniStatoModificato(this.elencoPosizioniDaElaborare);
+      this.elaboraPosizioniNuove();
+      this.elaboraPosizioniStatoModificato();
+      this.elaboraPosizioniLocalizzazioneModificata();
       // salva l'elenco delle posizioni Mostrate attualmente
       this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
 
@@ -249,19 +234,22 @@ export class FlottaDispatcherService {
     }    
     
     // individua le Nuove posizioni, ovvero quelle di Mezzi non ancora presenti
-    elaboraPosizioniNuove(elenco: PosizioneMezzo[]) : void {
-      this.elencoPosizioniNuove = elenco.
+    elaboraPosizioniNuove() : void {
+      this.elencoPosizioniNuove = JSON.parse( JSON.stringify(this.elencoPosizioniDaElaborare.
         filter( (item) => {
           var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
           if ( v == null) {
             return item}
           else {return null}  }
-         );
-        
+         )));
+
+      (this.elencoPosizioniNuove.length > 0)?console.log("FlottaDispatcherService.elaboraPosizioniNuove() - elencoPosizioniNuove", this.elencoPosizioniNuove):null;
+         
       // rimuove dalle posizioni da elaborare quelle Nuove
       this.elencoPosizioniNuove.forEach( v => { 
-        var k = elenco.indexOf( v );
-        if (k != -1) { elenco.splice(k,1); 
+        var k = this.elencoPosizioniDaElaborare.
+          findIndex( item => item.codiceMezzo == v.codiceMezzo );
+        if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
        }
       })
          
@@ -291,57 +279,17 @@ export class FlottaDispatcherService {
       //console.log("flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove );
 
   
-    // individua le posizioni con localizzazione Modificata ed eventualmente anche lo stato
-    elaboraPosizioniLocalizzazioneModificata(elenco: PosizioneMezzo[]) : void {
-      this.elencoPosizioniLocalizzazioneModificata = elenco.
-        filter( (item) => {
-          var v = this.elencoPosizioniMostratePrecedenti.find( 
-            x => item.codiceMezzo == x.codiceMezzo );
-          if ( v != null &&
-               (
-                 (v.localizzazione.lat != item.localizzazione.lat ||
-               v.localizzazione.lon != item.localizzazione.lon )
-               || (v.localizzazione.lat != item.localizzazione.lat ||
-                v.localizzazione.lon != item.localizzazione.lon ) && 
-                v.infoSO115.stato != item.infoSO115.stato )
-              ) {
-                // modifica nel DataStore la posizioni variata ed eventualmente il suo stato         
-                var kk = this.elencoPosizioniMostrate.findIndex( 
-                  x => item.codiceMezzo === x.codiceMezzo );                
-                if ( kk != null ) 
-                  {                           
-                    this.elencoPosizioniMostrate[kk].fonte = item.fonte;
-                    this.elencoPosizioniMostrate[kk].istanteAcquisizione = item.istanteAcquisizione;
-                    this.elencoPosizioniMostrate[kk].istanteArchiviazione = item.istanteArchiviazione;
-                    this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
-                    this.elencoPosizioniMostrate[kk].localizzazione = item.localizzazione;
-                    if (  item.infoSO115.stato != "0")
-                     {this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato; }
-                  }
-                
-                return item}
-          else {return null}  }
-         );
-      //console.log("flotta-dispatcher.service - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata );
-
-      /*
-      if (this.elencoPosizioniLocalizzazioneModificata.length > 0) {
-        this.impostaPosizioneMezziVisibili(this.elencoPosizioniLocalizzazioneModificata);
-        this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
-      }
-      */
-    }
-
     // individua le posizioni con il solo stato Modificato
-    elaboraPosizioniStatoModificato(elenco: PosizioneMezzo[]) : void {
-      this.elencoPosizioniStatoModificato = elenco.
+    elaboraPosizioniStatoModificato() : void {
+      this.elencoPosizioniStatoModificato = JSON.parse( JSON.stringify(this.elencoPosizioniDaElaborare.
         filter( (item) => {
           var v = this.elencoPosizioniMostratePrecedenti.find( 
             x => item.codiceMezzo == x.codiceMezzo );
           if ( v != null &&
-               v.infoSO115.stato != item.infoSO115.stato &&
-               v.localizzazione.lat === item.localizzazione.lat &&
-                v.localizzazione.lon === item.localizzazione.lon               
+              v.istanteAcquisizione != item.istanteAcquisizione &&
+              v.infoSO115.stato != item.infoSO115.stato &&
+              v.localizzazione.lat === item.localizzazione.lat &&
+              v.localizzazione.lon === item.localizzazione.lon               
               ) {
                 // modifica nel DataStore lo stato variato
                 var kk = this.elencoPosizioniMostrate.findIndex( 
@@ -357,8 +305,20 @@ export class FlottaDispatcherService {
                   
                 return item}
           else {return null}  }
-        );
+        )));
 
+        // rimuove dalle posizioni da elaborare quelle con lo Stato Modificato
+        this.elencoPosizioniStatoModificato.forEach( v => { 
+          var k = this.elencoPosizioniDaElaborare.
+            findIndex( item => item.codiceMezzo == v.codiceMezzo );
+          if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
+        }
+        });
+                 
+        (this.elencoPosizioniStatoModificato.length > 0)?console.log("FlottaDispatcherService.elencoPosizioniStatoModificato() - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato):null;
+
+        this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato);
+        
         /*
         if (this.elencoPosizioniStatoModificato.length > 0) {
           this.impostaPosizioneMezziVisibili(this.elencoPosizioniStatoModificato);
@@ -367,6 +327,66 @@ export class FlottaDispatcherService {
         */
       }
         
+
+      // individua le posizioni con istante acquisizione aggiornato
+      elaboraPosizioniLocalizzazioneModificata() : void {
+        this.elencoPosizioniLocalizzazioneModificata = JSON.parse( JSON.stringify(
+          this.elencoPosizioniDaElaborare.
+          filter( (item) => {
+            var v = this.elencoPosizioniMostratePrecedenti.find( 
+              x => item.codiceMezzo == x.codiceMezzo );
+            if ( v != null &&
+                  v.istanteAcquisizione != item.istanteAcquisizione
+                  /* &&
+                  (
+                    (v.localizzazione.lat != item.localizzazione.lat 
+                      || v.localizzazione.lon != item.localizzazione.lon 
+                      || v.localizzazione.lat != item.localizzazione.lat 
+                      || v.localizzazione.lon != item.localizzazione.lon 
+                    ) 
+                    || v.infoSO115.stato != item.infoSO115.stato 
+                  )*/
+              )
+                {
+                  // modifica nel DataStore la posizioni variata ed eventualmente il suo stato         
+                  var kk = this.elencoPosizioniMostrate.findIndex( 
+                    x => item.codiceMezzo === x.codiceMezzo );                
+                  if ( kk != null ) 
+                    {                           
+                      this.elencoPosizioniMostrate[kk].fonte = item.fonte;
+                      this.elencoPosizioniMostrate[kk].istanteAcquisizione = item.istanteAcquisizione;
+                      this.elencoPosizioniMostrate[kk].istanteArchiviazione = item.istanteArchiviazione;
+                      this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
+                      this.elencoPosizioniMostrate[kk].localizzazione = item.localizzazione;
+                      if (  item.infoSO115.stato != "0")
+                      {this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato; }
+                    }
+                  
+                  return item}
+            else {return null}  }
+          )));
+
+        // rimuove dalle posizioni da elaborare quelle con istante acquisizione aggiornato
+        this.elencoPosizioniLocalizzazioneModificata.forEach( v => { 
+          var k = this.elencoPosizioniDaElaborare.
+            findIndex( item => item.codiceMezzo == v.codiceMezzo );
+          if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
+        }
+        });
+                  
+        (this.elencoPosizioniLocalizzazioneModificata.length > 0)?console.log("FlottaDispatcherService.elencoPosizioniLocalizzazioneModificata() - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata):null;
+
+        (this.elencoPosizioniDaElaborare.length > 0)?console.log("Errore! Posizioni non elaborate:", this.elencoPosizioniDaElaborare):null;
+
+        this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
+
+        /*
+        if (this.elencoPosizioniLocalizzazioneModificata.length > 0) {
+          this.impostaPosizioneMezziVisibili(this.elencoPosizioniLocalizzazioneModificata);
+          this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata);
+        }
+        */
+      }
 
       /*
       // modifica nel DataStore le posizioni con variazioni

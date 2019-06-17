@@ -127,7 +127,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
           this.vociFiltroStatiMezzo = vocifiltro;
         })
-      );   
+      );
     
     this.subscription.add(
       this.gestioneFiltriService.getFiltriSedi()
@@ -135,7 +135,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
           this.vociFiltroSedi = vocifiltro;
         })
-      );   
+      );
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriGeneriMezzo()
@@ -143,7 +143,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
           this.vociFiltroGeneriMezzo = vocifiltro;
         })
-      );   
+      );
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriDestinazioneUso()
@@ -151,8 +151,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
           this.vociFiltroDestinazioneUso = vocifiltro;
         })
-      );   
-      
+      );
+
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
       //.debounceTime(3000)
@@ -282,7 +282,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     if (p.length  > 0) 
     {
       // aggiunge alle posizioni Mostrate quelle Nuove     
-      this.elencoPosizioniMostrate = JSON.parse( JSON.stringify(p));
+      //this.elencoPosizioniMostrate = JSON.parse( JSON.stringify(p));
+      this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(p);      
     }
   }
 
