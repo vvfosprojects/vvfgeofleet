@@ -30,6 +30,7 @@
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                 <div class="fa fa-clock-o"></div> {{ istanteAcquisizionePosizioneMezzo | distanzaTemporale : istanteUltimoAggiornamento : "S"}}
+                <!--<div class="fa fa-clock-o"></div> {{ this.posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento : "S"}}-->
             </div>
           </div>
         </div>
@@ -37,53 +38,3 @@
     </div>  
 
     
-
-<!--<span *ngIf="posizioneMezzo.selezionata">-->
-<!--
-  <span *ngIf="posizioneMezzoSelezionata()">
-  <td>
-      <span class="fa fa-building-o"> {{sedeMezzo()}}</span>
-  </td>
-  <td>
-      <span class="fa fa-truck"> {{posizioneMezzo.codiceMezzo}}</span>
-  </td>
-  <td>
-      <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
-  </td>
-  <td>
-      <span class="fa fa-clock-o"> {{posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento: "S"}}</span>
-  </td>
-</span>
--->
-<!--
-<td>
-  <span>{{posizioneMezzo.istanteInvio}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.codiceMezzo}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.classiMezzo}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.localizzazione.lat}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.localizzazione.lon}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.fonte.codiceFonte}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.fonte.classeFonte}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.infoSO115.stato}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.infoSO115.codiceIntervento}}</span>
-</td>
-<td>
-  <span>{{posizioneMezzo.infoSO115.dataIntervento}}</span>
-</td>
--->

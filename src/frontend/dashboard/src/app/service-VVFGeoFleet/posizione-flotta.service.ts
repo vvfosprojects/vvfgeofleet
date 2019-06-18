@@ -120,31 +120,17 @@ export class PosizioneFlottaService {
 
     
     public getURL(): Observable<PosizioneMezzo[]> {
+
+      this.setIstanteUltimoAggiornamento();
+      this.setAttSec();
+
       // onde evitare eventuali problemi di sincronizzazione con il servizio 
       // per la gestione dei parametri del WS, salvo i parametri in una var locale
-      
       var parm : ParametriGeoFleetWS = new ParametriGeoFleetWS();
       parm.set(this.parametriGeoFleetWS);
 
       //console.log("PosizioneFlottaService.getURL() - istanteUltimoAggiornamento, parm", this.istanteUltimoAggiornamento, parm);
       
-      // aggiungere sempre X secondi per essere sicuri di perdersi
-      // meno posizioni possibili, a causa della distanza di tempo tra
-      // l'invio della richiesta dal client e la sua ricezione dal ws
-      // Per essere certi, è necessaria un API che restituisca i messaggi
-      // acquisiti successivamente ad un certo istante
-      
-      if (this.maxIstanteAcquisizionePrecedente != null) 
-      {
-        var attSec = moment(this.istanteUltimoAggiornamento).
-        diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
-        this.trimSec.valueOf() ; 
-        parm.setAttSec(attSec);
-        // aggiorno l'intervallo temporale estratto nel servizio
-        // per la gestione dei parametri del WS
-        this.gestioneParametriService.setAttSec(attSec);
-      }
-
       var parametri : string = '';
       var richiestaWS : string = '';
       if (parm.getAttSec() != null) { parametri = parametri+ 
@@ -252,8 +238,8 @@ export class PosizioneFlottaService {
           {
             this.getURL().subscribe( (r : PosizioneMezzo[]) => {
               //console.log('PosizioneFlottaService.getPosizioneFlotta() - r',r);
-              this.setIstanteUltimoAggiornamento(r);
-              this.subjectPosizioniMezzo$.next(r); 
+              this.elencoPosizioni=this.setElencoPosizioni(r);
+              this.subjectPosizioniMezzo$.next(this.elencoPosizioni); 
               });
 
           }
@@ -270,65 +256,116 @@ export class PosizioneFlottaService {
       }
     }
 
-    private setIstanteUltimoAggiornamento(elencoPosizioniWS: PosizioneMezzo[])
+    private setAttSec()
+    {      
+      var attSec : number;
+
+      //
+      // 'AttSec' deve essere calcolato in relazione all'istante di acquisizione precedente 
+      // più alto.
+      //
+      // Aggiungere sempre X secondi (trimSec) per essere sicuri di perdersi
+      // meno posizioni possibili, a causa della distanza di tempo tra
+      // l'invio della richiesta dal client e la sua ricezione dal ws.
+      //
+      // Per essere certi, è necessaria un API che restituisca i messaggi
+      // 'acquisiti' successivamente ad un certo istante
+      //
+            
+      if (this.maxIstanteAcquisizionePrecedente != null) 
+      {
+        attSec = moment(this.istanteUltimoAggiornamento).
+          diff(this.maxIstanteAcquisizionePrecedente, 'seconds').valueOf() + 
+          this.trimSec.valueOf() ; 
+        // aggiorno l'intervallo temporale estratto nel servizio
+        // per la gestione dei parametri del WS
+        this.gestioneParametriService.setAttSec(attSec);
+      } 
+
+      //console.log("setAttSec() - attSec", attSec);
+
+    }
+    
+    private setElencoPosizioni(elencoPosizioniWS: PosizioneMezzo[]) :PosizioneMezzo[]
+    {
+      if (elencoPosizioniWS.length > 0) {
+
+        // filtra le posizioni con l'istante acquisizione  precedente all'istanteUltimoAggiornamento, per escludere 
+        // eventuali messaggi "futuri", che potrebbero essere ricevuti dagli adapter SO115
+        // a causa di errata impostazione della data di sistema sui server dei Comandi Provinciali
+        var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
+        elencoPosizioniMezzoDepurate = elencoPosizioniWS.filter(
+          i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
+        );
+
+        // filtra le posizioni da elaborare estraendo da quelle depurate, 
+        // le successive (o uguali) all'istante di acquisizione più recente della 
+        // precedente elaborazione
+        var elencoPosizioniDaElaborare : PosizioneMezzo[];
+        elencoPosizioniDaElaborare = elencoPosizioniMezzoDepurate.filter(
+          i => (new Date(i.istanteAcquisizione) >= new Date(this.maxIstanteAcquisizionePrecedente) )
+          );
+
+        //console.log("elencoPosizioniDaElaborare", elencoPosizioniDaElaborare);
+
+
+        if (elencoPosizioniDaElaborare.length > 0) {
+
+          // imposta maxIstanteAcquisizione 
+          this.maxIstanteAcquisizione = new Date(elencoPosizioniDaElaborare.
+            reduce( function (a,b) 
+            { var bb : Date = new Date(b.istanteAcquisizione);
+              var aa : Date  = new Date(a.istanteAcquisizione);
+              return aa>bb ? a : b ;
+            }).istanteAcquisizione);
+
+          // 
+          // Imposta trimSec che verrà utilizzato nella successiva richiesta al ws.
+          // Ottenuto calcolando la differenza di tempo tra l'
+          // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra 
+          // le posizioni ricevute, purchè succesive a istanteUltimoAggiornamento.
+          //
+          //          
+          this.trimSec = 0;
+          /*
+          this.trimSec = moment(
+            new Date(elencoPosizioniDaElaborare.
+                reduce( function (a,b) 
+                { var bb : Date = new Date(b.istanteAcquisizione);
+                  var aa : Date  = new Date(a.istanteAcquisizione);
+                  return aa>bb ? a : b ;
+                }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
+          */
+         this.trimSec = moment(this.maxIstanteAcquisizione).
+            diff(this.istanteUltimoAggiornamento, 'seconds');
+
+          //console.log("setElencoPosizioni() - trimSec", this.trimSec);
+          this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 20: 20;
+          //console.log("setElencoPosizioni() - trimSec adj", this.trimSec);
+                
+          /*
+          console.log("this.istanteUltimoAggiornamento, this.maxIstanteAcquisizione, this.maxIstanteAcquisizionePrecedente",
+            this.istanteUltimoAggiornamento, this.maxIstanteAcquisizione, this.maxIstanteAcquisizionePrecedente);
+          */
+
+          this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
+
+
+
+        }
+
+              
+                 
+      }      
+    
+      return elencoPosizioniDaElaborare;
+    }
+    
+    private setIstanteUltimoAggiornamento()
     {       
+
         // memorizza l'istante di inizio di questa operazione di aggiornamento
         this.istanteUltimoAggiornamento = moment().toDate();      
-     
-        if (elencoPosizioniWS.length > 0) {
-          //l'attSec deve essere calcolato in relazione all'istante 
-          //più alto ma comunque precedente all'istanteUltimoAggiornamento, per escludere 
-          //eventuali messaggi "futuri", che potrebbero essere ricevuti dagli adapter SO115
-          //a seguito di errata impostazione della data di sistema sui server dei Comandi Provinciali
-
-          var elencoPosizioniMezzoDepurate : PosizioneMezzo[];
-          elencoPosizioniMezzoDepurate = elencoPosizioniWS.filter(
-            i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
-          );            
-
-          // imposta maxIstanteAcquisizione filtrando le posizioni precedenti all'
-          // istanteUltimoAggiornamento
-          if (elencoPosizioniMezzoDepurate.length > 0) {
-            this.maxIstanteAcquisizione = new Date(elencoPosizioniMezzoDepurate.
-              reduce( function (a,b) 
-              { var bb : Date = new Date(b.istanteAcquisizione);
-                var aa : Date  = new Date(a.istanteAcquisizione);
-                return aa>bb ? a : b ;
-              }).istanteAcquisizione);
-
-            }
-
-          // imposta trimSec calcolando la differenza di tempo tra l'
-          // istanteUltimoAggiornamento e l'istanteAcquisizione più alto tra le posizioni ricevute, 
-          // purchè succesive a istanteUltimoAggiornamento
-          this.trimSec = 0;
-          var elencoPosizioniDaElaborare : PosizioneMezzo[];
-
-          elencoPosizioniDaElaborare = elencoPosizioniWS.filter(
-            i => (new Date(i.istanteAcquisizione) >= new Date(this.maxIstanteAcquisizionePrecedente) )
-            );
-
-          //console.log("elencoPosizioniDaElaborare", elencoPosizioniDaElaborare);
-          if (elencoPosizioniDaElaborare.length > 0) {
-              this.trimSec = moment(
-                new Date(elencoPosizioniDaElaborare.
-                    reduce( function (a,b) 
-                    { var bb : Date = new Date(b.istanteAcquisizione);
-                      var aa : Date  = new Date(a.istanteAcquisizione);
-                      return aa>bb ? a : b ;
-                    }).istanteAcquisizione)).diff(this.istanteUltimoAggiornamento, 'seconds');
-            }
-          //console.log("trimSec", this.trimSec);
-          this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 10: 10;
-          //console.log("trimSec adj", this.trimSec);
-
-   
-                
-          if (elencoPosizioniMezzoDepurate.length > 0) {
-            this.maxIstanteAcquisizionePrecedente = this.maxIstanteAcquisizione;
-          }
-                   
-        }      
 
         // restituisce l'istante di inizio di questa operazione di aggiornamento
         this.subjectIstanteUltimoAggiornamento$.next(this.istanteUltimoAggiornamento);

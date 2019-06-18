@@ -211,6 +211,7 @@ export class PosizioneMezzoComponent implements OnInit {
       );
 */    
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
+    console.log('posizioneMezzo ' ,this.posizioneMezzo);
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
     if (this.posizioneMezzo.selezionato) 
@@ -236,6 +237,7 @@ export class PosizioneMezzoComponent implements OnInit {
     this.iconaMezzoCorrente = this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
 
     this.istanteAcquisizionePosizioneMezzo = new Date(this.posizioneMezzo.istanteAcquisizione);
+    
     //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
   }
