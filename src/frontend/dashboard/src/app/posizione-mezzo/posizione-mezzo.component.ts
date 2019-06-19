@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, OnChanges, EventEmitter } from '@angular/core';
 import { Inject, HostListener } from "@angular/core";
 //import { DOCUMENT } from "@angular/platform-browser";
 import { MapType } from '@angular/compiler';
@@ -24,7 +24,7 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
   templateUrl: './posizione-mezzo.component.html',
   styleUrls: ['./posizione-mezzo.component.css']
 })
-export class PosizioneMezzoComponent implements OnInit {
+export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
   
   //private filtriSediObj : Object;
@@ -211,13 +211,51 @@ export class PosizioneMezzoComponent implements OnInit {
       );
 */    
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
-    console.log('posizioneMezzo ' ,this.posizioneMezzo);
+    //console.log('posizioneMezzo ' ,this.posizioneMezzo);
+    
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
+    
     if (this.posizioneMezzo.selezionato) 
       { this.seguiMezzo(); }
   }
 
+  badgeStatoMezzo() : any {
+    if (this.posizioneMezzo.infoSO115 != null) {
+      this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
+    } else 
+    {
+      //console.log(this.posizioneMezzo);
+      this.defStatoMezzoCorrente = this.mapAlert.get('0');
+    }
+
+    if (this.defStatoMezzoCorrente == null )
+    { console.log('this.defStatoMezzoCorrente == null',this.posizioneMezzo); }
+
+    return this.defStatoMezzoCorrente[1];
+  }
+
+
+  testoStatoMezzo() : any {
+    if (this.posizioneMezzo.infoSO115 != null) {
+      this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
+    } else 
+    {
+      //console.log(this.posizioneMezzo);
+      this.defStatoMezzoCorrente = this.mapAlert.get('0');
+    }
+
+    if (this.defStatoMezzoCorrente == null )
+    { console.log('this.defStatoMezzoCorrente == null',this.posizioneMezzo); }
+
+    return this.defStatoMezzoCorrente[0];
+  }
+  
+  iconaMezzo() : any {
+    return this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
+  }
+
+  
   aggiornaDatiMezzoCorrente() {
     //this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     if (this.posizioneMezzo.infoSO115 != null) {
@@ -241,18 +279,8 @@ export class PosizioneMezzoComponent implements OnInit {
     //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
   }
+  
 
-  /*
-  sedeMezzo() {
-   return (this.posizioneMezzo.classiMezzo.
-     find( i =>  i.substr(0,5) == "PROV:")).substr(5,2);
-  }
-  */
-
-  classiMezzoDepurata() {
-    return this.posizioneMezzo.classiMezzo.
-      filter( i =>  (i.substr(0,5) != "PROV:") )
-  }
 
   posizioneMezzoSelezionata() : boolean
   { 

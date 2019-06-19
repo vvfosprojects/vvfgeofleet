@@ -26,11 +26,13 @@
                 </div>                    
                 <div class="fa fa-building-o pl-1"></div> {{posizioneMezzo.sedeMezzo}}
                 <div class="fa {{iconaMezzoCorrente}}"></div> {{posizioneMezzo.codiceMezzo}}
-                <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>    
+                <div class="badge {{badgeStatoMezzoCorrente}}">{{testoStatoMezzoCorrente}}</div>
+                <!--<div class="fa {{iconaMezzo()}}"></div> {{posizioneMezzo.codiceMezzo}}-->
+                <!--<div class="badge {{badgeStatoMezzo()}}">{{this.testoStatoMezzo()}}</div>-->
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                <div class="fa fa-clock-o"></div> {{ istanteAcquisizionePosizioneMezzo | distanzaTemporale : istanteUltimoAggiornamento : "S"}}
-                <!--<div class="fa fa-clock-o"></div> {{ this.posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento : "S"}}-->
+                <!--<div class="fa fa-clock-o"></div> {{ istanteAcquisizionePosizioneMezzo | distanzaTemporale : istanteUltimoAggiornamento : "S"}}-->
+                <div class="fa fa-clock-o"></div> {{ this.posizioneMezzo.istanteAcquisizione | distanzaTemporale : istanteUltimoAggiornamento : "S"}}
             </div>
           </div>
         </div>

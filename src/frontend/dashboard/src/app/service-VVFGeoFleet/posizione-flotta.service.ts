@@ -44,6 +44,7 @@ export class PosizioneFlottaService {
   private maxIstanteAcquisizionePrecedente: Date = null;
 
   private trimSec: Number = 0;
+  private trimSecDefault: Number = 50;
 
 
   private defaultAttSec: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)
@@ -61,6 +62,7 @@ export class PosizioneFlottaService {
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   private subjectReset$ = new Subject<Boolean>();
+  private subjectResetTimer$ = new Subject<Boolean>();
 
   subscription = new Subscription();
   
@@ -68,9 +70,6 @@ export class PosizioneFlottaService {
       private gestioneParametriService: GestioneParametriService,
       private gestioneOpzioniService: GestioneOpzioniService
     ) { 
-
-      // schedula con un timer che si attiva ogni 9 secondi
-      this.timer = Observable.timer(0,9000).timeout(120000);
 
 
       this.parametriGeoFleetWS = new ParametriGeoFleetWS();
@@ -87,7 +86,8 @@ export class PosizioneFlottaService {
           // se è  stato modificato il tipo di estrazione dal ws o le coordinate del riquadro
           // allora resetta l'istante di acquisizione precedente
           // in quanto deve effettuare una nuova estrazione senza limite temporale.
-          //if (this.opzioni.getOnlyMap() &&
+
+
           //console.log('PosizioneFlottaService.getParametriGeoFleetWS()', parm);
           if  (parm.getRichiestaAPI() != this.parametriGeoFleetWS.getRichiestaAPI()
               || parm.getClassiMezzo() != this.parametriGeoFleetWS.getClassiMezzo()
@@ -104,6 +104,10 @@ export class PosizioneFlottaService {
             //console.log('PosizioneFlottaService.getParametriGeoFleetWS() - reset');
             this.maxIstanteAcquisizionePrecedente = null; 
             this.subjectReset$.next(true);
+            // Resetta il timer per eseguire immediatamente 
+            // la richiesta al ws prima di attendere il nuovo clock del timer
+            this.subjectResetTimer$.next(true);
+
           }
           this.parametriGeoFleetWSprecedenti.set(this.parametriGeoFleetWS);
           this.parametriGeoFleetWS.set(parm);
@@ -118,6 +122,9 @@ export class PosizioneFlottaService {
       
     }
 
+    public getResetTimer(): Observable<Boolean> {
+      return this.subjectResetTimer$.asObservable();
+    }
     
     public getURL(): Observable<PosizioneMezzo[]> {
 
@@ -233,6 +240,8 @@ export class PosizioneFlottaService {
 
     public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
 
+        // schedula con un timer che si attiva ogni 9 secondi
+        this.timer = Observable.timer(0,9000).timeout(120000);
         // subscribe al timer per l'aggiornamento periodico della Situazione flotta
         this.timerSubcribe = this.timer.subscribe(t => 
           {
@@ -244,6 +253,30 @@ export class PosizioneFlottaService {
 
           }
         );
+
+        this.subscription.add( this.getResetTimer().subscribe(
+          (value : Boolean) => {if (value)
+          {            
+            console.log("Destroy timer");
+            this.timerSubcribe.unsubscribe();
+            // schedula con un timer che si attiva ogni 9 secondi
+            this.timer = Observable.timer(0,9000).timeout(120000);
+            
+            // subscribe al timer per l'aggiornamento periodico della Situazione flotta
+            this.timerSubcribe = this.timer.subscribe(t => 
+              {
+                this.getURL().subscribe( (r : PosizioneMezzo[]) => {
+                  //console.log('PosizioneFlottaService.getPosizioneFlotta() - r',r);
+                  this.elencoPosizioni=this.setElencoPosizioni(r);
+                  this.subjectPosizioniMezzo$.next(this.elencoPosizioni); 
+                  });
+
+              }
+            );
+            
+          }}))
+
+
 
         //console.log('PosizioneFlottaService.getPosizioneFlotta() - subjectPosizioniMezzo$',this.subjectPosizioniMezzo$);
         return this.subjectPosizioniMezzo$.asObservable();
@@ -290,6 +323,8 @@ export class PosizioneFlottaService {
     {
       if (elencoPosizioniWS.length > 0) {
 
+        //(elencoPosizioniWS.length > 0)?console.log(moment().toDate(),"PosizioneFlottaService.setElencoPosizioni() - elencoPosizioniWS", elencoPosizioniWS):null;
+
         // filtra le posizioni con l'istante acquisizione  precedente all'istanteUltimoAggiornamento, per escludere 
         // eventuali messaggi "futuri", che potrebbero essere ricevuti dagli adapter SO115
         // a causa di errata impostazione della data di sistema sui server dei Comandi Provinciali
@@ -298,13 +333,20 @@ export class PosizioneFlottaService {
           i => (new Date(i.istanteAcquisizione) < new Date(this.istanteUltimoAggiornamento) )
         );
 
+        var elencoPosizioniDaElaborare : PosizioneMezzo[];
+        /*
         // filtra le posizioni da elaborare estraendo da quelle depurate, 
         // le successive (o uguali) all'istante di acquisizione più recente della 
         // precedente elaborazione
-        var elencoPosizioniDaElaborare : PosizioneMezzo[];
         elencoPosizioniDaElaborare = elencoPosizioniMezzoDepurate.filter(
           i => (new Date(i.istanteAcquisizione) >= new Date(this.maxIstanteAcquisizionePrecedente) )
           );
+        */
+
+        // non effettua nessun filtro sull'istante di acquisizione,
+        // per evitare che le posizioni archiviate successivamente
+        // all'ultimo istante acquisizione vengano scartate
+        elencoPosizioniDaElaborare = elencoPosizioniMezzoDepurate;
 
         //console.log("elencoPosizioniDaElaborare", elencoPosizioniDaElaborare);
 
@@ -340,7 +382,7 @@ export class PosizioneFlottaService {
             diff(this.istanteUltimoAggiornamento, 'seconds');
 
           //console.log("setElencoPosizioni() - trimSec", this.trimSec);
-          this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + 20: 20;
+          this.trimSec = (this.trimSec.valueOf() > 0 ) ? this.trimSec.valueOf() + this.trimSecDefault.valueOf(): this.trimSecDefault.valueOf();
           //console.log("setElencoPosizioni() - trimSec adj", this.trimSec);
                 
           /*

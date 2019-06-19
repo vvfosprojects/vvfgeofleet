@@ -88,7 +88,7 @@ export class AppComponent implements OnInit {
         
         cambiaModalita($event,value) {
           this.modalita = value;
-          console.log('AppComponent - cambiaModalita()', $event,this.modalita);
+          //console.log('AppComponent - cambiaModalita()', $event,this.modalita);
           this.gestioneOpzioniService.setModalita(this.modalita);
         }
         

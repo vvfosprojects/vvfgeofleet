@@ -191,11 +191,13 @@ export class FlottaDispatcherService {
         
         //console.log("FlottaDispatcherService.aggiornaSituazioneFlotta() - posizioni", posizioni);
         //console.log("FlottaDispatcherService.length: ", posizioni.length);
+
+        // ordina in modo Ascendente
         this.elencoPosizioniDaElaborare = posizioni.sort( 
             function(a,b) 
           { var bb : Date = new Date(b.istanteAcquisizione);
             var aa : Date  = new Date(a.istanteAcquisizione);
-            return aa>bb ? -1 : aa<bb ? 1 : 0;
+            return aa>bb ? 1 : aa<bb ? -1 : 0;
           }
         );
 
@@ -203,6 +205,7 @@ export class FlottaDispatcherService {
         // delle posizioni Nuove, Modificate e d Eliminate
         this.elaboraPosizioniRicevute();
       
+        /*
         // riordina l'elenco aggiornato
         this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.sort( 
           function(a,b) 
@@ -211,6 +214,7 @@ export class FlottaDispatcherService {
             return aa>bb ? -1 : aa<bb ? 1 : 0;
           }
         );
+        */
         
       });
 
@@ -220,6 +224,7 @@ export class FlottaDispatcherService {
 
 
     elaboraPosizioniRicevute(){
+
       this.elaboraPosizioniNuove();
       this.rimuoviPosizioniElaborate(this.elencoPosizioniNuove);
       this.elaboraPosizioniStatoModificato();
@@ -227,18 +232,21 @@ export class FlottaDispatcherService {
       this.elaboraPosizioniLocalizzazioneModificata();
       this.rimuoviPosizioniElaborate(this.elencoPosizioniLocalizzazioneModificata);
 
+      /*
       var el : PosizioneMezzo[] = this.elaboraPosizioniNonModificate();
       (el.length > 0)?console.log("FlottaDispatcherService.elaboraPosizioniNonModificate() - el", el):null;
       this.rimuoviPosizioniElaborate(el);
+      */
 
       (this.elencoPosizioniDaElaborare.length > 0)?console.log("Errore! Posizioni non elaborate:", this.elencoPosizioniDaElaborare):null;
       /*
       this.elencoPosizioniLocalizzazioneModificata = this.elencoPosizioniLocalizzazioneModificata.concat
         (JSON.parse(JSON.stringify(this.elencoPosizioniDaElaborare)));
       */
+      
 
       // salva l'elenco delle posizioni Mostrate attualmente
-      //this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));                        
+      //this.elencoPosizioniMostratePrecedenti = JSON.parse( JSON.stringify(this.elencoPosizioniMostrate));
 
       // riesegue il setup dei filtri per mostrare eventuali nuovi valori non presenti
       // in precedenza
@@ -251,7 +259,7 @@ export class FlottaDispatcherService {
     rimuoviPosizioniElaborate(elenco : PosizioneMezzo[]) : void {
       elenco.forEach( v => { 
         var k = this.elencoPosizioniDaElaborare.
-          findIndex( item => item.codiceMezzo == v.codiceMezzo );
+          findIndex( item => item.codiceMezzo === v.codiceMezzo );
         if (k != -1) { this.elencoPosizioniDaElaborare.splice(k,1); 
        }
        else { console.log("rimuoviPosizioniElaborate() - item non trovato", v, this.elencoPosizioniDaElaborare);}
@@ -263,8 +271,8 @@ export class FlottaDispatcherService {
       this.elencoPosizioniNuove = JSON.parse( JSON.stringify(this.elencoPosizioniDaElaborare.
         filter( (item) => {
           //var v = this.elencoPosizioniMostratePrecedenti.find( x => item.codiceMezzo == x.codiceMezzo );
-          var v = this.elencoPosizioniMostrate.find( x => item.codiceMezzo == x.codiceMezzo );
-          if ( v == null) {
+          var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+          if ( v == -1) {
             return item}
           else {return null}  }
          )));
@@ -274,24 +282,26 @@ export class FlottaDispatcherService {
 
       if (this.elencoPosizioniNuove.length > 0) {
         // aggiunge nel DataStore le Nuove posizioni
-        if (this.elencoPosizioniMostrate.length == 0 ) 
+        if (this.elencoPosizioniMostrate.length === 0 ) 
           { 
             this.elencoPosizioniMostrate = JSON.parse(JSON.stringify(this.elencoPosizioniNuove));
           }
         else 
           { 
-            this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(
-              this.elencoPosizioniNuove);
+            this.elencoPosizioniMostrate =  JSON.parse(JSON.stringify(
+              this.elencoPosizioniMostrate.concat( JSON.parse(JSON.stringify(
+              this.elencoPosizioniNuove)))));
           }
     
         //this.impostaPosizioneMezziVisibili(this.elencoPosizioniNuove);
+
+        //(this.elencoPosizioniNuove.length > 0)?console.log(moment().toDate(),"flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove ):null;
 
         // restituisce gli array delle posizioni elaborate
         this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove);
       }
     }
 
-      //console.log("flotta-dispatcher.service - elencoPosizioniNuove", this.elencoPosizioniNuove );
 
   
     // individua le posizioni con lo stato Modificato
@@ -302,7 +312,7 @@ export class FlottaDispatcherService {
             var kk = this.elencoPosizioniMostrate.findIndex( 
               x => item.codiceMezzo === x.codiceMezzo );                
             if ( kk != -1  
-                && item.infoSO115.stato != '0' // se non è arrivata dai TTK
+                && item.infoSO115.stato != "0" // se non è arrivata dai TTK
                 // && this.elencoPosizioniMostrate[kk].istanteAcquisizione != item.istanteAcquisizione 
                 // && this.elencoPosizioniMostrate[kk].infoSO115.stato != item.infoSO115.stato            
                 ) {
@@ -313,20 +323,19 @@ export class FlottaDispatcherService {
                   this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
                   this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato;
               
-                  return item}
-            else {return null}  }
+                  return this.elencoPosizioniMostrate[kk];}
+            else {return null;}  }
           )
       ));
 
   
-      //(this.elencoPosizioniStatoModificato.length > 0)?console.log("FlottaDispatcherService.elencoPosizioniStatoModificato() - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato):null;
+      //(this.elencoPosizioniStatoModificato.length > 0)?console.log(moment().toDate(),"FlottaDispatcherService.elencoPosizioniStatoModificato() - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato):null;
+
       (this.elencoPosizioniStatoModificato.length > 0)?this.subjectPosizioniMezzoStatoModificato$.next(this.elencoPosizioniStatoModificato):null;
       
-      /*
-      if (this.elencoPosizioniStatoModificato.length > 0) {
-        this.impostaPosizioneMezziVisibili(this.elencoPosizioniStatoModificato);
-      }
-      */
+      //if (this.elencoPosizioniStatoModificato.length > 0) {
+      //  this.impostaPosizioneMezziVisibili(this.elencoPosizioniStatoModificato);
+      //}
     }
 
     elaboraPosizioniNonModificate() : PosizioneMezzo[] {
@@ -334,7 +343,7 @@ export class FlottaDispatcherService {
         filter( (item) => {
           //var v = this.elencoPosizioniMostratePrecedenti.find( 
           var v = this.elencoPosizioniMostrate.find( 
-            x => item.codiceMezzo == x.codiceMezzo );
+            x => item.codiceMezzo === x.codiceMezzo );
           if ( v != null && v === item ) {return item}
           else {return null}
         }
@@ -359,14 +368,15 @@ export class FlottaDispatcherService {
                 this.elencoPosizioniMostrate[kk].istanteArchiviazione = item.istanteArchiviazione;
                 this.elencoPosizioniMostrate[kk].istanteInvio = item.istanteInvio;
                 this.elencoPosizioniMostrate[kk].localizzazione = item.localizzazione;
-                if (  item.infoSO115.stato != '0')
+                if (  item.infoSO115.stato != "0")
                 {this.elencoPosizioniMostrate[kk].infoSO115.stato = item.infoSO115.stato; }
                 
-                return item}
+                return this.elencoPosizioniMostrate[kk];}
           else {return null}  }
         )));
   
-      //(this.elencoPosizioniLocalizzazioneModificata.length > 0)?console.log("FlottaDispatcherService.elencoPosizioniLocalizzazioneModificata() - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata):null;
+      //(this.elencoPosizioniLocalizzazioneModificata.length > 0)?console.log(moment().toDate(),"FlottaDispatcherService.elencoPosizioniLocalizzazioneModificata() - elencoPosizioniLocalizzazioneModificata", this.elencoPosizioniLocalizzazioneModificata):null;
+
       (this.elencoPosizioniLocalizzazioneModificata.length > 0)?this.subjectPosizioniMezzoLocalizzazioneModificata$.next(this.elencoPosizioniLocalizzazioneModificata):null;
 
 
@@ -384,7 +394,7 @@ export class FlottaDispatcherService {
           var v = this.elencoPosizioniMostrate.find( 
             x => item.codiceMezzo == x.codiceMezzo );
           if ( v != null &&
-              item.infoSO115.stato != '0' &&  // se non è arrivata dai TTK
+              item.infoSO115.stato != "0" &&  // se non è arrivata dai TTK
               v.istanteAcquisizione != item.istanteAcquisizione &&
               v.infoSO115.stato != item.infoSO115.stato            
               ) {
