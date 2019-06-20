@@ -187,6 +187,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     //console.log("seguiMezzo", evento);
   }
 
+  isSeguiMezzo(p : PosizioneMezzo) : Boolean {
+    return ( this.seguiMezziSelezionati.findIndex( i => i.codiceMezzo === p.codiceMezzo) != -1 );
+  }
+
   seguiMezzo(evento) {
     var tipoevento: string = evento[1];
     var pos : PosizioneMezzo ;
@@ -372,7 +376,9 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         // modifica anche la posizione tra i Mezzi da seguire se è presente
         this.seguiMezziSelezionati[v] = JSON.parse(JSON.stringify(p)); 
         // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
-        if (this.opzioni.getCenterOnMezzo() ) {
+        // ed è stato selezionato solo 1 Mezzo, allora si ricentra ed effettua lo zoom,
+        // altrimenti lascia tutto invariato
+        if (this.opzioni.getCenterOnMezzo() && this.seguiMezziSelezionati.length === 0) {
           this.mezzoSelezionato = p;
           
           this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));

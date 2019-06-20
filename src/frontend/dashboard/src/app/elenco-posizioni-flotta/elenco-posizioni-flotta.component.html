@@ -5,7 +5,7 @@
 <div class="row h8 mt-0">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 p-1">
         <p-accordion>
-            <p-accordionTab header="Mezzi Seguiti">
+            <p-accordionTab header="Mezzi Selezionati">
             <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
                 <div class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">
                 <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
@@ -18,7 +18,7 @@
                             [vociFiltroSedi]="vociFiltroSedi"
                             [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
                             [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"                            [posizioneMezzo]="r"                             
-                            [isSeguiMezzo]="opzioni.isSeguiMezzo"
+                            [isSeguiMezzo]="true"
                             (mezzoSelezionato)="centraSuMappa($event)"
                             (mezzoSelezionato)="evidenziaSuMappa($event)"
                             (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
@@ -53,7 +53,7 @@
                                 [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
                                 [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"    
                                 [posizioneMezzo]="r" 
-                                [isSeguiMezzo]="!opzioni.isSeguiMezzo"
+                                [isSeguiMezzo]="isSeguiMezzo(r)"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"
