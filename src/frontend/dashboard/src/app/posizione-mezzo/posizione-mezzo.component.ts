@@ -8,12 +8,7 @@ import { Observable, Subscription, Subject, of } from "rxjs";
 import * as moment from 'moment';
 
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
-
-import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
-
-import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
-
 
 //import { EventEmitter } from 'events';
 
@@ -33,13 +28,20 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() isSeguiMezzo: boolean ;
 
-  public  istanteUltimoAggiornamento: Date;
+  @Input() istanteUltimoAggiornamento: Date;
+  @Input() vociFiltroStatiMezzo: VoceFiltro[] = [];
+  @Input() vociFiltroSedi: VoceFiltro[] = [];
+  @Input() vociFiltroGeneriMezzo: VoceFiltro[] = [];
+  @Input() vociFiltroDestinazioneUso: VoceFiltro[] = [];
+    
   /*
   @Input() filtriStatiMezzo: string[] = [];
   @Input() filtriSedi: string[] = [];
   @Input() filtriGeneriMezzo: string[] = [];
   @Input() filtriDestinazioneUso: string[] = [];
   */
+
+  
  
   /*
   @Input() filtriStatiMezzoObj: Object;
@@ -70,16 +72,10 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
   private istanteAcquisizionePosizioneMezzo: Date;
 
-  private vociFiltroStatiMezzo: VoceFiltro[] = [];
-  private vociFiltroSedi: VoceFiltro[] = [];
-  private vociFiltroGeneriMezzo: VoceFiltro[] = [];
-  private vociFiltroDestinazioneUso: VoceFiltro[] = [];
 
   subscription = new Subscription();
 
-  constructor(
-    private gestioneFiltriService: GestioneFiltriService,
-    private flottaDispatcherService: FlottaDispatcherService)
+  constructor()
   { 
 
     /*
@@ -135,46 +131,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
     this.mapIconeFonte = new Map(this.defIconeFonte);        
 
-    this.subscription.add(
-      this.flottaDispatcherService.getIstanteUltimoAggiornamento()
-      .subscribe( istante => {
-          this.istanteUltimoAggiornamento = istante; 
-        })
-      );
-        
-    // attende una eventuale modifica dei filtri
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriStatiMezzo()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
-          this.vociFiltroStatiMezzo = vocifiltro;
-        })
-      );   
-    
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriSedi()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
-          this.vociFiltroSedi = vocifiltro;
-        })
-      );   
 
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriGeneriMezzo()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
-          this.vociFiltroGeneriMezzo = vocifiltro;
-        })
-      );   
-
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriDestinazioneUso()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
-          this.vociFiltroDestinazioneUso = vocifiltro;
-        })
-      );   
-    
   }
   /*
   @HostListener("window:resize", [])
@@ -183,10 +140,10 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   }
   */
   ngOnInit() {
-
+/*
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
-
+*/
   }
 
   ngOnChanges() {
@@ -213,12 +170,14 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
     //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
     //console.log('posizioneMezzo ' ,this.posizioneMezzo);
     
+    /*
     if (this.posizioneMezzo != null )
       { this.aggiornaDatiMezzoCorrente(); }
-    
+    */
     if (this.posizioneMezzo.selezionato) 
       { this.seguiMezzo(); }
   }
+
 
   badgeStatoMezzo() : any {
     if (this.posizioneMezzo.infoSO115 != null) {
@@ -255,7 +214,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
     return this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
   }
 
-  
+  /*
   aggiornaDatiMezzoCorrente() {
     //this.defStatoMezzoCorrente = this.mapAlert.get(this.posizioneMezzo.infoSO115.stato);
     if (this.posizioneMezzo.infoSO115 != null) {
@@ -279,7 +238,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
     //if (this.posizioneMezzo.fonte.classeFonte == "") {this.iconaMezzoCorrente = "fa-truck";}
     //console.log(this.badgeStatoMezzoCorrente);
   }
-  
+  */
 
 
   posizioneMezzoSelezionata() : boolean

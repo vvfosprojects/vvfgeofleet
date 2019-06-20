@@ -13,7 +13,11 @@
                     data-toggle="tooltip" 
                     title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
                         <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
-                            [posizioneMezzo]="r"                             
+                            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                            [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
+                            [vociFiltroSedi]="vociFiltroSedi"
+                            [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
+                            [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"                            [posizioneMezzo]="r"                             
                             [isSeguiMezzo]="opzioni.isSeguiMezzo"
                             (mezzoSelezionato)="centraSuMappa($event)"
                             (mezzoSelezionato)="evidenziaSuMappa($event)"
@@ -43,6 +47,11 @@
                                 <!--[filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"-->
                                 <!--[filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"-->                            
                 <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                                [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
+                                [vociFiltroSedi]="vociFiltroSedi"
+                                [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
+                                [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"    
                                 [posizioneMezzo]="r" 
                                 [isSeguiMezzo]="!opzioni.isSeguiMezzo"
                                 (mezzoSelezionato)="centraSuMappa($event)"

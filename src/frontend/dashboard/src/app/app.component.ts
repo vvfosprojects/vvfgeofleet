@@ -71,9 +71,7 @@ export class AppComponent implements OnInit {
 
    
         ngOnDestroy() {
-          //this.timerSubcribe.unsubscribe();
-          //console.log("Destroy timer");
-      
+
         }
 
 

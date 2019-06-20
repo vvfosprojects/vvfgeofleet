@@ -14,6 +14,7 @@ import { Opzioni } from '../shared/model/opzioni.model';
 
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
 
 import { Subscription } from 'rxjs';
 
@@ -38,8 +39,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   public mezzoSelezionato: PosizioneMezzo ;
   //
 
+  public istanteUltimoAggiornamento: Date;
+  public vociFiltroStatiMezzo: VoceFiltro[] = [];
+  public vociFiltroSedi: VoceFiltro[] = [];
+  public vociFiltroGeneriMezzo: VoceFiltro[] = [];
+  public vociFiltroDestinazioneUso: VoceFiltro[] = [];
+  
   private geolocationPosition : Position;
-
 
   private draggedPosizioneMezzo: PosizioneMezzo;
 
@@ -47,7 +53,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
       
     constructor(
       private flottaDispatcherService: FlottaDispatcherService,
-      private gestioneOpzioniService: GestioneOpzioniService
+      private gestioneOpzioniService: GestioneOpzioniService,
+      private gestioneFiltriService: GestioneFiltriService      
     )    
     {
     this.seguiMezziSelezionati = [];
@@ -58,7 +65,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
-      //.debounceTime(3000)
       .subscribe( opt => { 
         this.opzioni.set(opt); })
       );   
@@ -66,40 +72,80 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     
     this.subscription.add(
       this.flottaDispatcherService.getReset()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
           // svuota l'elenco delle posizioni elencate
           this.elencoPosizioni = [];
         })
       );   
-      
+
+    // attende una eventuale modifica dei filtri
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriStatiMezzo()
+      .subscribe( vocifiltro => {
+          //console.log(moment().toDate(),"ElencoPosizioniFlottaComponent - getFiltriStatiMezzo:", vocifiltro);
+          this.vociFiltroStatiMezzo = vocifiltro;
+        })
+      );   
+    
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriSedi()
+      .subscribe( vocifiltro => {
+          //console.log(moment().toDate(),"ElencoPosizioniFlottaComponent - getFiltriSedi:", vocifiltro);
+          this.vociFiltroSedi = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriGeneriMezzo()
+      .subscribe( vocifiltro => {
+          //console.log(moment().toDate(),"ElencoPosizioniFlottaComponent - getFiltriGeneriMezzo:", vocifiltro);
+          this.vociFiltroGeneriMezzo = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriDestinazioneUso()
+      .subscribe( vocifiltro => {
+          //console.log(moment().toDate(),"ElencoPosizioniFlottaComponent - getFiltriDestinazioneUso:", vocifiltro);
+          this.vociFiltroDestinazioneUso = vocifiltro;
+        })
+      );   
+
+    this.subscription.add(
+      this.flottaDispatcherService.getIstanteUltimoAggiornamento()
+      .subscribe( istante => {
+          this.istanteUltimoAggiornamento = istante; 
+        })
+      );
+        
+            
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
-          //console.log("ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni):null;
           this.aggiungiNuovePosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - fine"):null;
         })
       );   
 
     this.subscription.add(
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
-          //console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni):null;
           this.modificaPosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - fine"):null;
         })
       );   
   
     this.subscription.add(
       this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
-          //console.log("ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni):null;
           this.modificaPosizioniFlotta(posizioni);
           this.controllaCentraSuUltimaPosizione();
+          //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - fine"):null;
         })
       );   
 
@@ -205,13 +251,17 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
     if (p.length  > 0) 
     {
       // riordina l'array ricevuto per istanteAcquisizione ascendente
+      /*
       p = p.sort( 
         function(a,b) 
         { var bb : Date = new Date(b.istanteAcquisizione);
           var aa : Date  = new Date(a.istanteAcquisizione);
           return aa>bb ? 1 : aa<bb ? -1 : 0;
         });
-
+      */
+      //
+      // l'array ricevuto è già ordinato per istanteAcquisizione ascendente.
+      //
       // aggiunge le nuove posizioni in cima a quelle visualizzate nella pagina HTML
       // e controlla se la posizione ricevuta è relativa ad un Mezzo da seguire
 
@@ -220,6 +270,14 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         this.controllaMezzoDaSeguire(item);
       } )
 
+      // riordina l'array elencoPosizioni per istanteAcquisizione discendente
+      this.elencoPosizioni = this.elencoPosizioni.sort( 
+        function(a,b) 
+        { var bb : Date = new Date(b.istanteAcquisizione);
+          var aa : Date  = new Date(a.istanteAcquisizione);
+          return aa>bb ? -1 : aa<bb ? 1 : 0;
+        });
+      
       // riordina l'array seguiMezziSelezionati per istanteAcquisizione discendente
       this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
         function(a,b) 
@@ -243,14 +301,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     if (p.length  > 0) 
     {    
+      /*
       // ordina l'array posizioniMezzoModificate per istanteAcquisizione ascendente
       p = p.sort( 
         function(a,b) 
         { var bb : Date = new Date(b.istanteAcquisizione);
           var aa : Date  = new Date(a.istanteAcquisizione);
           return aa>bb ? 1 : aa<bb ? -1 : 0;
-        });    
+        });  
+      */  
     
+      //
+      // l'array ricevuto è già ordinato per istanteAcquisizione ascendente.
+      //
       // modifica nelle posizioni Mostrate quelle con variazioni
       p.forEach( item => { 
           var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
@@ -281,6 +344,14 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         } 
       );
 
+      // riordina l'array elencoPosizioni per istanteAcquisizione discendente
+      this.elencoPosizioni = this.elencoPosizioni.sort( 
+        function(a,b) 
+        { var bb : Date = new Date(b.istanteAcquisizione);
+          var aa : Date  = new Date(a.istanteAcquisizione);
+          return aa>bb ? -1 : aa<bb ? 1 : 0;
+        });
+      
       // riordina l'array seguiMezziSelezionati per istanteAcquisizione discendente
       this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
         function(a,b) 
@@ -293,114 +364,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
         
   }
 
-  /*
-  aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
-    //this.testModalitaCambiata();
-    var p : PosizioneMezzo[];
-    p = nuovePosizioniMezzo.filter(r => r.infoSO115 != null); 
-    if (p.length  > 0) 
-    {
-      // aggiunge le nuove posizioni a quelle visualizzate nella pagina HTML
-      this.elencoPosizioni = this.elencoPosizioni.concat(p);
-
-      // riordina l'array elencoPosizioni per istanteAcquisizione discendente
-      this.elencoPosizioni = this.elencoPosizioni.sort( 
-        function(a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? -1 : aa<bb ? 1 : 0;
-        });
-
-      // ordina l'array nuovePosizioniMezzo per istanteAcquisizione discendente
-      nuovePosizioniMezzo = nuovePosizioniMezzo.sort( 
-        function(a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? -1 : aa<bb ? 1 : 0;
-        });
-
-      // controlla se la posizione ricevuta è relativa ad un Mezzo da seguire
-      nuovePosizioniMezzo.forEach( i => this.controllaMezzoDaSeguire(i));
-
-      // riordina l'array seguiMezziSelezionati per istanteAcquisizione discendente
-      this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
-        function(a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? -1 : aa<bb ? 1 : 0;
-        });
-
-      // 
-
-    }
-
-  }
-  */
-
-  /*
-  modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
-    //this.testModalitaCambiata();
-    var p : PosizioneMezzo[];
-    p = posizioniMezzoModificate.filter(r => r.infoSO115 != null); 
-
-    
-    // ordina l'array posizioniMezzoModificate per istanteAcquisizione discendente
-    p = p.sort( 
-      function(a,b) 
-      { var bb : Date = new Date(b.istanteAcquisizione);
-        var aa : Date  = new Date(a.istanteAcquisizione);
-        return aa>bb ? -1 : aa<bb ? 1 : 0;
-      });
-    
-    
-    // modifica nelle posizioni Mostrate quelle con variazioni
-    p.forEach( item => { 
-      var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
-      if ( v != null) {  
-        // se la posizione ricevuta ha uno stato 'sconosciuto'
-        // modifica solo le informazioni di base, senza modificare quelle relative a SO115 
-        // altrimenti modifica tutte le informazioni
-        if (item.infoSO115.stato != "0")
-          { this.elencoPosizioni[v] = JSON.parse(JSON.stringify(item)); }
-        else
-          { this.elencoPosizioni[v].fonte = item.fonte;
-            //this.elencoPosizioni[v].classiMezzo = item.classiMezzo;
-            this.elencoPosizioni[v].istanteAcquisizione = item.istanteAcquisizione;
-            this.elencoPosizioni[v].istanteArchiviazione = item.istanteArchiviazione;
-            this.elencoPosizioni[v].istanteInvio = item.istanteInvio;
-            this.elencoPosizioni[v].localizzazione = item.localizzazione;
-          }
-
-        // controlla se la posizione ricevuta è relativa ad un Mezzo da seguire
-        this.controllaMezzoDaSeguire(this.elencoPosizioni[v]);
-      }    
-
-
-    } )
-     
-    if (p.length  > 0) 
-    {
-      // riordina l'array elencoPosizioni per istanteAcquisizione discendente
-      this.elencoPosizioni = this.elencoPosizioni.sort( 
-        function(a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? -1 : aa<bb ? 1 : 0;
-        });
-      // riordina l'array seguiMezziSelezionati per istanteAcquisizione discendente
-      this.seguiMezziSelezionati = this.seguiMezziSelezionati.sort( 
-        function(a,b) 
-        { var bb : Date = new Date(b.istanteAcquisizione);
-          var aa : Date  = new Date(a.istanteAcquisizione);
-          return aa>bb ? -1 : aa<bb ? 1 : 0;
-        });
-      
-    }
-        
-  }
-  */
   
- 
   controllaMezzoDaSeguire(p: PosizioneMezzo) {
     var v = this.seguiMezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
     if (v != -1) 

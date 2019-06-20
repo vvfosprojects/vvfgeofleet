@@ -62,7 +62,6 @@ export class PosizioneFlottaService {
   private subjectIstanteUltimoAggiornamento$ = new Subject<Date>();
 
   private subjectReset$ = new Subject<Boolean>();
-  private subjectResetTimer$ = new Subject<Boolean>();
 
   subscription = new Subscription();
   
@@ -71,12 +70,15 @@ export class PosizioneFlottaService {
       private gestioneOpzioniService: GestioneOpzioniService
     ) { 
 
+      // definisce con un timer che si attiverà ogni 9 secondi
+      this.timer = Observable.timer(0,9000).timeout(120000);
 
+      // devono essere vuoti in modo che alla prima esecuzione
+      // venga inviato un reset per rischedulare il timer
       this.parametriGeoFleetWS = new ParametriGeoFleetWS();
-      this.parametriGeoFleetWS.reset();
-
       this.parametriGeoFleetWSprecedenti = new ParametriGeoFleetWS();
-      this.parametriGeoFleetWSprecedenti.reset();
+      //this.parametriGeoFleetWS.reset();
+      //this.parametriGeoFleetWSprecedenti.reset();
 
       this.opzioni = new Opzioni();
 
@@ -88,8 +90,9 @@ export class PosizioneFlottaService {
           // in quanto deve effettuare una nuova estrazione senza limite temporale.
 
 
-          //console.log('PosizioneFlottaService.getParametriGeoFleetWS()', parm);
-          if  (parm.getRichiestaAPI() != this.parametriGeoFleetWS.getRichiestaAPI()
+          //console.log('PosizioneFlottaService.getParametriGeoFleetWS()', parm, this.parametriGeoFleetWS);
+          if  (
+              parm.getRichiestaAPI() != this.parametriGeoFleetWS.getRichiestaAPI()
               || parm.getClassiMezzo() != this.parametriGeoFleetWS.getClassiMezzo()
               || 
                 (this.opzioni.getOnlyMap() && 
@@ -104,9 +107,6 @@ export class PosizioneFlottaService {
             //console.log('PosizioneFlottaService.getParametriGeoFleetWS() - reset');
             this.maxIstanteAcquisizionePrecedente = null; 
             this.subjectReset$.next(true);
-            // Resetta il timer per eseguire immediatamente 
-            // la richiesta al ws prima di attendere il nuovo clock del timer
-            this.subjectResetTimer$.next(true);
 
           }
           this.parametriGeoFleetWSprecedenti.set(this.parametriGeoFleetWS);
@@ -122,10 +122,7 @@ export class PosizioneFlottaService {
       
     }
 
-    public getResetTimer(): Observable<Boolean> {
-      return this.subjectResetTimer$.asObservable();
-    }
-    
+
     public getURL(): Observable<PosizioneMezzo[]> {
 
       this.setIstanteUltimoAggiornamento();
@@ -222,6 +219,7 @@ export class PosizioneFlottaService {
                 e.classiMezzoDepurata = this.classiMezzoDepurata(e);
                 e.descrizionePosizione = e.classiMezzoDepurata.toString() + " " + e.codiceMezzo + " (" + e.sedeMezzo + ")";
                 e.visibile = false;
+
                 let posizioneMezzo = Object.create(PosizioneMezzo.prototype);
                 return Object.assign(posizioneMezzo, e);
 
@@ -240,33 +238,23 @@ export class PosizioneFlottaService {
 
     public getPosizioneFlotta(): Observable<PosizioneMezzo[]> {
 
-        // schedula con un timer che si attiva ogni 9 secondi
-        this.timer = Observable.timer(0,9000).timeout(120000);
-        // subscribe al timer per l'aggiornamento periodico della Situazione flotta
-        this.timerSubcribe = this.timer.subscribe(t => 
-          {
-            this.getURL().subscribe( (r : PosizioneMezzo[]) => {
-              //console.log('PosizioneFlottaService.getPosizioneFlotta() - r',r);
-              this.elencoPosizioni=this.setElencoPosizioni(r);
-              this.subjectPosizioniMezzo$.next(this.elencoPosizioni); 
-              });
-
-          }
-        );
-
-        this.subscription.add( this.getResetTimer().subscribe(
+        // Attende il reset del timer per rischedularlo.
+        // In questo modo se si vuole eseguire immediatamante 
+        // la richiesta al ws prima di attendere il nuovo clock del timer        
+        // basta inviare un reset.
+        this.subscription.add( this.getReset().subscribe(
           (value : Boolean) => {if (value)
           {            
-            console.log("Destroy timer");
-            this.timerSubcribe.unsubscribe();
-            // schedula con un timer che si attiva ogni 9 secondi
-            this.timer = Observable.timer(0,9000).timeout(120000);
+            //console.log("Rischedulazione timer");
+            if (this.timerSubcribe)
+              { this.timerSubcribe.unsubscribe(); }
             
             // subscribe al timer per l'aggiornamento periodico della Situazione flotta
             this.timerSubcribe = this.timer.subscribe(t => 
               {
                 this.getURL().subscribe( (r : PosizioneMezzo[]) => {
                   //console.log('PosizioneFlottaService.getPosizioneFlotta() - r',r);
+
                   this.elencoPosizioni=this.setElencoPosizioni(r);
                   this.subjectPosizioniMezzo$.next(this.elencoPosizioni); 
                   });
@@ -275,8 +263,6 @@ export class PosizioneFlottaService {
             );
             
           }}))
-
-
 
         //console.log('PosizioneFlottaService.getPosizioneFlotta() - subjectPosizioniMezzo$',this.subjectPosizioniMezzo$);
         return this.subjectPosizioniMezzo$.asObservable();
@@ -447,6 +433,7 @@ export class PosizioneFlottaService {
     }
       
     toolTipText(item : PosizioneMezzo) {
+
       var testo : string;
       var opzioniDataOra = {};
       //" (" + this.sedeMezzo(item) + ") del " + 
@@ -461,6 +448,9 @@ export class PosizioneFlottaService {
         testo = testo + " - Intervento " + item.infoSO115.codiceIntervento + " del " +
         new Date(item.infoSO115.dataIntervento).toLocaleDateString() ;
       }
+
+      //(item.codiceMezzo === 'O.19572' ?console.log(moment().toDate(),testo.toString()):null);
+      
       return testo;
     }  
 

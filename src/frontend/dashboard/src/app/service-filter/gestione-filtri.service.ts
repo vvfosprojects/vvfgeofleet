@@ -4,6 +4,8 @@ import { Observable, Subject, of } from "rxjs";
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
+import * as moment from 'moment';
+
 // i Filtri vengono condivisi in tutta l'applicazione
 @Injectable({
   providedIn: 'root'
@@ -466,7 +468,7 @@ export class GestioneFiltriService {
   constructor() {     
       // scatena l'invio dei subject a chi è in ascolto
       var elencoPosizioni : PosizioneMezzo[] = [];
-      this.setupFiltri(elencoPosizioni);
+      //this.setupFiltri(elencoPosizioni);
   }
 
   private setupFiltriStatiMezzo(elencoPosizioni : PosizioneMezzo[]): void {
@@ -500,7 +502,7 @@ export class GestioneFiltriService {
 
     this.vociFiltroSedi = this.vociFiltroSediALL.filter( i =>
       elencoPosizioni.some( iii => 
-        ( iii.sedeMezzo === i.codice ) 
+        ( iii.sedeMezzo === i.codice.toString() ) 
       ));
 
     this.subjectFiltriSedi$.next(this.vociFiltroSedi);
@@ -511,7 +513,7 @@ export class GestioneFiltriService {
     // filtra solo i Generi Mezzo presenti nell'elenco Posizioni
     this.vociFiltroGeneriMezzo = this.vociFiltroGeneriMezzoALL.filter( i =>
       elencoPosizioni.some( iii => 
-        ( iii.classiMezzo.some( cm  => cm === i.codice)) 
+        ( iii.classiMezzo.some( cm  => cm === i.codice.toString())) 
       ));
 
     // aggiungo sempre il genere Mezzo "sconosciuto"
@@ -536,7 +538,7 @@ export class GestioneFiltriService {
     // filtra solo le Destinazioni d'uso presenti nell'elenco Posizioni
     this.vociFiltroDestinazioneUso = this.vociFiltroDestinazioneUsoALL.filter( i =>
       elencoPosizioni.find( iii => 
-        {if ( iii.destinazioneUso === i.codice)
+        {if ( iii.destinazioneUso === i.codice.toString())
           return true; 
           else 
           return false;
@@ -650,6 +652,8 @@ export class GestioneFiltriService {
 
   public setupFiltri(elencoPosizioni : PosizioneMezzo[]): void {
     
+    
+    //console.log(moment().toDate(),"GestioneFiltriService.setupFiltri() - elencoPosizioni", elencoPosizioni);
     this.setupFiltriStatiMezzo(elencoPosizioni);
     this.setupFiltriSedi(elencoPosizioni);
     this.setupFiltriGeneriMezzo(elencoPosizioni);

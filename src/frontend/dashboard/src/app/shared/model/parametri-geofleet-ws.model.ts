@@ -13,8 +13,10 @@ export class ParametriGeoFleetWS {
       if (obj) {
         this.set(obj);
       }
+      /*
       else
         {this.reset();}
+      */
     }    
 
     private defaultAttSecStandard: Number = 259200; // 3 giorni (3 * 24 * 60 * 60)

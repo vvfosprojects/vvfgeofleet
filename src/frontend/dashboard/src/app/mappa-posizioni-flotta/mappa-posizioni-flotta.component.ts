@@ -198,6 +198,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         })
       );   
 
+      this.gestioneParametriService.resetParametriGeoFleetWS();
+
 
    }    
 
