@@ -103,10 +103,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private opzioni: Opzioni;
   private opzioniPrecedenti: Opzioni;
 
+  /*
   private vociFiltroStatiMezzo: VoceFiltro[] = [];
   private vociFiltroSedi: VoceFiltro[] = [];
   private vociFiltroGeneriMezzo: VoceFiltro[] = [];
   private vociFiltroDestinazioneUso: VoceFiltro[] = [];
+  */
   
   subscription = new Subscription();
   
@@ -123,6 +125,14 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     
     // attende una eventuale modifica dei filtri
+    this.subscription.add(
+      this.gestioneFiltriService.getFiltriIsChanged()
+      .subscribe( value => {
+          this.elaboraPosizioniMostrate();
+        })
+      );
+    
+    /*
     this.subscription.add(
       this.gestioneFiltriService.getFiltriStatiMezzo()
       .subscribe( vocifiltro => {
@@ -154,16 +164,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
           this.vociFiltroDestinazioneUso = vocifiltro;
         })
       );
+    */
 
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()
-      //.debounceTime(3000)
       .subscribe( opt => { this.gestisciModificaOpzioni(opt) })
       );   
 
     this.subscription.add(
       this.flottaDispatcherService.getReset()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
           // svuota l'elenco delle posizioni mostrate
           this.elencoPosizioniMostrate = [];
@@ -174,7 +183,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
             
     this.subscription.add(
       this.flottaDispatcherService.getNuovePosizioniFlotta()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
           //console.log("MappaPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni);
           this.aggiungiNuovePosizioniFlotta(posizioni);
@@ -184,7 +192,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     this.subscription.add(
       this.flottaDispatcherService.getPosizioniFlottaStatoModificato()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
           //console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaStatoModificato - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
@@ -194,7 +201,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     this.subscription.add(
       this.flottaDispatcherService.getPosizioniFlottaLocalizzazioneModificata()
-      //.debounceTime(3000)
       .subscribe( posizioni => {
           //console.log("MappaPosizioniFlottaComponent, getPosizioniFlottaLocalizzazioneModificata - posizioni:", posizioni);
           this.modificaPosizioniFlotta(posizioni);
@@ -202,7 +208,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         })
       );   
 
-      this.gestioneParametriService.resetParametriGeoFleetWS();
+    this.gestioneParametriService.resetParametriGeoFleetWS();
 
 
    }    
@@ -282,10 +288,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     */
 }
 
+  
   elaboraPosizioniMostrate() : void{
     this.elencoPosizioniMostrate = this.elencoPosizioni.filter( 
       item => this.posizioneMezzoSelezionata(item));
   }
+  
 
   aggiungiNuovePosizioniFlotta( nuovePosizioniMezzo :PosizioneMezzo[]) {
     var p : PosizioneMezzo[];
@@ -293,8 +301,12 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     if (p.length  > 0) 
     {
       // aggiunge alle posizioni Mostrate quelle Nuove     
-      //this.elencoPosizioni = JSON.parse( JSON.stringify(p));
       this.elencoPosizioni = this.elencoPosizioni.concat(p);      
+      /*
+      this.elencoPosizioniMostrate = this.elencoPosizioniMostrate.concat(
+        nuovePosizioniMezzo.
+          filter(item => this.posizioneMezzoSelezionata(item)));
+      */
     }
     this.elaboraPosizioniMostrate();
     
@@ -307,53 +319,45 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     // modifica nelle posizioni Mostrate quelle con variazioni
     p.forEach( item => { 
       var v = this.elencoPosizioni.findIndex( x => item.codiceMezzo === x.codiceMezzo );
+      //var v = this.elencoPosizioniMostrate.findIndex( x => item.codiceMezzo === x.codiceMezzo );
       //if ( v != null) {  this.elencoPosizioni[v] = item; }    
       
-      if ( v != null ) {  
-        // se la posizione ricevuta ha uno stato 'sconosciuto'
-        // modifica solo le informazioni di base, senza modificare quelle relative a SO115 
-        // altrimenti modifica tutte le informazioni
-        if (item.infoSO115.stato != "0")
-          { 
-            this.elencoPosizioni[v] = item; 
-            /*
-            //console.log("stato ok", this.elencoPosizioni[v] );
-            //this.elencoPosizioni[v] = item; 
-            var vePM = Object.values(this.elencoPosizioni[v]);
-            var vitem = Object.values(item);
-            var trovato : boolean = false;
-            var ii : number = 0;
-            do {
-                if ( vePM[ii] != null && vitem[ii] != null 
-                  && vePM[ii].toString() != vitem[ii].toString() ) 
-                {
-                  //console.log("item cambiato", vePM.length, vePM[ii], vitem[ii], this.elencoPosizioni[v], item );
-                  this.elencoPosizioni[v] = item; 
-                  trovato = true;
-                }
-                ii++;
-            } while ( !trovato && ii < vePM.length)
-            */
+      if ( v != -1 ) {  
+        // se la posizione modificata è stata trovata
+        if (this.posizioneMezzoSelezionata(this.elencoPosizioni[v]))
+        {
 
-          }
+          // se la posizione ricevuta ha uno stato 'sconosciuto'
+          // modifica solo le informazioni di base, senza modificare quelle relative a SO115 
+          // altrimenti modifica tutte le informazioni
+          if (item.infoSO115.stato != "0")
+            { 
+              this.elencoPosizioni[v] = item; 
+            }
+          else
+            { //console.log("stato 0", this.elencoPosizioni[v] );
+              //console.log(this.elencoPosizioni[v].infoSO115.stato );
+              this.elencoPosizioni[v].toolTipText = item.toolTipText;
+              this.elencoPosizioni[v].fonte = item.fonte;
+              //this.elencoPosizioni[v].classiMezzo = item.classiMezzo;
+              this.elencoPosizioni[v].istanteAcquisizione = item.istanteAcquisizione;
+              this.elencoPosizioni[v].istanteArchiviazione = item.istanteArchiviazione;
+              this.elencoPosizioni[v].istanteInvio = item.istanteInvio;
+              this.elencoPosizioni[v].localizzazione = item.localizzazione;
+
+            }
+        }
+        /*
         else
-          { //console.log("stato 0", this.elencoPosizioni[v] );
-            //console.log(this.elencoPosizioni[v].infoSO115.stato );
-            this.elencoPosizioni[v].toolTipText = item.toolTipText;
-            this.elencoPosizioni[v].fonte = item.fonte;
-            //this.elencoPosizioni[v].classiMezzo = item.classiMezzo;
-            this.elencoPosizioni[v].istanteAcquisizione = item.istanteAcquisizione;
-            this.elencoPosizioni[v].istanteArchiviazione = item.istanteArchiviazione;
-            this.elencoPosizioni[v].istanteInvio = item.istanteInvio;
-            this.elencoPosizioni[v].localizzazione = item.localizzazione;
-
-          }
+        // altrimenti la rimuove
+        { this.elencoPosizioniMostrate.slice(v,1); }
+        */
       }    
 
     } )
     this.elaboraPosizioniMostrate();
   }
-     
+
 
 
   markerIconUrl(m: PosizioneMezzo) {
@@ -446,65 +450,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     if (p.infoSO115 != null) 
     {
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
-        r = (r? true:
-          (
-            this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
-            some(filtro => filtro.codice === p.infoSO115.stato )
-            && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
-            some(filtro => filtro.codice === p.sedeMezzo )
-            && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
-            some(filtro => p.classiMezzo.some( item => item === filtro.codice))
-            && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
-            some(filtro => filtro.codice === p.destinazioneUso )
-            )          
-        );          
-        //r = (r? true: p.visibile);
-
-        /*
-        r = (r? true: this.filtriStatiMezzo.
-          some(filtro => filtro === p.infoSO115.stato )
-          && 
-          this.filtriSedi.
-          some(filtro => filtro === p.sedeMezzo )
-          && this.filtriGeneriMezzo.
-          some(filtro => p.classiMezzo.some( item => item === filtro))
-          && this.filtriDestinazioneUso.
-          some(filtro =>filtro === p.destinazioneUso )
-          );        
-        */
-        
-        /*
-        r = (r? true: 
-              ( (this.filtriStatiMezzoObj[p.infoSO115.stato] == p.infoSO115.stato)
-              && 
-              (this.filtriSediObj[p.sedeMezzo] == p.sedeMezzo)
-              && 
-              p.classiMezzoDepurata.
-                some( gm => this.filtriGeneriMezzoObj[gm] == gm )
-              && 
-              this.filtriDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
-            );
-        */
-        /*
-        var r : boolean = 
-        (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
-          this.filtriStatiMezzo.
-            some(filtro => filtro === p.infoSO115.stato))
-        && 
-        (this.filtriSedi.length === this.filtriSediCardinalita||
-          this.filtriSedi.
-            some(filtro => filtro === p.sedeMezzo))
-        && 
-        (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
-          this.filtriGeneriMezzo.
-            some(filtro => p.classiMezzo[1] === filtro))
-        ;
-        */
-
-
-
-        //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
-
+        r = (r? true: this.gestioneFiltriService.posizioneMezzoSelezionata(p));
     } 
 
     return r;

@@ -464,7 +464,8 @@ export class GestioneFiltriService {
     private subjectFiltriSedi$ = new Subject<VoceFiltro[]>();
     private subjectFiltriGeneriMezzo$ = new Subject<VoceFiltro[]>();
     private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
-    
+    private subjectFiltriIsChanged$ = new Subject<Boolean>();
+
   constructor() {     
       // scatena l'invio dei subject a chi è in ascolto
       var elencoPosizioni : PosizioneMezzo[] = [];
@@ -494,6 +495,7 @@ export class GestioneFiltriService {
       elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
 
     this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+    this.subjectFiltriIsChanged$.next(true);
   }
 
   private setupFiltriSedi(elencoPosizioni : PosizioneMezzo[]): void {
@@ -506,6 +508,7 @@ export class GestioneFiltriService {
       ));
 
     this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+    this.subjectFiltriIsChanged$.next(true);
   }
   
   private setupFiltriGeneriMezzo(elencoPosizioni : PosizioneMezzo[]): void {
@@ -531,6 +534,7 @@ export class GestioneFiltriService {
     }
 
     this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
+    this.subjectFiltriIsChanged$.next(true);
   }
   
   private setupFiltriDestinazioneUso(elencoPosizioni : PosizioneMezzo[]): void {
@@ -547,6 +551,7 @@ export class GestioneFiltriService {
              
 
     this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
+    this.subjectFiltriIsChanged$.next(true);
 
   }
   
@@ -575,6 +580,7 @@ export class GestioneFiltriService {
       });
 
     this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+    this.subjectFiltriIsChanged$.next(true);
       
   }
 
@@ -593,6 +599,7 @@ export class GestioneFiltriService {
       });
     
     this.subjectFiltriSedi$.next(this.vociFiltroSedi);
+    this.subjectFiltriIsChanged$.next(true);
         
   }
 
@@ -612,7 +619,7 @@ export class GestioneFiltriService {
       });
 
     this.subjectFiltriGeneriMezzo$.next(this.vociFiltroGeneriMezzo);
-      
+    this.subjectFiltriIsChanged$.next(true);
   }
 
   public setVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
@@ -630,7 +637,14 @@ export class GestioneFiltriService {
       });
 
     this.subjectFiltriDestinazioneUso$.next(this.vociFiltroDestinazioneUso);
-      
+    this.subjectFiltriIsChanged$.next(true);
+    
+  }
+
+  
+
+  public getFiltriIsChanged(): Observable<Boolean> {
+    return this.subjectFiltriIsChanged$.asObservable();
   }
 
   public getFiltriStatiMezzo(): Observable<VoceFiltro[]> {
@@ -726,7 +740,76 @@ export class GestioneFiltriService {
     //}
 
   }
-  
-  
 
+  posizioneMezzoSelezionata(p : PosizioneMezzo) : boolean { 
+
+    var r : boolean = false;
+
+    if (p.infoSO115 != null) 
+    {
+        r = (r? true:
+          (
+            this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.infoSO115.stato )
+            && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.sedeMezzo )
+            && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
+            some(filtro => p.classiMezzo.some( item => item === filtro.codice))
+            && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
+            some(filtro => filtro.codice === p.destinazioneUso )
+            )          
+        );          
+        //r = (r? true: p.visibile);
+
+        /*
+        r = (r? true: this.filtriStatiMezzo.
+          some(filtro => filtro === p.infoSO115.stato )
+          && 
+          this.filtriSedi.
+          some(filtro => filtro === p.sedeMezzo )
+          && this.filtriGeneriMezzo.
+          some(filtro => p.classiMezzo.some( item => item === filtro))
+          && this.filtriDestinazioneUso.
+          some(filtro =>filtro === p.destinazioneUso )
+          );        
+        */
+        
+        /*
+        r = (r? true: 
+              ( (this.filtriStatiMezzoObj[p.infoSO115.stato] == p.infoSO115.stato)
+              && 
+              (this.filtriSediObj[p.sedeMezzo] == p.sedeMezzo)
+              && 
+              p.classiMezzoDepurata.
+                some( gm => this.filtriGeneriMezzoObj[gm] == gm )
+              && 
+              this.filtriDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
+            );
+        */
+        /*
+        var r : boolean = 
+        (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
+          this.filtriStatiMezzo.
+            some(filtro => filtro === p.infoSO115.stato))
+        && 
+        (this.filtriSedi.length === this.filtriSediCardinalita||
+          this.filtriSedi.
+            some(filtro => filtro === p.sedeMezzo))
+        && 
+        (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
+          this.filtriGeneriMezzo.
+            some(filtro => p.classiMezzo[1] === filtro))
+        ;
+        */
+
+
+
+        //some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro));
+
+    } 
+
+    return r;
+      
+  }
+  
 }
