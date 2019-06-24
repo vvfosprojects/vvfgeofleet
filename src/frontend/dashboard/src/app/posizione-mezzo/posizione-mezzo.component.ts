@@ -10,6 +10,8 @@ import * as moment from 'moment';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
+import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+
 //import { EventEmitter } from 'events';
 
 //selector: '[app-posizione-mezzo]',
@@ -29,10 +31,14 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   @Input() isSeguiMezzo: boolean ;
 
   @Input() istanteUltimoAggiornamento: Date;
+  @Input() istanteModificaFiltri: Date;
+
+  /*
   @Input() vociFiltroStatiMezzo: VoceFiltro[] = [];
   @Input() vociFiltroSedi: VoceFiltro[] = [];
   @Input() vociFiltroGeneriMezzo: VoceFiltro[] = [];
   @Input() vociFiltroDestinazioneUso: VoceFiltro[] = [];
+  */
     
   /*
   @Input() filtriStatiMezzo: string[] = [];
@@ -75,7 +81,8 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
   subscription = new Subscription();
 
-  constructor()
+  constructor(private gestioneFiltriService: GestioneFiltriService    
+  )
   { 
 
     /*
@@ -240,7 +247,14 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   }
   */
 
+  posizioneMezzoSelezionata() : boolean
+  { 
+   var r = this.isSeguiMezzo ||
+   (this.gestioneFiltriService.posizioneMezzoSelezionata(this.posizioneMezzo));
+   return r;
+  }
 
+  /*
   posizioneMezzoSelezionata() : boolean
   { 
     var r = this.isSeguiMezzo ||
@@ -258,6 +272,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
     return r;
     
   }
+  */
   /*
   posizioneMezzoSelezionata() { 
     return ( this.isSeguiMezzo ||

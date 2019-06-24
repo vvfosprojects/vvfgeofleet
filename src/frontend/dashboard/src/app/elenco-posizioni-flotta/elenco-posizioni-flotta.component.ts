@@ -40,10 +40,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
   //
 
   public istanteUltimoAggiornamento: Date;
+  public istanteModificaFiltri : Date;
+  /*
   public vociFiltroStatiMezzo: VoceFiltro[] = [];
   public vociFiltroSedi: VoceFiltro[] = [];
   public vociFiltroGeneriMezzo: VoceFiltro[] = [];
   public vociFiltroDestinazioneUso: VoceFiltro[] = [];
+  */
   
   private geolocationPosition : Position;
 
@@ -80,6 +83,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
 
     // attende una eventuale modifica dei filtri
     this.subscription.add(
+      this.gestioneFiltriService.getFiltriIsChanged()
+      .subscribe( value => {
+          this.istanteModificaFiltri = moment().toDate();
+        })
+      );
+    
+    /*
+    // attende una eventuale modifica dei filtri
+    this.subscription.add(
       this.gestioneFiltriService.getFiltriStatiMezzo()
       .subscribe( vocifiltro => {
           //console.log(moment().toDate(),"ElencoPosizioniFlottaComponent - getFiltriStatiMezzo:", vocifiltro);
@@ -110,6 +122,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit {
           this.vociFiltroDestinazioneUso = vocifiltro;
         })
       );   
+    */
 
     this.subscription.add(
       this.flottaDispatcherService.getIstanteUltimoAggiornamento()

@@ -9,15 +9,19 @@
             <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
                 <div class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">
                 <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
+                            <!--
+                            [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
+                            [vociFiltroSedi]="vociFiltroSedi"
+                            [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
+                            [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"                            [posizioneMezzo]="r"                             
+                            -->
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
                     title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
                         <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
                             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                            [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
-                            [vociFiltroSedi]="vociFiltroSedi"
-                            [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
-                            [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"                            [posizioneMezzo]="r"                             
+                            [istanteModificaFiltri]="istanteModificaFiltri"
+                            [posizioneMezzo]="r" 
                             [isSeguiMezzo]="true"
                             (mezzoSelezionato)="centraSuMappa($event)"
                             (mezzoSelezionato)="evidenziaSuMappa($event)"
@@ -46,12 +50,15 @@
                                 <!--[filtriSediCardinalita]="vociFiltroSedi.length"-->
                                 <!--[filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"-->
                                 <!--[filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"-->                            
-                <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
-                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                                <!--
                                 [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
                                 [vociFiltroSedi]="vociFiltroSedi"
                                 [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
-                                [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"    
+                                [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"
+                                -->
+                    <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
+                                [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
+                                [istanteModificaFiltri]="istanteModificaFiltri"
                                 [posizioneMezzo]="r" 
                                 [isSeguiMezzo]="isSeguiMezzo(r)"
                                 (mezzoSelezionato)="centraSuMappa($event)"
@@ -60,8 +67,8 @@
                                 pDroppable="elencoPosizioni" pDraggable="elencoPosizioni" 
                                 (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"                                
                                 (onDrop)="seguiMezzoDrop($event)"                                
-                                ></app-posizione-mezzo>
-                    </div>
+                    ></app-posizione-mezzo>
+                </div>
             </div>                
             </p-accordionTab>
             <p-accordionTab header="Filtri">
