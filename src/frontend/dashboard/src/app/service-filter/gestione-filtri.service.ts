@@ -4,6 +4,7 @@ import { Observable, Subject, of } from "rxjs";
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
+
 import * as moment from 'moment';
 
 // i Filtri vengono condivisi in tutta l'applicazione
@@ -467,16 +468,18 @@ export class GestioneFiltriService {
     private subjectFiltriDestinazioneUso$ = new Subject<VoceFiltro[]>();
     private subjectFiltriIsChanged$ = new Subject<Boolean>();
 
+
+  
   constructor() {     
       // scatena l'invio dei subject a chi è in ascolto
-      var elencoPosizioni : PosizioneMezzo[] = [];
+      //var elencoPosizioni : PosizioneMezzo[] = [];
       //this.setupFiltri(elencoPosizioni);
+  
   }
 
-  private setupFiltriStatiMezzo(elencoPosizioni : PosizioneMezzo[]): void {
-    // elabora solo le posizioni su cui sono disponibili le info di SO115
-    elencoPosizioni = elencoPosizioni.filter(r => r.infoSO115 != null);
-  
+
+  public calcolcaCardinalitaStatiMezzo(elencoPosizioni : PosizioneMezzo[], pushNext: Boolean): void {
+    
     // calcola la cardinalità per tutti gli Stati del Mezzo, se non sono presenti nell'elenco Posizioni, sarà 0
     this.vociFiltroStatiMezzo.find(v => v.codice === "0").cardinalita = 
       elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("0") === 0).length;
@@ -494,8 +497,22 @@ export class GestioneFiltriService {
       elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("6") === 0).length;
     this.vociFiltroStatiMezzo.find(v => v.codice === "7").cardinalita = 
       elencoPosizioni.filter(r =>  r.infoSO115.stato.localeCompare("7") === 0).length;
+    
+    if (pushNext) {
+      this.subjectFiltriStatiMezzo$.next(this.vociFiltroStatiMezzo);
+    }
+}
 
-    this.setVisibleStatiMezzoObj(this.vociFiltroStatiMezzo.
+  private setupFiltriStatiMezzo(elencoPosizioni : PosizioneMezzo[]): void {
+    // elabora solo le posizioni su cui sono disponibili le info di SO115
+    elencoPosizioni = elencoPosizioni.filter(r => r.infoSO115 != null);
+
+    //this.calcolcaCardinalitaStatiMezzo(elencoPosizioni, false);
+    this.calcolcaCardinalitaStatiMezzo(elencoPosizioni.filter( item => 
+      this.posizioneMezzoSelezionataPerCardinalitaStati(item)), false);
+    
+    
+      this.setVisibleStatiMezzoObj(this.vociFiltroStatiMezzo.
       filter(v => v.selezionato).
       map(item => 
       (item.codice).toString()));
@@ -606,15 +623,6 @@ export class GestioneFiltriService {
   }
 
   public setVisibleStatiMezzo(vociFiltroSelezionate : String[]): void {
-    /*
-    this.filtriStatiMezzoObj = undefined;  
-    this.filtriStatiMezzoObj = new Object();  
-    this.filtriStatiMezzo = this.vociFiltroStatiMezzo
-    .filter(v => v.selezionato)
-    .map(v => (v.codice).toString())
-    ;
-    this.filtriStatiMezzo.forEach( item => { this.filtriStatiMezzoObj[item] = item; } ); 
-    */
 
     // azzera le selezioni precedenti
     //
@@ -637,15 +645,7 @@ export class GestioneFiltriService {
   }
 
   public setVisibleSedi(vociFiltroSelezionate : String[]): void {
-    /*
-    this.filtriSediObj = undefined;  
-    this.filtriSediObj = new Object();  
-    this.filtriSedi = this.vociFiltroSedi
-    .filter(v => v.selezionato)
-    .map(v => (v.codice).toString())
-    ;
-    this.filtriSedi.forEach( item => { this.filtriSediObj[item] = item; } );    
-    */
+
     vociFiltroSelezionate.forEach( ii => { 
       this.vociFiltroSedi.find( item => item.codice == ii).selezionato = true;
       });
@@ -663,16 +663,7 @@ export class GestioneFiltriService {
   }
 
   public setVisibleGeneriMezzo(vociFiltroSelezionate : String[]): void {
-    /*
-    this.filtriGeneriMezzoObj = undefined;
-    this.filtriGeneriMezzoObj = new Object();
-    this.filtriGeneriMezzo = this.vociFiltroGeneriMezzo
-    .filter(v => v.selezionato)
-    .map(v => (v.codice).toString())
-    ;
-    this.filtriGeneriMezzo.forEach( item => { this.filtriGeneriMezzoObj[item]=item; } );
-    */
-   
+  
     vociFiltroSelezionate.forEach( ii => { 
       this.vociFiltroGeneriMezzo.find( item => item.codice == ii).selezionato = true;
       });
@@ -687,15 +678,7 @@ export class GestioneFiltriService {
   }
 
   public setVisibleDestinazioneUso(vociFiltroSelezionate : String[]): void {
-    /*
-    this.filtriDestinazioneUsoObj = undefined;      
-    this.filtriDestinazioneUsoObj = new Object();  
-    this.filtriDestinazioneUso = this.vociFiltroDestinazioneUso
-    .filter(v => v.selezionato)
-    .map(v => (v.codice).toString())
-    ;
-    this.filtriDestinazioneUso.forEach( item => { this.filtriDestinazioneUsoObj[item]=item; } );      
-    */
+
     vociFiltroSelezionate.forEach( ii => { 
       this.vociFiltroDestinazioneUso.find( item => item.codice == ii).selezionato = true;
       });
@@ -747,30 +730,24 @@ export class GestioneFiltriService {
 
   }
    
-    /*
-    var statiMezzo : string[] = [ "0", "1", "2", "3", "4", "5", "6"];
-
-    this.vociFiltroStatiMezzo = Object.keys(statiMezzo).map(desc => new VoceFiltro(desc, desc, statiMezzo[desc]));
-    */
-
 
     /*
-    l'ipotesi di creare un altro vettore aggiungendo la proprietà "visible" 
+    l'ipotesi di creare un altro array aggiungendo la proprietà "visible" 
     per tutti gli elementi, e di impostarla in base allo stato dei filtri selezionato 
     (true/false) si è rivelata una soluzione molto lenta e quindi abbandonata
 
     //this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni;
 
 
-        import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
+    import { PosizioneMezzo } from '../posizione-mezzo/posizione-mezzo.model';
 
-        export class PosizioneMezzoFiltrata {
-            constructor (
-                public posizioneMezzo:PosizioneMezzo,       
-                public visible:boolean
-            ) {}
-            
-            }
+    export class PosizioneMezzoFiltrata {
+        constructor (
+            public posizioneMezzo:PosizioneMezzo,       
+            public visible:boolean
+        ) {}
+        
+        }
 
 
     this.elencoPosizioniMezzoFiltrate = this.elencoPosizioni.map( 
@@ -813,6 +790,34 @@ export class GestioneFiltriService {
 
 
   // metodo che restituisce se una posizione risulta selezionata in 
+  // base ai filtri applicati, ai fini del calcolo della cardinalità 
+  // degli stati mezzo
+  posizioneMezzoSelezionataPerCardinalitaStati(p : PosizioneMezzo) : boolean { 
+
+    var r : boolean = false;
+
+    if (p.infoSO115 != null
+      && this.vociFiltroSediObj != null
+      && this.vociFiltroGeneriMezzoObj != null
+      && this.vociFiltroDestinazioneUsoObj != null
+    )  
+    {
+      r = (r? true: 
+        ( (this.vociFiltroSediObj[p.sedeMezzo] == p.sedeMezzo)
+        && 
+        p.classiMezzoDepurata.
+          some( gm => this.vociFiltroGeneriMezzoObj[gm] == gm )
+        && 
+        this.vociFiltroDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
+      );
+  
+
+    } 
+
+    return r;    
+  }
+
+  // metodo che restituisce se una posizione risulta selezionata in 
   // base ai filtri applicati
   posizioneMezzoSelezionata(p : PosizioneMezzo) : boolean { 
 
@@ -852,22 +857,6 @@ export class GestioneFiltriService {
               this.vociFiltroDestinazioneUsoObj[p.destinazioneUso] == p.destinazioneUso)       
             );
         
-        /*
-        var r : boolean = 
-        (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
-          this.filtriStatiMezzo.
-            some(filtro => filtro === p.infoSO115.stato))
-        && 
-        (this.filtriSedi.length === this.filtriSediCardinalita||
-          this.filtriSedi.
-            some(filtro => filtro === p.sedeMezzo))
-        && 
-        (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
-          this.filtriGeneriMezzo.
-            some(filtro => p.classiMezzo[1] === filtro))
-        ;
-        */
-
 
     } 
 

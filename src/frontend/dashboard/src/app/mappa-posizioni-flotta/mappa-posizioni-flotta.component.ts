@@ -51,29 +51,10 @@ import { Inject, HostListener } from "@angular/core";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  
-  /*
-  @Input() filtriStatiMezzo: string[] = [];
-  @Input() filtriSedi: string[] = [];
-  @Input() filtriGeneriMezzo: string[] = [];
-  @Input() filtriDestinazioneUso: string[] = [];
-  */
-
-  /*
-  @Input() filtriStatiMezzoObj: Object;
-  @Input() filtriSediObj: Object;
-  @Input() filtriGeneriMezzoObj : Object ;
-  @Input() filtriDestinazioneUsoObj: Object;
- 
-  @Input() filtriStatiMezzoCardinalita: number ;
-  @Input() filtriSediCardinalita: number ;
-  @Input() filtriGeneriMezzoCardinalita: number ;
-  @Input() filtriDestinazioneUsoCardinalita: number;
-  */
-
   @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
   @Input() mezzoSelezionato: PosizioneMezzo ;
-  
+  @Input() onlySelected: boolean ;
+    
   public elencoPosizioniMostrate : PosizioneMezzo[] = [];
 
   private elencoPosizioni : PosizioneMezzo[] = [];
@@ -99,17 +80,11 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private areaChangedDebounceTime = new Subject();
 
-  //public parametriGeoFleetWS : ParametriGeoFleetWS;
+
   private opzioni: Opzioni;
   private opzioniPrecedenti: Opzioni;
 
-  /*
-  private vociFiltroStatiMezzo: VoceFiltro[] = [];
-  private vociFiltroSedi: VoceFiltro[] = [];
-  private vociFiltroGeneriMezzo: VoceFiltro[] = [];
-  private vociFiltroDestinazioneUso: VoceFiltro[] = [];
-  */
-  
+
   subscription = new Subscription();
   
   constructor( 
@@ -444,13 +419,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
 
   posizioneMezzoSelezionata(p : PosizioneMezzo) : boolean { 
+    // mostra tutti i Mezzi selezionati e Mezzi filtrati dai criteri, se non è attiva
+    // l'opzione 'mostra solo i selezionati'
 
     var r : boolean = false;
 
     if (p.infoSO115 != null) 
     {
         r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
-        r = (r? true: this.gestioneFiltriService.posizioneMezzoSelezionata(p));
+        r = (r? true: (!this.onlySelected && this.gestioneFiltriService.posizioneMezzoSelezionata(p)) );
     } 
 
     return r;

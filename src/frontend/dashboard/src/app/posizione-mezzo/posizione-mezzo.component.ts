@@ -23,46 +23,14 @@ import { GestioneFiltriService } from '../service-filter/gestione-filtri.service
 })
 export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
-  
-  //private filtriSediObj : Object;
-  //private filtriGeneriMezzoObj : Object ;
-
   @Input() posizioneMezzo: PosizioneMezzo;
   @Input() isSeguiMezzo: boolean ;
 
   @Input() istanteUltimoAggiornamento: Date;
   @Input() istanteModificaFiltri: Date;
 
-  /*
-  @Input() vociFiltroStatiMezzo: VoceFiltro[] = [];
-  @Input() vociFiltroSedi: VoceFiltro[] = [];
-  @Input() vociFiltroGeneriMezzo: VoceFiltro[] = [];
-  @Input() vociFiltroDestinazioneUso: VoceFiltro[] = [];
-  */
-    
-  /*
-  @Input() filtriStatiMezzo: string[] = [];
-  @Input() filtriSedi: string[] = [];
-  @Input() filtriGeneriMezzo: string[] = [];
-  @Input() filtriDestinazioneUso: string[] = [];
-  */
-
+  @Input() onlySelected: boolean ;
   
- 
-  /*
-  @Input() filtriStatiMezzoObj: Object;
-  @Input() filtriSediObj: Object;
-  @Input() filtriGeneriMezzoObj : Object ;
-  @Input() filtriDestinazioneUsoObj: Object;
-  
-  @Input() filtriStatiMezzoCardinalita: number ;
-  @Input() filtriSediCardinalita: number ;
-  @Input() filtriGeneriMezzoCardinalita: number ;
-  @Input() filtriDestinazioneUsoCardinalita: number;
-  */
- 
- 
-  //@Output() mezzoSelezionato = new EventEmitter<PosizioneMezzo>();
   @Output() mezzoSelezionato = new EventEmitter<Object[]>();
   @Output() mezzoDaSeguire = new EventEmitter<Object[]>();
   private currentItem: PosizioneMezzo;
@@ -84,30 +52,6 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   constructor(private gestioneFiltriService: GestioneFiltriService    
   )
   { 
-
-    /*
-    var arr = [{a:{b:1}},{c:{d:2}}] 
-    var newObj = arr.reduce((a, b) => Object.assign(a, b), {})
-
-    console.log(newObj)
-    */    
-
-    /*
-    const filtriGeneriMezzo = [ "aa", "bb" ];
-    const filtriGeneriMezzoObj = { key: String, value: String};
-
-    filtriGeneriMezzo.forEach( item => filtriGeneriMezzoObj[item] = item );
-    console.log(filtriGeneriMezzoObj["aa"]);
-    */
-
-    /*
-    const filtriGeneriMezzo = [ "aa", "bb" ];
-    this.filtriGeneriMezzoObj = Object.setPrototypeOf(this.filtriGeneriMezzo, this.filtriGeneriMezzoObj);
-    console.log(filtriGeneriMezzoObj[0]);
-    */
-
-    //this.filtriGeneriMezzoObj = Object.setPrototypeOf(this.filtriGeneriMezzo, this.filtriGeneriMezzoObj);
-
 
 
     //constructor(@Inject(DOCUMENT) private doc: Document) {
@@ -138,7 +82,6 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
     this.mapIconeFonte = new Map(this.defIconeFonte);        
 
-
   }
   /*
   @HostListener("window:resize", [])
@@ -147,42 +90,21 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   }
   */
   ngOnInit() {
-/*
-    if (this.posizioneMezzo != null )
-      { this.aggiornaDatiMezzoCorrente(); }
-*/
+    /*
+        if (this.posizioneMezzo != null )
+          { this.aggiornaDatiMezzoCorrente(); }
+    */
   }
 
   ngOnChanges() {
-    //this.istanteUltimoAggiornamento = moment().toDate();
-/*
-    this.filtriSediObj = undefined;  
-    this.filtriGeneriMezzoObj = undefined;
-
-    this.filtriSediObj = new Object();  
-    this.filtriGeneriMezzoObj = new Object( );
-
-    this.filtriSedi.forEach( item => 
-      {
-       this.filtriSediObj[item] = item; 
-      }
-      );      
-    
-    this.filtriGeneriMezzo.forEach( item => 
-      {       
-         this.filtriGeneriMezzoObj[item]=item; 
-      }
-      );
-*/    
-    //console.log('posizioneMezzoSelezionata ' ,this.filtriStatiMezzo);
-    //console.log('posizioneMezzo ' ,this.posizioneMezzo);
-    
     /*
-    if (this.posizioneMezzo != null )
-      { this.aggiornaDatiMezzoCorrente(); }
+        if (this.posizioneMezzo != null )
+          { this.aggiornaDatiMezzoCorrente(); }
     */
+    /*
     if (this.posizioneMezzo.selezionato) 
       { this.seguiMezzo(); }
+    */
   }
 
 
@@ -216,7 +138,11 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
     return this.defStatoMezzoCorrente[0];
   }
-  
+
+  iconaSelezionato() : any {
+    return (this.isSeguiMezzo)?'fa-tag':'fa-thumb-tack';
+  }
+
   iconaMezzo() : any {
     return this.mapIconeFonte.get(this.posizioneMezzo.fonte.classeFonte);
   }
@@ -249,88 +175,14 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
   posizioneMezzoSelezionata() : boolean
   { 
-   var r = this.isSeguiMezzo ||
-   (this.gestioneFiltriService.posizioneMezzoSelezionata(this.posizioneMezzo));
-   return r;
-  }
-
-  /*
-  posizioneMezzoSelezionata() : boolean
-  { 
+    // mostra tutti i Mezzi selezionati e Mezzi filtrati dai criteri, se non è attiva
+    // l'opzione 'mostra solo i selezionati'
     var r = this.isSeguiMezzo ||
-    (
-    this.vociFiltroStatiMezzo.filter( checked => checked.selezionato === true).
-    some(filtro => filtro.codice === this.posizioneMezzo.infoSO115.stato )
-    && this.vociFiltroSedi.filter( checked => checked.selezionato === true).
-    some(filtro => filtro.codice === this.posizioneMezzo.sedeMezzo )
-    && this.vociFiltroGeneriMezzo.filter( checked => checked.selezionato === true).
-    some(filtro => this.posizioneMezzo.classiMezzo.some( item => item === filtro.codice))
-    && this.vociFiltroDestinazioneUso.filter( checked => checked.selezionato === true).
-    some(filtro => filtro.codice === this.posizioneMezzo.destinazioneUso )
-    );
-
+    (!this.onlySelected && (this.gestioneFiltriService.posizioneMezzoSelezionata(this.posizioneMezzo)));
     return r;
-    
   }
-  */
-  /*
-  posizioneMezzoSelezionata() { 
-    return ( this.isSeguiMezzo ||
-      this.posizioneMezzo.visibile);
-    }
-    */
-
-  /*
-  posizioneMezzoSelezionata() 
-  { 
-    return ( this.isSeguiMezzo ||
-      (this.filtriStatiMezzo.
-          some(filtro => filtro === this.posizioneMezzo.infoSO115.stato)
-      &&       
-      this.filtriSedi.
-          some(filtro => filtro === this.posizioneMezzo.sedeMezzo)
-      &&
-      this.filtriGeneriMezzo.
-          some(filtro => this.posizioneMezzo.classiMezzo.
-            some( gm => gm === filtro))  
-      && this.filtriDestinazioneUso.
-          some(filtro =>filtro === this.posizioneMezzo.destinazioneUso )              
-          )
-        );
-  }
-  */
-  
-      /*
-      ( (this.filtriStatiMezzoObj[this.posizioneMezzo.infoSO115.stato] == this.posizioneMezzo.infoSO115.stato)
-        && 
-        (this.filtriSediObj[this.posizioneMezzo.sedeMezzo] == this.posizioneMezzo.sedeMezzo)
-        && 
-        this.posizioneMezzo.classiMezzoDepurata.
-          some( gm => this.filtriGeneriMezzoObj[gm] == gm )
-        && 
-        this.filtriDestinazioneUsoObj[this.posizioneMezzo.destinazioneUso] == this.posizioneMezzo.destinazioneUso)       
-      );
-      */
 
 
-  /*
-  posizioneMezzoSelezionata() { 
-    return (
-      (this.filtriStatiMezzo.length === this.filtriStatiMezzoCardinalita||
-        this.filtriStatiMezzo.
-          some(filtro => filtro === this.posizioneMezzo.infoSO115.stato))
-      && 
-      (this.filtriSedi.length === this.filtriSediCardinalita||
-        this.filtriSedi.
-          some(filtro => filtro === this.posizioneMezzo.sedeMezzo))
-      && 
-      (this.filtriGeneriMezzo.length === this.filtriGeneriMezzoCardinalita||
-        this.filtriGeneriMezzo.
-          some(filtro => this.posizioneMezzo.classiMezzo[1] === filtro))
-      );
-
-  }
-  */
   
   private mouseIn() {
     this.currentItem = this.posizioneMezzo;
@@ -351,7 +203,12 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
 
   private seguiMezzo() { 
-    this.mezzoDaSeguire.emit([this.posizioneMezzo, "dblclick"] );
+    if (this.isSeguiMezzo) {
+      this.mezzoDaSeguire.emit([this.posizioneMezzo, "rimuovi"] );
+    }
+    else {
+      this.mezzoDaSeguire.emit([this.posizioneMezzo, "aggiungi"] );
+    }
   }
 
 }

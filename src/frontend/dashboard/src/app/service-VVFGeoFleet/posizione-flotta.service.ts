@@ -116,7 +116,15 @@ export class PosizioneFlottaService {
 
       this.subscription.add(
         this.gestioneOpzioniService.getOpzioni()
-        .subscribe( opt => { this.opzioni = opt; })
+        .subscribe( opt => { 
+          //console.log(moment().toDate(),opt.getGgMaxPos(),this.opzioni.getGgMaxPos());
+          if (opt.getGgMaxPos() != this.opzioni.getGgMaxPos() )
+          {             
+            this.maxIstanteAcquisizionePrecedente = null; 
+            this.subjectReset$.next(true);
+          }
+          this.opzioni.set(opt) ;
+        })
       );   
   
       

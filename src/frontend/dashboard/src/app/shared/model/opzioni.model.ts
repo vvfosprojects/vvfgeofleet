@@ -1,5 +1,6 @@
 export class Opzioni {
 
+    private onlySelected: boolean ;
     private centerOnLast: boolean ;
     private centerOnMezzo: boolean ;
     private isSeguiMezzo: boolean ;
@@ -24,9 +25,10 @@ export class Opzioni {
 
     
     public reset(): void { 
+        this.onlySelected = false;
         this.centerOnLast = true; 
         this.centerOnMezzo = false; 
-        this.isSeguiMezzo = true; 
+        this.isSeguiMezzo = false; 
         this.onlyMap = false; 
         this.ggMaxPos = 3; 
         this.startLat = 41.889777; 
@@ -36,6 +38,7 @@ export class Opzioni {
       }  
 
     public set(obj: Opzioni): void {       
+      this.setOnlySelected(obj.getOnlySelected());
       this.setCenterOnLast(obj.getCenterOnLast());
       this.setCenterOnMezzo(obj.getCenterOnMezzo());
       this.setGgMaxPos(obj.getGgMaxPos());
@@ -49,6 +52,12 @@ export class Opzioni {
       this.setUserLon(obj.getUserLon());
     }
 
+
+    public getOnlySelected() : boolean { return this.onlySelected;}
+    public setOnlySelected(value : boolean): void { 
+      this.onlySelected = value; 
+    }
+  
     public getCenterOnLast() : boolean { return this.centerOnLast;}
     public setCenterOnLast(value : boolean): void { 
       this.centerOnLast = value; 

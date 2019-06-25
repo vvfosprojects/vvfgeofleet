@@ -9,29 +9,23 @@
             <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
                 <div class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">
                 <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
-                            <!--
-                            [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
-                            [vociFiltroSedi]="vociFiltroSedi"
-                            [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
-                            [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"                            [posizioneMezzo]="r"                             
-                            -->
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
-                    title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
+                    title="Fai un click sul 'ticket' di un Mezzo quando vuoi terminare l'inseguimento.">
                         <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
                             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                             [istanteModificaFiltri]="istanteModificaFiltri"
                             [posizioneMezzo]="r" 
                             [isSeguiMezzo]="true"
+                            [onlySelected]="true"                            
                             (mezzoSelezionato)="centraSuMappa($event)"
                             (mezzoSelezionato)="evidenziaSuMappa($event)"
-                            (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
+                            (mezzoDaSeguire)="seguiMezzo($event)"
                             pDroppable="seguiMezziSelezionati" pDraggable="seguiMezziSelezionati"
                             (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"
                             (onDrop)="rimuoviSeguiMezzoDrop($event)"
                             ></app-posizione-mezzo>
                     </div>            
-                    <!--</div>-->
                 </div>      
             </p-accordionTab>                                    
             <p-accordionTab header="Posizioni più recenti" [selected]="true">
@@ -40,27 +34,13 @@
                 <!--<div class="area-elenco card card-inverse"-->
                 <div class="area-elenco card card-inverse drag-column drop-column m-0"
                 data-toggle="tooltip" 
-                title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
-                            <!--[istanteUltimoAggiornamento]="istanteUltimoAggiornamento"-->                    
-                                <!--[filtriStatiMezzoObj]="filtriStatiMezzoObj"-->
-                                <!--[filtriSediObj]="filtriSediObj"-->
-                                <!--[filtriGeneriMezzoObj]="filtriGeneriMezzoObj"-->
-                                <!--[filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"-->
-                                <!--[filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"-->
-                                <!--[filtriSediCardinalita]="vociFiltroSedi.length"-->
-                                <!--[filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"-->
-                                <!--[filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"-->                            
-                                <!--
-                                [vociFiltroStatiMezzo]="vociFiltroStatiMezzo"
-                                [vociFiltroSedi]="vociFiltroSedi"
-                                [vociFiltroGeneriMezzo]="vociFiltroGeneriMezzo"
-                                [vociFiltroDestinazioneUso]="vociFiltroDestinazioneUso"
-                                -->
+                title="Fai un click sullo 'spillo' di un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
                     <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                                 [istanteModificaFiltri]="istanteModificaFiltri"
                                 [posizioneMezzo]="r" 
                                 [isSeguiMezzo]="isSeguiMezzo(r)"
+                                [onlySelected]="opzioni.onlySelected"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"
@@ -79,7 +59,11 @@
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                    <app-pannello-opzioni>                            
+                    <app-pannello-opzioni
+                        [aggiorna]="true"
+                        [elencoMezzi]="elencoPosizioni"
+                        [seguiMezziSelezionati]="seguiMezziSelezionati"
+                        (selezioneMezzi)="nuovaSelezioneMezzi($event)">
                     </app-pannello-opzioni>
                 </div>
             </p-accordionTab>
@@ -89,6 +73,7 @@
         <app-mappa-posizioni-flotta            
             [elencoMezziDaSeguire]="seguiMezziSelezionati"
             [mezzoSelezionato]="mezzoSelezionato"
+            [onlySelected]="opzioni.onlySelected"            
         >
         </app-mappa-posizioni-flotta>        
         <!--

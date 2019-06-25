@@ -1,14 +1,13 @@
 
   <!--<div *ngIf="posizioneMezzo.visibile" class="card card-inverse row_text p-1 text-left"-->
 
-    <div *ngIf="posizioneMezzoSelezionata()" class="card card-inverse py-1"
+  <div *ngIf="posizioneMezzoSelezionata()" class="card card-inverse py-1"
     [ngClass]="{    
     'evidence' : isSeguiMezzo, 
     'highlight' : posizioneMezzo==currentItem && !isSeguiMezzo, 
     'not-highlight' : posizioneMezzo!=currentItem && !isSeguiMezzo }"
-    (dblclick)="seguiMezzo()" (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()"
+    (mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()"
     >
-    <!--(mouseover)="mouseIn()" (mouseout)="mouseOut()" (click)="centerOnMap()"-->
 
       <div class="row">
         <div  data-toggle="tooltip" data-html="true" 
@@ -18,9 +17,10 @@
             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 ">   
                 <div class="btn-group btn-group-toggle">
                     <label class="btn-primary-sm p-0" ngbButtonLabel >
-                      <i class="fa fa-thumb-tack"></i>
-                        <!--<i class="fas fa-thumbtack"></i>-->
-                      <input type="checkbox" ngbButton [(ngModel)]="posizioneMezzo.selezionato">
+                      <i class="fa {{iconaSelezionato()}}"></i>
+                      <!--<i class="fas fa-thumbtack"></i>-->
+                      <!--<input type="checkbox" ngbButton [(ngModel)]="posizioneMezzo.selezionato">-->
+                      <input type="checkbox" (click)="seguiMezzo()" >
                     </label>
                 </div>                    
                 <div class="fa fa-building-o pl-1"></div> {{posizioneMezzo.sedeMezzo}}

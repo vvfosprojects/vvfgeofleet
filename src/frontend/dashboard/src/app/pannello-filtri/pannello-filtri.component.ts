@@ -22,14 +22,13 @@ export class PannelloFiltriComponent implements OnInit {
   public vociFiltroDestinazioneUso: VoceFiltro[] = [];
 
   subscription = new Subscription();
-     
+
   constructor( private gestioneFiltriService: GestioneFiltriService
   ) {
 
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriStatiMezzo()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("ElencoPosizioniFlottaComponent, getFiltriStatiMezzo:", vocifiltro);
           this.vociFiltroStatiMezzo = vocifiltro;
@@ -38,7 +37,6 @@ export class PannelloFiltriComponent implements OnInit {
     
     this.subscription.add(
       this.gestioneFiltriService.getFiltriSedi()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("ElencoPosizioniFlottaComponent, getFiltriSedi:", vocifiltro);
           this.vociFiltroSedi = vocifiltro;
@@ -47,7 +45,6 @@ export class PannelloFiltriComponent implements OnInit {
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriGeneriMezzo()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("ElencoPosizioniFlottaComponent, getFiltriGeneriMezzo:", vocifiltro);
           this.vociFiltroGeneriMezzo = vocifiltro;
@@ -56,7 +53,6 @@ export class PannelloFiltriComponent implements OnInit {
 
     this.subscription.add(
       this.gestioneFiltriService.getFiltriDestinazioneUso()
-      //.debounceTime(3000)
       .subscribe( vocifiltro => {
           //console.log("ElencoPosizioniFlottaComponent, getFiltriDestinazioneUso:", vocifiltro);
           this.vociFiltroDestinazioneUso = vocifiltro;
@@ -78,7 +74,6 @@ export class PannelloFiltriComponent implements OnInit {
     //console.log('event: ', event);
     //this.filtriSedi = event;
     this.gestioneFiltriService.setVisibleSedi(event);
-
   }
 
   nuovaSelezioneGeneriMezzo(event) {

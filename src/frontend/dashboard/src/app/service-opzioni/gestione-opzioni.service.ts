@@ -5,6 +5,9 @@ import { Opzioni } from '../shared/model/opzioni.model';
 import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
 
+import * as moment from 'moment';
+
+
 // le opzioni vengono condivise in tutta l'applicazione
 @Injectable({
   providedIn: 'root'
@@ -49,6 +52,17 @@ export class GestioneOpzioniService {
     this.subjectOpzioni$.next(this.opzioni);
   }
 
+  public setOnlySelected(value : boolean): void { 
+    var k = this.opzioniPrecedenti.getOnlySelected();
+    if ( k != value)
+    { 
+      this.opzioni.setOnlySelected(value);
+      this.opzioniPrecedenti.set(this.opzioni);
+      
+      this.subjectOpzioni$.next(this.opzioni);
+    }   
+  }
+
   public setOnlyMap(value : boolean): void { 
     var k = this.opzioniPrecedenti.getOnlyMap();
     if ( k != value)
@@ -73,6 +87,8 @@ export class GestioneOpzioniService {
     // in quanto comporta una nuova richiesta integrale al ws
     // 
     var k = this.opzioniPrecedenti.getGgMaxPos();
+    //console.log(moment().toDate(),k,value);
+
     if ( k != value)
     { 
       this.gestioneParametriService.setAttSec(value*24*60*60);            
