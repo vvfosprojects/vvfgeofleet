@@ -12,7 +12,7 @@
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
                     title="Fai un click sul 'ticket' di un Mezzo quando vuoi terminare l'inseguimento.">
-                        <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
+                        <app-posizione-mezzo *ngFor="let r of mezziSelezionati" 
                             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                             [istanteModificaFiltri]="istanteModificaFiltri"
                             [posizioneMezzo]="r" 
@@ -23,8 +23,8 @@
                             (mezzoDaSeguire)="seguiMezzo($event)"
                             pDroppable="seguiMezziSelezionati" pDraggable="seguiMezziSelezionati"
                             (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"
-                            (onDrop)="rimuoviSeguiMezzoDrop($event)"
-                            ></app-posizione-mezzo>
+                            (onDrop)="rimuoviSeguiMezzoDrop($event)"    
+                        ></app-posizione-mezzo>
                     </div>            
                 </div>      
             </p-accordionTab>                                    
@@ -59,10 +59,8 @@
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <!--[seguiMezziSelezionati]="seguiMezziSelezionati"-->
                     <app-pannello-opzioni
-                        [aggiorna]="true"
-                        [elencoMezzi]="elencoPosizioni"
-                        [seguiMezziSelezionati]="seguiMezziSelezionati"
                         (selezioneMezzi)="nuovaSelezioneMezzi($event)">
                     </app-pannello-opzioni>
                 </div>
@@ -70,8 +68,8 @@
         </p-accordion>
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
+        <!--[elencoMezziDaSeguire]="seguiMezziSelezionati"-->
         <app-mappa-posizioni-flotta            
-            [elencoMezziDaSeguire]="seguiMezziSelezionati"
             [mezzoSelezionato]="mezzoSelezionato"
             [onlySelected]="opzioni.onlySelected"            
         >

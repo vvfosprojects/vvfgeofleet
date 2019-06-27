@@ -31,8 +31,8 @@
             <label>Segui sulla mappa i Mezzi Selezionati</label>
         </div>
         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-1">
-            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.centerOnMezzo"
-            (change)="changeOptSeguiMezzo()"></ui-switch>
+            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.centerOnSelected"
+            (change)="changeCenterOnSelected()"></ui-switch>
         </div>
     </div>
     <div class="row py-1">
@@ -45,7 +45,7 @@
                     [(ngModel)]="seguiMezziSelezionati" filter="true">
             </p-dropdown>            
             -->
-            <div *ngIf="opzioni.getIsSeguiMezzo()">
+            <div *ngIf="opzioni.getCenterOnSelected()">
                 <app-filtro-multi-select-dd 
                     [titolo]="titoloFiltroMezziSelezionati" 
                     [vociFiltro]="vociFiltroMezziSelezionati" 

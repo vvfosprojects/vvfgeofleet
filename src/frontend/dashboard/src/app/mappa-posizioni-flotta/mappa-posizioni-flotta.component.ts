@@ -14,6 +14,7 @@ import { Subject, Observable } from 'rxjs';
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import { Opzioni } from '../shared/model/opzioni.model';
 
+
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 import { GestioneParametriService } from '../service-parametri/gestione-parametri.service';
@@ -51,13 +52,16 @@ import { Inject, HostListener } from "@angular/core";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  @Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
+  //@Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
+
   @Input() mezzoSelezionato: PosizioneMezzo ;
   @Input() onlySelected: boolean ;
     
   public elencoPosizioniMostrate : PosizioneMezzo[] = [];
 
   private elencoPosizioni : PosizioneMezzo[] = [];
+
+  private mezziSelezionati : PosizioneMezzo[] = [] ;
 
 
   timeout : any;
@@ -185,6 +189,15 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     this.gestioneParametriService.resetParametriGeoFleetWS();
 
+    this.subscription.add(
+      this.flottaDispatcherService.getMezziSelezionati()
+      .subscribe( elenco => { this.mezziSelezionati = 
+        JSON.parse(JSON.stringify(elenco));
+
+      //console.log(moment().toDate(), "MappaPosizioniFlottaComponent.getMezziSelezionati() - this.mezziSelezionati",  this.mezziSelezionati);
+      
+      })
+    );      
 
    }    
 
@@ -426,7 +439,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
     if (p.infoSO115 != null) 
     {
-        r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
+        //r = (this.elencoMezziDaSeguire.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
+        r = (this.mezziSelezionati.find( i => i.codiceMezzo === p.codiceMezzo) == null) ? false : true;
         r = (r? true: (!this.onlySelected && this.gestioneFiltriService.posizioneMezzoSelezionata(p)) );
     } 
 

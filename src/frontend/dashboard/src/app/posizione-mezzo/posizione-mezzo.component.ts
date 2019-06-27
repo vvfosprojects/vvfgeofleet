@@ -11,6 +11,7 @@ import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 //import { EventEmitter } from 'events';
 
@@ -49,7 +50,9 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
 
   subscription = new Subscription();
 
-  constructor(private gestioneFiltriService: GestioneFiltriService    
+  constructor(
+    private gestioneFiltriService: GestioneFiltriService,
+    private gestioneOpzioniService: GestioneOpzioniService
   )
   { 
 
@@ -202,6 +205,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   }
 
 
+  
   private seguiMezzo() { 
     if (this.isSeguiMezzo) {
       this.mezzoDaSeguire.emit([this.posizioneMezzo, "rimuovi"] );
@@ -210,5 +214,6 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
       this.mezzoDaSeguire.emit([this.posizioneMezzo, "aggiungi"] );
     }
   }
+  
 
 }

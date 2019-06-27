@@ -1,9 +1,10 @@
 export class Opzioni {
 
-    private onlySelected: boolean ;
     private centerOnLast: boolean ;
-    private centerOnMezzo: boolean ;
-    private isSeguiMezzo: boolean ;
+    private centerOnSelected: boolean ;
+    //private centerOnMezzo: boolean ;
+    //private isSeguiMezzo: boolean ;
+    private onlySelected: boolean ;
     private onlyMap: boolean ;
     private ggMaxPos: number ;
     private startLat: number ;
@@ -25,10 +26,11 @@ export class Opzioni {
 
     
     public reset(): void { 
-        this.onlySelected = false;
         this.centerOnLast = true; 
-        this.centerOnMezzo = false; 
-        this.isSeguiMezzo = false; 
+        this.centerOnSelected = false;
+        //this.centerOnMezzo = false; 
+        //this.isSeguiMezzo = false; 
+        this.onlySelected = false;
         this.onlyMap = false; 
         this.ggMaxPos = 3; 
         this.startLat = 41.889777; 
@@ -40,9 +42,10 @@ export class Opzioni {
     public set(obj: Opzioni): void {       
       this.setOnlySelected(obj.getOnlySelected());
       this.setCenterOnLast(obj.getCenterOnLast());
-      this.setCenterOnMezzo(obj.getCenterOnMezzo());
+      this.setCenterOnSelected(obj.getCenterOnSelected());
+      //this.setCenterOnMezzo(obj.getCenterOnMezzo());
+      //this.setIsSeguiMezzo(obj.getIsSeguiMezzo());
       this.setGgMaxPos(obj.getGgMaxPos());
-      this.setIsSeguiMezzo(obj.getIsSeguiMezzo());
       this.setModalita(obj.getModalita());
       this.setOnlyMap(obj.getOnlyMap());
       this.setStartLat(obj.getStartLat());
@@ -63,16 +66,24 @@ export class Opzioni {
       this.centerOnLast = value; 
     }
   
+
+    public getCenterOnSelected() : boolean { return this.centerOnSelected;}
+    public setCenterOnSelected(value : boolean): void { 
+      this.centerOnSelected = value; 
+    }
+    
+    /*
     public getCenterOnMezzo() : boolean { return this.centerOnMezzo;}
     public setCenterOnMezzo(value : boolean): void { 
       this.centerOnMezzo = value; 
     }
-    
+
     public getIsSeguiMezzo() : boolean { return this.isSeguiMezzo;}
     public setIsSeguiMezzo(value : boolean): void { 
       this.isSeguiMezzo = value; 
     }
-  
+    */
+
     public getOnlyMap() : boolean { return this.onlyMap;}
     public setOnlyMap(value : boolean): void { 
       this.onlyMap = value; 

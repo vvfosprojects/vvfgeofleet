@@ -16,6 +16,7 @@ import { PosizioneFlottaService } from '../service-VVFGeoFleet/posizione-flotta.
 import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flotta.service.fake';
 
 import { GestioneFiltriService } from '../service-filter/gestione-filtri.service';
+import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 
 //import { VoceFiltro } from "../filtri/voce-filtro.model";
 
@@ -30,6 +31,7 @@ export class FlottaDispatcherService {
 
   private istanteUltimoAggiornamento: Date;
 
+  private subjectElencoPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
 
   private subjectNuovePosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
   private subjectPosizioniMezzoStatoModificato$ = new Subject<PosizioneMezzo[]>();
@@ -65,6 +67,10 @@ export class FlottaDispatcherService {
   // copia del dataStore delle posizioni relative all'aggiornamento precedente
   //private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
+  // dataStore dei Mezzi selezionati
+  private mezziSelezionati : PosizioneMezzo[] = [] ;
+  private subjectMezziSelezionati$ = new Subject<PosizioneMezzo[]>();
+  
   subscription = new Subscription();
 
   /*
@@ -78,6 +84,7 @@ export class FlottaDispatcherService {
   constructor(
     private posizioneFlottaService: PosizioneFlottaService,
     private gestioneFiltriService: GestioneFiltriService,
+    private gestioneOpzioniService: GestioneOpzioniService    
   ) { 
 
     //console.log('FlottaDispatcherService.constructor()');
@@ -112,7 +119,11 @@ export class FlottaDispatcherService {
 
   }
 
-
+  public getMezziSelezionati(): Observable<PosizioneMezzo[]> {
+    //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
+    return this.subjectMezziSelezionati$.asObservable();
+  }
+  
   public getReset(): Observable<Boolean> {      
     return this.subjectReset$.asObservable();
   }
@@ -121,7 +132,13 @@ export class FlottaDispatcherService {
   Observable<Date> {
     return this.subjectIstanteUltimoAggiornamento$.asObservable();                
   }  
-
+  
+  public getElencoMezzi():
+  Observable<PosizioneMezzo[]> {
+    //console.log("FlottaDispatcherService.getNuovePosizioniFlotta()", this.subjectNuovePosizioniMezzo$);
+    return this.subjectElencoPosizioniMezzo$.asObservable();
+  }
+  
   public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
     //console.log("FlottaDispatcherService.getNuovePosizioniFlotta()", this.subjectNuovePosizioniMezzo$);
@@ -201,6 +218,8 @@ export class FlottaDispatcherService {
       //console.log(moment().toDate(),"FlottaDispatcherService.elaboraPosizioniRicevute() - elencoPosizioniMostrate", this.elencoPosizioniMostrate);
 
       this.gestioneFiltriService.setupFiltri(this.elencoPosizioniMostrate);
+
+      this.subjectElencoPosizioniMezzo$.next(this.elencoPosizioniMostrate);
 
     }    
 
@@ -362,4 +381,45 @@ export class FlottaDispatcherService {
       return elencoOut;
     }
 
+
+
+    resetMezziSelezionati() {
+      this.mezziSelezionati = [];
+      this.gestioneOpzioniService.setCenterOnSelected(false);
+      this.subjectMezziSelezionati$.next(this.mezziSelezionati);    
+    }
+    
+  
+    addMezziSelezionati(item: PosizioneMezzo) {
+  
+      var pos : PosizioneMezzo ;
+      var k: number;
+      pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
+      if (pos == null) {
+          this.mezziSelezionati = this.mezziSelezionati.concat(item);        
+          this.gestioneOpzioniService.setCenterOnSelected(true);
+      }    
+      
+      //console.log(moment().toDate(), "GestioneOpzioniService.addMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
+      this.subjectMezziSelezionati$.next(this.mezziSelezionati);
+    }
+  
+    removeMezziSelezionati(item: PosizioneMezzo) {
+  
+      let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
+      if (i != -1 )
+      {
+        this.mezziSelezionati.splice(i,1);
+  
+        if (this.mezziSelezionati.length > 0) 
+          {this.gestioneOpzioniService.setCenterOnSelected(true);}
+        else
+          {this.gestioneOpzioniService.setCenterOnSelected(false);}    
+    
+        this.subjectMezziSelezionati$.next(this.mezziSelezionati);
+      }
+      //console.log(moment().toDate(), "GestioneOpzioniService.removeMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
+      
+    }
+        
   }

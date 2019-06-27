@@ -7,6 +7,9 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
+import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
+
+import * as moment from 'moment';
 
 
 @Component({
@@ -14,16 +17,18 @@ import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.serv
   templateUrl: './pannello-opzioni.component.html',
   styleUrls: ['./pannello-opzioni.component.css']
 })
-export class PannelloOpzioniComponent implements OnInit, OnChanges {
 
+//export class PannelloOpzioniComponent implements OnInit, OnChanges {
+export class PannelloOpzioniComponent  {
 
   public opzioni: Opzioni;
 
-
-  @Input() aggiorna: boolean;
-  @Input() elencoMezzi: PosizioneMezzo[] = [];
-  @Input() seguiMezziSelezionati: PosizioneMezzo[] = [];
+  //@Input() elencoMezzi: PosizioneMezzo[] = [];
+  //@Input() seguiMezziSelezionati: PosizioneMezzo[] = [];
   @Output() selezioneMezzi: EventEmitter<Object[]> = new EventEmitter();
+
+  private elencoMezzi: PosizioneMezzo[] = [];
+  private mezziSelezionati: PosizioneMezzo[] = [];
 
   public titoloFiltroMezziSelezionati: string = "Mezzi selezionati";
   public vociFiltroMezziSelezionati: VoceFiltro[] = [];
@@ -31,41 +36,64 @@ export class PannelloOpzioniComponent implements OnInit, OnChanges {
   subscription = new Subscription();
      
   constructor(
-    private gestioneOpzioniService: GestioneOpzioniService
+    private gestioneOpzioniService: GestioneOpzioniService,
+    private flottaDispatcherService: FlottaDispatcherService
   ) { 
-    this.opzioni = new Opzioni();
+      this.opzioni = new Opzioni();
 
-    this.subscription.add(
-      this.gestioneOpzioniService.getOpzioni()
-      .subscribe( opt => { this.opzioni.set(opt); 
-        //console.log("this.opzioni",this.opzioni);
-      })
+      this.subscription.add(
+        this.gestioneOpzioniService.getOpzioni()
+        .subscribe( opt => { this.opzioni.set(opt); 
+          //console.log("this.opzioni",this.opzioni);
+        })
       );   
 
+      this.subscription.add(
+        this.flottaDispatcherService.getMezziSelezionati()
+        .subscribe( elenco => { this.mezziSelezionati = 
+          JSON.parse(JSON.stringify(elenco));
+
+        //console.log(moment().toDate(), "PannelloOpzioniComponent.getMezziSelezionati() - this.mezziSelezionati",  this.mezziSelezionati);
+        
+        })
+      );   
+
+      this.subscription.add(
+        this.flottaDispatcherService.getElencoMezzi()
+        .subscribe( elenco => { this.elencoMezzi = 
+          JSON.parse(JSON.stringify(elenco));
+          this.aggiornaMezzi();
+
+        })
+      );        
     }
 
   nuovaSelezioneMezziSelezionati(event) {
     //console.log('event: ', event);
     this.selezioneMezzi.emit(event);
   } 
-    
+
+  /*
   ngOnInit() {
-    if (this.aggiorna) { this.aggiorna = false;}
+    console.log(moment().toDate(), "PannelloOpzioniComponent.ngOnchanges - this.elencoMezzi",  this.elencoMezzi);
+
     this.aggiornaMezzi();
   }
 
     
   ngOnChanges() {
-    if (this.aggiorna) { this.aggiorna = false;}
+    console.log(moment().toDate(), "PannelloOpzioniComponent.ngOnchanges - this.elencoMezzi",  this.elencoMezzi);
+
     this.aggiornaMezzi();
   }  
+  */
 
   aggiornaMezzi() {
 
     this.vociFiltroMezziSelezionati = [];
     this.vociFiltroMezziSelezionati = this.elencoMezzi.map( 
       item => {
-        var selezionato: boolean = this.seguiMezziSelezionati.find( 
+        var selezionato: boolean = this.mezziSelezionati.find( 
           itemSelezionato => item.codiceMezzo === itemSelezionato.codiceMezzo )?true:false;
 
         var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizionePosizione, 0, 
@@ -73,7 +101,7 @@ export class PannelloOpzioniComponent implements OnInit, OnChanges {
         return voceFiltro;              
       });
 
-    console.log("this.vociFiltroMezziSelezionati", this.elencoMezzi, this.vociFiltroMezziSelezionati);
+    //console.log("PannelloOpzioniComponent.aggiornaMezzi(), mezziSelezionati, vociFiltroMezziSelezionati (solo selezionati)", this.mezziSelezionati, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
 
   }
   //changeOptOnlyMap(e) {
@@ -95,12 +123,20 @@ export class PannelloOpzioniComponent implements OnInit, OnChanges {
   }
 
   changeCenterOnLast() {
-    if (!this.opzioni.getCenterOnMezzo()) 
+    if (!this.opzioni.getCenterOnLast()) 
       this.gestioneOpzioniService.setCenterOnLast(true)
     else 
       this.gestioneOpzioniService.setCenterOnLast(false)    
   }  
 
+  changeCenterOnSelected() {
+    if (!this.opzioni.getCenterOnSelected()) 
+      this.gestioneOpzioniService.setCenterOnSelected(true)
+    else 
+      this.gestioneOpzioniService.setCenterOnSelected(false)    
+  }  
+
+  /*
   changeOptSeguiMezzo() {
     if (!this.opzioni.getIsSeguiMezzo()) 
       this.gestioneOpzioniService.setIsSeguiMezzo(true)
@@ -109,6 +145,7 @@ export class PannelloOpzioniComponent implements OnInit, OnChanges {
       this.gestioneOpzioniService.setIsSeguiMezzo(false)
       //this.seguiMezziSelezionati = []; 
   }
+  */
 
   fineSelezioneGgMaxPos(e) {    
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);
