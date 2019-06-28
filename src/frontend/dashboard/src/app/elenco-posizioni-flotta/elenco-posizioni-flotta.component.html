@@ -5,33 +5,27 @@
 <div class="row h8 mt-0">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 p-1">
         <p-accordion>
-            <p-accordionTab header="Mezzi Seguiti">
+            <p-accordionTab header="Mezzi Selezionati">
             <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
                 <div class="col-xl-12 col-lg-4 col-md-4 col-sm-12 p-1">
                 <!--<div class="area-elenco-mezzi-da-seguire-sticky">-->
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
-                    title="Fai un doppio click su questo Mezzo quando vuoi terminare l'inseguimento.">
-                    <app-posizione-mezzo *ngFor="let r of seguiMezziSelezionati" 
-                            [posizioneMezzo]="r" 
+                    title="Fai un click sul 'ticket' di un Mezzo quando vuoi terminare l'inseguimento.">
+                        <app-posizione-mezzo *ngFor="let r of mezziSelezionati" 
                             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                            [filtriStatiMezzoObj]="filtriStatiMezzoObj"
-                            [filtriSediObj]="filtriSediObj"
-                            [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
-                            [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
-                            [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
-                            [filtriSediCardinalita]="vociFiltroSedi.length"
-                            [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
-                            [isSeguiMezzo]="isSeguiMezzo"
+                            [istanteModificaFiltri]="istanteModificaFiltri"
+                            [posizioneMezzo]="r" 
+                            [isSeguiMezzo]="true"
+                            [onlySelected]="true"                            
                             (mezzoSelezionato)="centraSuMappa($event)"
                             (mezzoSelezionato)="evidenziaSuMappa($event)"
-                            (mezzoDaSeguire)="rimuoviSeguiMezzo($event)"
+                            (mezzoDaSeguire)="seguiMezzo($event)"
                             pDroppable="seguiMezziSelezionati" pDraggable="seguiMezziSelezionati"
                             (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"
-                            (onDrop)="rimuoviSeguiMezzoDrop($event)"
-                            ></app-posizione-mezzo>
+                            (onDrop)="rimuoviSeguiMezzoDrop($event)"    
+                        ></app-posizione-mezzo>
                     </div>            
-                    <!--</div>-->
                 </div>      
             </p-accordionTab>                                    
             <p-accordionTab header="Posizioni più recenti" [selected]="true">
@@ -40,113 +34,44 @@
                 <!--<div class="area-elenco card card-inverse"-->
                 <div class="area-elenco card card-inverse drag-column drop-column m-0"
                 data-toggle="tooltip" 
-                title="Fai un doppio click su un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
-                <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
-                                [posizioneMezzo]="r" 
+                title="Fai un click sullo 'spillo' di un Mezzo dell'elenco se vuoi seguirne gli spostamenti.">
+                    <app-posizione-mezzo *ngFor="let r of elencoPosizioni" 
                                 [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-                                [filtriStatiMezzoObj]="filtriStatiMezzoObj"
-                                [filtriSediObj]="filtriSediObj"
-                                [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
-                                [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
-                                [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
-                                [filtriSediCardinalita]="vociFiltroSedi.length"
-                                [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
-                                [filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"
-                                [isSeguiMezzo]="!isSeguiMezzo"
+                                [istanteModificaFiltri]="istanteModificaFiltri"
+                                [posizioneMezzo]="r" 
+                                [isSeguiMezzo]="isSeguiMezzo(r)"
+                                [onlySelected]="opzioni.onlySelected"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"
                                 pDroppable="elencoPosizioni" pDraggable="elencoPosizioni" 
                                 (onDragStart)="dragStart($event,r)" (onDragEnd)="dragEnd($event)"                                
                                 (onDrop)="seguiMezzoDrop($event)"                                
-                                ></app-posizione-mezzo>
-                    </div>
+                    ></app-posizione-mezzo>
+                </div>
             </div>                
             </p-accordionTab>
             <p-accordionTab header="Filtri">
                     <div>
-                            <app-filtri [titolo]="titoloFiltroStatiMezzo" 
-                            [vociFiltro]="vociFiltroStatiMezzo" 
-                            (nuovaSelezione)="nuovaSelezioneStatiMezzo($event)"></app-filtri>
-                            <app-filtro-multi-select-dd [titolo]="titoloFiltroSedi" 
-                            [vociFiltro]="vociFiltroSedi" 
-                            (nuovaSelezione)="nuovaSelezioneSedi($event)"></app-filtro-multi-select-dd>
-                            <app-filtro-multi-select-dd [titolo]="titoloFiltroGeneriMezzo" 
-                            [vociFiltro]="vociFiltroGeneriMezzo" 
-                            (nuovaSelezione)="nuovaSelezioneGeneriMezzo($event)"></app-filtro-multi-select-dd>
-                            <app-filtro-multi-select-dd [titolo]="titoloFiltroDestinazioneUso" 
-                            [vociFiltro]="vociFiltroDestinazioneUso" 
-                            (nuovaSelezione)="nuovaSelezioneDestinazioneUso($event)"></app-filtro-multi-select-dd>
+                        <app-pannello-filtri>                            
+                        </app-pannello-filtri>
                     </div>
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11">
-                        <label>Estrai solo le posizioni presenti sul riquadro della mappa</label>
-                    </div> 
-                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
-                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="onlyMap"
-                        (change)="changeOptOnlyMap('-')"></ui-switch>            
-                    </div>                 
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-1">
-                        <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
-                    </div>
-                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1">
-                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnLast"></ui-switch>            
-                    </div>
-
-                    <div class="p-2 col-xl-11 col-lg-11 col-md-11 col-sm-11">
-                        <label>Segui un Mezzo sulla mappa</label>
-                    </div>
-                    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1">
-                        <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="centerOnMezzo"
-                        (change)="changeOptSeguiMezzo()"></ui-switch>
-                    </div>
-                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <p-dropdown  [options]="elencoPosizioni" 
-                                [style] ="{minWidth:'20em'}"
-                                disabled = "{{!centerOnMezzo}}"
-                                optionLabel="descrizionePosizione"
-                                [(ngModel)]="seguiMezziSelezionati[0]" filter="true">
-                        </p-dropdown>
-                        
-                    </div>
-                    <div class="p-2 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <label>Estrai le posizioni fino a {{ggMaxPos}} giorni fa</label>
-                    </div>
-                    <div class="p-2">
-                        <p-slider [(ngModel)]="ggMaxPos"
-                                [style]="{'width':'200px'}" [min]="1" [max]="30" [animate]="true"
-                                (onSlideEnd)="fineSelezioneGgMaxPos($event)">
-                        </p-slider>
-                    </div>
+                    <app-pannello-opzioni
+                        (selezioneMezzi)="nuovaSelezioneMezzi($event)">
+                    </app-pannello-opzioni>
                 </div>
             </p-accordionTab>
         </p-accordion>
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
-        <app-mappa-posizioni-flotta
-            [elencoPosizioniDaElaborare]="elencoUltimePosizioni" 
-            [elencoPosizioni]="elencoPosizioni" 
-            [elencoMezziDaSeguire]="seguiMezziSelezionati"
-            [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-            [filtriStatiMezzoObj]="filtriStatiMezzoObj"
-            [filtriSediObj]="filtriSediObj"
-            [filtriGeneriMezzoObj]="filtriGeneriMezzoObj"
-            [filtriDestinazioneUsoObj]="filtriDestinazioneUsoObj"
-            [filtriStatiMezzoCardinalita]="vociFiltroStatiMezzo.length"
-            [filtriSediCardinalita]="vociFiltroSedi.length"
-            [filtriGeneriMezzoCardinalita]="vociFiltroGeneriMezzo.length"
-            [filtriDestinazioneUsoCardinalita]="vociFiltroDestinazioneUso.length"
-            [mapLat]="startLat"
-            [mapLon]="startLon"
-            [mapZoom]="startZoom"
+        <app-mappa-posizioni-flotta            
             [mezzoSelezionato]="mezzoSelezionato"
-            [reset]="reset"
-            [optOnlyMap]="onlyMap"
-            (nuovaSelezioneArea)="selezioneArea($event)"
+            [onlySelected]="opzioni.onlySelected"            
         >
-        </app-mappa-posizioni-flotta>
+        </app-mappa-posizioni-flotta>        
         <!--
         <app-gmaps-posizioni-flotta
             [elencoPosizioni]="elencoPosizioni" 

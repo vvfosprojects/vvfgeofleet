@@ -1,0 +1,60 @@
+<div class="p-2">
+    <div class="row py-1">
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+            <label>Estrai solo le posizioni presenti sul riquadro della mappa</label>
+        </div> 
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-1">
+            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.onlyMap"
+            (change)="changeOptOnlyMap()"></ui-switch>            
+        </div>           
+    </div>      
+    <div class="row py-1">
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+            <label>Mostra solo le posizioni dei Mezzi selezionati</label>
+        </div> 
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-1">
+            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.onlySelected"
+            (change)="changeOptOnlySelected()"></ui-switch>            
+        </div>                 
+    </div>
+    <div class="row py-1">
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-1">
+            <label>Evidenzia sulla mappa l'ultima posizione ricevuta</label>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-1">
+            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.centerOnLast"
+            (change)="changeCenterOnLast()"></ui-switch>            
+        </div>
+    </div>
+    <div class="row py-1">
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10">
+            <label>Segui sulla mappa i Mezzi Selezionati</label>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-1">
+            <ui-switch color="gray" switchColor="white" size="small" [(ngModel)]="opzioni.centerOnSelected"
+            (change)="changeCenterOnSelected()"></ui-switch>
+        </div>
+    </div>
+    <div class="row py-1">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div *ngIf="opzioni.getCenterOnSelected()">
+                <app-filtro-multi-select-dd 
+                    [titolo]="titoloFiltroMezziSelezionati" 
+                    [vociFiltro]="vociFiltroMezziSelezionati" 
+                    (nuovaSelezione)="nuovaSelezioneMezziSelezionati($event)">
+                </app-filtro-multi-select-dd>   
+            </div>    
+        </div>
+    </div>
+    <div class="row py-2">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <label>Estrai le posizioni fino a {{opzioni.ggMaxPos}} giorni fa</label>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <p-slider [(ngModel)]="opzioni.ggMaxPos"
+                    [style]="{'width':'200px'}" [min]="1" [max]="30" [animate]="true"
+                    (onSlideEnd)="fineSelezioneGgMaxPos($event)">
+            </p-slider>
+        </div>
+    </div>
+</div>

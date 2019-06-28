@@ -59,15 +59,15 @@
                   <span class="h8 text-white text-left pt-2 pr-1" style="font-size:80%;">
                   Modalità di visualizzazione:</span> 
                   <div class="btn-group btn-group-toggle text-right " ngbRadioGroup name="radioBasic" 
-                  [(ngModel)]="modalita">
+                  [(ngModel)]="modalita" >
                     <label ngbButtonLabel class="btn-primary btn-sm">
-                      <input ngbButton type="radio" [value]="1"> Comando
+                      <input ngbButton type="radio" [value]="1" (click)="cambiaModalita($event,1)"> Comando
                     </label>
                     <label ngbButtonLabel class="btn-primary btn-sm">
-                      <input ngbButton type="radio" [value]="2"> Direzione
+                      <input ngbButton type="radio" [value]="2" (click)="cambiaModalita($event,2)"> Direzione
                     </label>
                     <label ngbButtonLabel class="btn-primary btn-sm">
-                      <input ngbButton type="radio" [value]="3"> CON
+                      <input ngbButton type="radio" [value]="3" (click)="cambiaModalita($event,3)"> CON
                     </label>
                   </div>
               </div>
@@ -85,17 +85,7 @@
       </div>
   </nav>
   <div class="container-fluid">
-    <app-elenco-posizioni-flotta 
-      [elencoUltimePosizioni]="elencoPosizioniMezzo"
-      [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
-      [maxIstanteAcquisizione]="maxIstanteAcquisizione"
-      [reset]="reset"
-      [startLat]="startLat"
-      [startLon]="startLon" 
-      [startZoom]="startZoom"   
-      [modalita]="modalita"
-      (nuovaSelezioneGgMaxPos)="aggiornaAttSec($event)"
-      (nuovaSelezioneAreaPos)="aggiornaArea($event)">
+    <app-elenco-posizioni-flotta>
     </app-elenco-posizioni-flotta>
   </div>
 </body>
