@@ -31,7 +31,7 @@ export class FlottaDispatcherService {
 
   private istanteUltimoAggiornamento: Date;
 
-  private subjectElencoPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
+  //private subjectElencoPosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
 
   private subjectNuovePosizioniMezzo$ = new Subject<PosizioneMezzo[]>();
   private subjectPosizioniMezzoStatoModificato$ = new Subject<PosizioneMezzo[]>();
@@ -73,12 +73,6 @@ export class FlottaDispatcherService {
   
   subscription = new Subscription();
 
-  /*
-  private vociFiltroStatiMezzo: VoceFiltro[] = [];
-  private vociFiltroSedi: VoceFiltro[] = [];
-  private vociFiltroGeneriMezzo: VoceFiltro[] = [];
-  private vociFiltroDestinazioneUso: VoceFiltro[] = [];
-  */
 
 
   constructor(
@@ -133,11 +127,13 @@ export class FlottaDispatcherService {
     return this.subjectIstanteUltimoAggiornamento$.asObservable();                
   }  
   
+  /*
   public getElencoMezzi():
   Observable<PosizioneMezzo[]> {
     //console.log("FlottaDispatcherService.getNuovePosizioniFlotta()", this.subjectNuovePosizioniMezzo$);
     return this.subjectElencoPosizioniMezzo$.asObservable();
   }
+  */
   
   public getNuovePosizioniFlotta(): 
   Observable<PosizioneMezzo[]> {
@@ -160,7 +156,6 @@ export class FlottaDispatcherService {
   private aggiornaSituazioneFlotta(): void {
 
     this.posizioneFlottaService.getPosizioneFlotta()
-    //.debounceTime(3000)
     .subscribe( posizioni => 
       {
         if (posizioni === null) { return; }
@@ -219,7 +214,7 @@ export class FlottaDispatcherService {
 
       this.gestioneFiltriService.setupFiltri(this.elencoPosizioniMostrate);
 
-      this.subjectElencoPosizioniMezzo$.next(this.elencoPosizioniMostrate);
+      //this.subjectElencoPosizioniMezzo$.next(this.elencoPosizioniMostrate);
 
     }    
 

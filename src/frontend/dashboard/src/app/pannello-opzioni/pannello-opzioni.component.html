@@ -37,14 +37,6 @@
     </div>
     <div class="row py-1">
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-            <!--
-            <p-dropdown  [options]="elencoPosizioni[0]" 
-                    [style] ="{minWidth:'20em'}"
-                    disabled = "{{!centerOnMezzo}}"
-                    optionLabel="descrizionePosizione"
-                    [(ngModel)]="seguiMezziSelezionati" filter="true">
-            </p-dropdown>            
-            -->
             <div *ngIf="opzioni.getCenterOnSelected()">
                 <app-filtro-multi-select-dd 
                     [titolo]="titoloFiltroMezziSelezionati" 

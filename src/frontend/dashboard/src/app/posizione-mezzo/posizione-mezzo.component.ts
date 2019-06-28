@@ -104,10 +104,7 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
         if (this.posizioneMezzo != null )
           { this.aggiornaDatiMezzoCorrente(); }
     */
-    /*
-    if (this.posizioneMezzo.selezionato) 
-      { this.seguiMezzo(); }
-    */
+
   }
 
 

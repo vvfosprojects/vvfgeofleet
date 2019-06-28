@@ -52,8 +52,6 @@ import { Inject, HostListener } from "@angular/core";
 
 export class MappaPosizioniFlottaComponent implements OnInit {
 
-  //@Input() elencoMezziDaSeguire : PosizioneMezzo[] = [];
-
   @Input() mezzoSelezionato: PosizioneMezzo ;
   @Input() onlySelected: boolean ;
     
@@ -111,39 +109,6 @@ export class MappaPosizioniFlottaComponent implements OnInit {
         })
       );
     
-    /*
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriStatiMezzo()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriStatiMezzo:", vocifiltro);
-          this.vociFiltroStatiMezzo = vocifiltro;
-        })
-      );
-    
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriSedi()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriSedi:", vocifiltro);
-          this.vociFiltroSedi = vocifiltro;
-        })
-      );
-
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriGeneriMezzo()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriGeneriMezzo:", vocifiltro);
-          this.vociFiltroGeneriMezzo = vocifiltro;
-        })
-      );
-
-    this.subscription.add(
-      this.gestioneFiltriService.getFiltriDestinazioneUso()
-      .subscribe( vocifiltro => {
-          //console.log("FlottaDispatcherService, getFiltriDestinazioneUso:", vocifiltro);
-          this.vociFiltroDestinazioneUso = vocifiltro;
-        })
-      );
-    */
 
     this.subscription.add(
       this.gestioneOpzioniService.getOpzioni()

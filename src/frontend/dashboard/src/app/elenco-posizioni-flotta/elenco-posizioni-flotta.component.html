@@ -59,7 +59,6 @@
             </p-accordionTab>
             <p-accordionTab header="Opzioni">
                 <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                    <!--[seguiMezziSelezionati]="seguiMezziSelezionati"-->
                     <app-pannello-opzioni
                         (selezioneMezzi)="nuovaSelezioneMezzi($event)">
                     </app-pannello-opzioni>
@@ -68,7 +67,6 @@
         </p-accordion>
     </div>
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
-        <!--[elencoMezziDaSeguire]="seguiMezziSelezionati"-->
         <app-mappa-posizioni-flotta            
             [mezzoSelezionato]="mezzoSelezionato"
             [onlySelected]="opzioni.onlySelected"            

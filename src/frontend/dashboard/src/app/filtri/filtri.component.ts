@@ -15,37 +15,20 @@ export class FiltriComponent implements OnInit {
   
   enable: boolean = true;
   
-  //filtri : Filtri;
-
   constructor() { 
   }
 
   ngOnInit() {
-    //this.filtri = new Filtri( true, true, true, true, true, true, true);
+
   }
   
   private toggleClicked () {
-    /*
-    console.log('statoMezzo1: ' + this.filtri.statoMezzo1);
-    console.log('statoMezzo2: ' + this.filtri.statoMezzo2);
-    console.log('statoMezzo3: ' + this.filtri.statoMezzo3);
-    console.log('statoMezzo4: ' + this.filtri.statoMezzo4);
-    console.log('statoMezzo5: ' + this.filtri.statoMezzo5);
-    console.log('statoMezzo6: ' + this.filtri.statoMezzo6);
-    */
+
   }
 
   public selezione(event, codice) {
     //console.log('event: ' + event);
-    /*
-    console.log('codice: ' + this.vociFiltro[0].codice);
-    console.log('codice: ' + this.vociFiltro[1].codice);
-    console.log('codice: ' + this.vociFiltro[2].codice);
-    console.log('codice: ' + this.vociFiltro[3].codice);
-    console.log('codice: ' + this.vociFiltro[4].codice);
-    console.log('codice: ' + this.vociFiltro[5].codice);
-    */
-    
+
     this.vociFiltro.find(vf => vf.codice === codice).selezionato = event.target.checked;
     // restituisce le sole voci selezionate
     this.nuovaSelezione.emit(
@@ -54,16 +37,7 @@ export class FiltriComponent implements OnInit {
         .map(v => v.codice)
     );
     
-    /*
-    var voceFiltro : VoceFiltro;
-    voceFiltro = this.vociFiltro.find(vf => vf.codice === codice)
-    if (voceFiltro != null) {
-      voceFiltro.selezionato = event.target.checked;
-      // restituisce la sola voce cliccata, chi la riceve dovrà controllare se è stata
-      // selezionata o deselezionata
-      this.nuovaSelezione.emit([voceFiltro]);
-    }
-    */
+
   
   }
 

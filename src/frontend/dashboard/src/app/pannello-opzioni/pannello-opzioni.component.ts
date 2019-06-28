@@ -5,11 +5,13 @@ import { Subscription } from 'rxjs';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
+import { Mezzo } from '../shared/model/mezzo.model';
 
 import { GestioneOpzioniService } from '../service-opzioni/gestione-opzioni.service';
 import { FlottaDispatcherService } from '../service-dispatcher/flotta-dispatcher.service';
 
 import * as moment from 'moment';
+import { isNgTemplate } from '@angular/compiler';
 
 
 @Component({
@@ -27,7 +29,9 @@ export class PannelloOpzioniComponent  {
   //@Input() seguiMezziSelezionati: PosizioneMezzo[] = [];
   @Output() selezioneMezzi: EventEmitter<Object[]> = new EventEmitter();
 
-  private elencoMezzi: PosizioneMezzo[] = [];
+  //private elencoMezzi: PosizioneMezzo[] = [];
+  private elencoMezzi: Mezzo[] = [];
+
   private mezziSelezionati: PosizioneMezzo[] = [];
 
   public titoloFiltroMezziSelezionati: string = "Mezzi selezionati";
@@ -58,14 +62,15 @@ export class PannelloOpzioniComponent  {
         })
       );   
 
-      this.subscription.add(
-        this.flottaDispatcherService.getElencoMezzi()
-        .subscribe( elenco => { this.elencoMezzi = 
-          JSON.parse(JSON.stringify(elenco));
-          this.aggiornaMezzi();
 
-        })
-      );        
+      this.subscription.add(
+        this.flottaDispatcherService.getNuovePosizioniFlotta()
+        .subscribe( posizioni => {
+            //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni):null;
+            this.aggiornaMezzi(posizioni);
+          })
+        );   
+        
     }
 
   nuovaSelezioneMezziSelezionati(event) {
@@ -73,22 +78,12 @@ export class PannelloOpzioniComponent  {
     this.selezioneMezzi.emit(event);
   } 
 
-  /*
-  ngOnInit() {
-    console.log(moment().toDate(), "PannelloOpzioniComponent.ngOnchanges - this.elencoMezzi",  this.elencoMezzi);
 
-    this.aggiornaMezzi();
-  }
+  aggiornaMezzi(posizioni: PosizioneMezzo[]) {
 
-    
-  ngOnChanges() {
-    console.log(moment().toDate(), "PannelloOpzioniComponent.ngOnchanges - this.elencoMezzi",  this.elencoMezzi);
-
-    this.aggiornaMezzi();
-  }  
-  */
-
-  aggiornaMezzi() {
+    this.elencoMezzi = this.elencoMezzi.concat( posizioni.map( item => { 
+      var mezzo = new Mezzo( item.codiceMezzo, item.descrizionePosizione) ;
+      return mezzo;}));
 
     this.vociFiltroMezziSelezionati = [];
     this.vociFiltroMezziSelezionati = this.elencoMezzi.map( 
@@ -96,11 +91,18 @@ export class PannelloOpzioniComponent  {
         var selezionato: boolean = this.mezziSelezionati.find( 
           itemSelezionato => item.codiceMezzo === itemSelezionato.codiceMezzo )?true:false;
 
-        var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizionePosizione, 0, 
+        var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
           selezionato, "", "badge-info", "");
         return voceFiltro;              
       });
 
+    // riordina l'array vociFiltroMezziSelezionati per Descrizione ascendente
+    this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.sort( 
+      function(a,b) 
+      { return a.descrizione>b.descrizione ? 1 : a.descrizione<b.descrizione ? -1 : 0;
+      });
+    
+    
     //console.log("PannelloOpzioniComponent.aggiornaMezzi(), mezziSelezionati, vociFiltroMezziSelezionati (solo selezionati)", this.mezziSelezionati, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
 
   }
@@ -135,17 +137,6 @@ export class PannelloOpzioniComponent  {
     else 
       this.gestioneOpzioniService.setCenterOnSelected(false)    
   }  
-
-  /*
-  changeOptSeguiMezzo() {
-    if (!this.opzioni.getIsSeguiMezzo()) 
-      this.gestioneOpzioniService.setIsSeguiMezzo(true)
-      //this.seguiMezziSelezionati[0] = this.elencoPosizioni [0];}
-    else 
-      this.gestioneOpzioniService.setIsSeguiMezzo(false)
-      //this.seguiMezziSelezionati = []; 
-  }
-  */
 
   fineSelezioneGgMaxPos(e) {    
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);

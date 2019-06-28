@@ -76,7 +76,8 @@ export class AppComponent implements OnInit {
 
 
         // ngOnChanges non viene attivato su modifiche al model che non 
-        // siano via Input
+        // siano via Input, nè tantomeno su modifiche ad oggetti complessi (es. array)
+        // anche se passati in Input
         /* 
         ngOnChanges(changes: SimpleChanges) {
           console.log('AppComponent - ngOnChanges()', this.modalita);

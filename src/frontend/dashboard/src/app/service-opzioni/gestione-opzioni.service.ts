@@ -37,14 +37,6 @@ export class GestioneOpzioniService {
     return this.subjectOpzioni$.asObservable();
   }
 
-  /*
-  public getMezziSelezionati(): Observable<PosizioneMezzo[]> {
-    //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
-    return this.subjectMezziSelezionati$.asObservable();
-  }
-  */
-  
-
   public resetOpzioni(): void { 
     this.opzioni.reset();
     this.subjectOpzioni$.next(this.opzioni);
@@ -60,18 +52,6 @@ export class GestioneOpzioniService {
     this.subjectOpzioni$.next(this.opzioni);
   }
   
-
-  /*
-  public setCenterOnMezzo(value : boolean): void { 
-    this.opzioni.setCenterOnMezzo(value); 
-    this.subjectOpzioni$.next(this.opzioni);
-  }
-  
-  public setIsSeguiMezzo(value : boolean): void { 
-    this.opzioni.setIsSeguiMezzo(value); 
-    this.subjectOpzioni$.next(this.opzioni);
-  }
-  */
 
   public setOnlySelected(value : boolean): void { 
     var k = this.opzioniPrecedenti.getOnlySelected();
@@ -183,46 +163,6 @@ export class GestioneOpzioniService {
     }
   }
 
-  /*
-  resetMezziSelezionati() {
-    this.mezziSelezionati = [];
-    this.setCenterOnSelected(false);
-    this.subjectMezziSelezionati$.next(this.mezziSelezionati);    
-  }
-  
 
-  addMezziSelezionati(item: PosizioneMezzo) {
-
-    var pos : PosizioneMezzo ;
-    var k: number;
-    pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
-    if (pos == null) {
-        this.mezziSelezionati = this.mezziSelezionati.concat(item);        
-        this.setCenterOnSelected(true);
-    }    
-    
-    //console.log(moment().toDate(), "GestioneOpzioniService.addMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
-    this.subjectMezziSelezionati$.next(this.mezziSelezionati);
-  }
-
-  removeMezziSelezionati(item: PosizioneMezzo) {
-
-    let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
-    if (i != -1 )
-    {
-      this.mezziSelezionati.splice(i,1);
-
-      if (this.mezziSelezionati.length > 0) 
-        {this.setCenterOnSelected(true);}
-      else
-        {this.setCenterOnSelected(false);}    
-  
-      this.subjectMezziSelezionati$.next(this.mezziSelezionati);
-    }
-    //console.log(moment().toDate(), "GestioneOpzioniService.removeMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
-    
-  }
-  */
-  
 }
 
