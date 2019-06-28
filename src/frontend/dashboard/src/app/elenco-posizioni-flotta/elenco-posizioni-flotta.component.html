@@ -40,7 +40,7 @@
                                 [istanteModificaFiltri]="istanteModificaFiltri"
                                 [posizioneMezzo]="r" 
                                 [isSeguiMezzo]="isSeguiMezzo(r)"
-                                [onlySelected]="opzioni.onlySelected"
+                                [onlySelected]="opzioni.getOnlySelected()"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"

@@ -15,7 +15,7 @@
     "@agm/core": "^1.0.0-beta.2",
     "@agm/js-marker-clusterer": "^1.0.0-beta.3",
     "@google/markerclusterer": "^1.0.3",
-    "@ng-bootstrap/ng-bootstrap": "^1.0.0-beta.5",
+    "@ng-bootstrap/ng-bootstrap": "^5.0.0-rc.0",
     "@types/googlemaps": "^3.30.11",
     "@types/markerclustererplus": "^2.1.33",
     "angular2-ui-switch": "^1.2.0",

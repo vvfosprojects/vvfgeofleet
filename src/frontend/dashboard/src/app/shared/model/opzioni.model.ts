@@ -1,12 +1,13 @@
 export class Opzioni {
 
-    private centerOnLast: boolean ;
-    private centerOnSelected: boolean ;
-    //private centerOnMezzo: boolean ;
-    //private isSeguiMezzo: boolean ;
-    private onlySelected: boolean ;
-    private onlyMap: boolean ;
-    private ggMaxPos: number ;
+    // opzioni modificabili direttamente dal pannello Opzioni
+    public centerOnLast: boolean ;
+    public centerOnSelected: boolean ;
+    public onlySelected: boolean ;
+    public onlyMap: boolean ;
+    public ggMaxPos: number ;
+
+    //
     private startLat: number ;
     private startLon: number ;
     private startZoom: number ;
@@ -28,8 +29,6 @@ export class Opzioni {
     public reset(): void { 
         this.centerOnLast = true; 
         this.centerOnSelected = false;
-        //this.centerOnMezzo = false; 
-        //this.isSeguiMezzo = false; 
         this.onlySelected = false;
         this.onlyMap = false; 
         this.ggMaxPos = 3; 
@@ -43,8 +42,6 @@ export class Opzioni {
       this.setOnlySelected(obj.getOnlySelected());
       this.setCenterOnLast(obj.getCenterOnLast());
       this.setCenterOnSelected(obj.getCenterOnSelected());
-      //this.setCenterOnMezzo(obj.getCenterOnMezzo());
-      //this.setIsSeguiMezzo(obj.getIsSeguiMezzo());
       this.setGgMaxPos(obj.getGgMaxPos());
       this.setModalita(obj.getModalita());
       this.setOnlyMap(obj.getOnlyMap());
@@ -72,18 +69,6 @@ export class Opzioni {
       this.centerOnSelected = value; 
     }
     
-    /*
-    public getCenterOnMezzo() : boolean { return this.centerOnMezzo;}
-    public setCenterOnMezzo(value : boolean): void { 
-      this.centerOnMezzo = value; 
-    }
-
-    public getIsSeguiMezzo() : boolean { return this.isSeguiMezzo;}
-    public setIsSeguiMezzo(value : boolean): void { 
-      this.isSeguiMezzo = value; 
-    }
-    */
-
     public getOnlyMap() : boolean { return this.onlyMap;}
     public setOnlyMap(value : boolean): void { 
       this.onlyMap = value; 
