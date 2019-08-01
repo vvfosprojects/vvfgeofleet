@@ -1,6 +1,6 @@
 src/app/app.module.ts
-src/app/environments/environment.ts
-src/app/environments/environment.prod.ts
+src/environments/environment.ts
+src/environments/environment.prod.ts
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
