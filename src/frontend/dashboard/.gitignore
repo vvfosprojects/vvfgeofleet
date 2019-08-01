@@ -1,6 +1,6 @@
-./src/frontend/dashboard/src/app/app.module.ts
-./src/frontend/dashboard/src/environments/environment.ts
-./src/frontend/dashboard/src/environments/environment.prod.ts
+src/app/app.module.ts
+src/app/environments/environment.ts
+src/app/environments/environment.prod.ts
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
