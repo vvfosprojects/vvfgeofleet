@@ -81,7 +81,12 @@ export class PannelloOpzioniComponent  {
 
   aggiornaMezzi(posizioni: PosizioneMezzo[]) {
 
-    this.elencoMezzi = this.elencoMezzi.concat( posizioni.map( item => { 
+    var posizioneDaElaborare = posizioni.filter( item => 
+      { return this.elencoMezzi.
+        find(itemElenco => item.codiceMezzo === itemElenco.codiceMezzo)?false:true
+      });
+
+    this.elencoMezzi = this.elencoMezzi.concat( posizioneDaElaborare.map( item => { 
       var mezzo = new Mezzo( item.codiceMezzo, item.descrizionePosizione) ;
       return mezzo;}));
 
