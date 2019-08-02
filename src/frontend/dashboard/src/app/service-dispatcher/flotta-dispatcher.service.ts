@@ -12,6 +12,8 @@ import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model
 
 
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
+import { Mezzo } from '../shared/model/mezzo.model';
+
 import { PosizioneFlottaService } from '../service-VVFGeoFleet/posizione-flotta.service';
 import { PosizioneFlottaServiceFake } from '../service-VVFGeoFleet/posizione-flotta.service.fake';
 
@@ -67,10 +69,19 @@ export class FlottaDispatcherService {
   // copia del dataStore delle posizioni relative all'aggiornamento precedente
   //private elencoPosizioniMostratePrecedenti : PosizioneMezzo[] = [];
 
+
+  // dataStore dell'elenco Mezzi
+  private elencoMezzi: Mezzo[] = [];
+
   // dataStore dei Mezzi selezionati
-  private mezziSelezionati : PosizioneMezzo[] = [] ;
-  private subjectMezziSelezionati$ = new Subject<PosizioneMezzo[]>();
+  //private mezziSelezionati : PosizioneMezzo[] = [] ;
+  //private subjectMezziSelezionati$ = new Subject<PosizioneMezzo[]>();
+  private mezziSelezionati : Mezzo[] = [] ;
+
+  private subjectMezziSelezionati$ = new Subject<Mezzo[]>();
+  private subjectNuoviMezzi$ = new Subject<Mezzo[]>();
   
+
   subscription = new Subscription();
 
 
@@ -113,7 +124,13 @@ export class FlottaDispatcherService {
 
   }
 
-  public getMezziSelezionati(): Observable<PosizioneMezzo[]> {
+
+  public getNuoviMezzi(): Observable<Mezzo[]> {
+    //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
+    return this.subjectNuoviMezzi$.asObservable();
+  }
+  
+  public getMezziSelezionati(): Observable<Mezzo[]> {
     //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
     return this.subjectMezziSelezionati$.asObservable();
   }
@@ -188,6 +205,8 @@ export class FlottaDispatcherService {
       (this.elencoPosizioniNuove.length > 0)?this.subjectNuovePosizioniMezzo$.next(this.elencoPosizioniNuove):null;
       this.rimuoviPosizioniElaborate(this.elencoPosizioniNuove);
 
+      // aggiunge nel datastore dell'elenco Mezzi quelli eventualmente non ancora presenti
+      this.aggiornaElencoMezzi(this.elencoPosizioniNuove);
 
       this.elencoPosizioniStatoModificato = this.elaboraPosizioniStatoModificato(this.elencoPosizioniDaElaborare);
       //(this.elencoPosizioniStatoModificato.length > 0)?console.log(moment().toDate(),"FlottaDispatcherService.elaboraPosizioniRicevute() - elencoPosizioniStatoModificato", this.elencoPosizioniStatoModificato):null;
@@ -378,6 +397,22 @@ export class FlottaDispatcherService {
 
 
 
+    aggiornaElencoMezzi(posizioni: PosizioneMezzo[]) {
+
+      var posizioneDaElaborare = posizioni.filter( item => 
+        { return this.elencoMezzi.
+          find(itemElenco => item.codiceMezzo === itemElenco.codiceMezzo)?false:true
+        });
+  
+      var elMez = posizioneDaElaborare.map( item => { 
+        var mezzo = new Mezzo( item.codiceMezzo, item.descrizionePosizione) ;
+        return mezzo;});
+
+      this.elencoMezzi = this.elencoMezzi.concat( elMez);
+      
+      this.subjectNuoviMezzi$.next(elMez);  
+    }    
+
     resetMezziSelezionati() {
       this.mezziSelezionati = [];
       this.gestioneOpzioniService.setCenterOnSelected(false);
@@ -385,9 +420,11 @@ export class FlottaDispatcherService {
     }
     
   
-    addMezziSelezionati(item: PosizioneMezzo) {
+    //addMezziSelezionati(item: PosizioneMezzo) {
+    addMezziSelezionati(item: Mezzo) {
   
-      var pos : PosizioneMezzo ;
+      //var pos : PosizioneMezzo ;
+      var pos : Mezzo ;
       var k: number;
       pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
       if (pos == null) {
@@ -399,7 +436,8 @@ export class FlottaDispatcherService {
       this.subjectMezziSelezionati$.next(this.mezziSelezionati);
     }
   
-    removeMezziSelezionati(item: PosizioneMezzo) {
+    //removeMezziSelezionati(item: PosizioneMezzo) {
+    removeMezziSelezionati(item: Mezzo) {
   
       let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
       if (i != -1 )

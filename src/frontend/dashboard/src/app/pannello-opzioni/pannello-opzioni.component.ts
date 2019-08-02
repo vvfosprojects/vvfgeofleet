@@ -32,7 +32,7 @@ export class PannelloOpzioniComponent  {
   //private elencoMezzi: PosizioneMezzo[] = [];
   private elencoMezzi: Mezzo[] = [];
 
-  private mezziSelezionati: PosizioneMezzo[] = [];
+  private elencoPosizioni: PosizioneMezzo[] = [];
 
   public titoloFiltroMezziSelezionati: string = "Mezzi selezionati";
   public vociFiltroMezziSelezionati: VoceFiltro[] = [];
@@ -54,20 +54,20 @@ export class PannelloOpzioniComponent  {
 
       this.subscription.add(
         this.flottaDispatcherService.getMezziSelezionati()
-        .subscribe( elenco => { this.mezziSelezionati = 
+        .subscribe( elenco => { this.elencoPosizioni = 
           JSON.parse(JSON.stringify(elenco));
 
-        //console.log(moment().toDate(), "PannelloOpzioniComponent.getMezziSelezionati() - this.mezziSelezionati",  this.mezziSelezionati);
+        //console.log(moment().toDate(), "PannelloOpzioniComponent.getMezziSelezionati() - this.elencoPosizioni",  this.elencoPosizioni);
         
         })
       );   
 
 
       this.subscription.add(
-        this.flottaDispatcherService.getNuovePosizioniFlotta()
-        .subscribe( posizioni => {
+        this.flottaDispatcherService.getNuoviMezzi()
+        .subscribe( mezzi => {
             //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni):null;
-            this.aggiornaMezzi(posizioni);
+            this.aggiornaMezzi(mezzi);
           })
         );   
         
@@ -79,28 +79,30 @@ export class PannelloOpzioniComponent  {
   } 
 
 
-  aggiornaMezzi(posizioni: PosizioneMezzo[]) {
+  aggiornaMezzi(mezzi: Mezzo[]) {
 
-    var posizioneDaElaborare = posizioni.filter( item => 
-      { return this.elencoMezzi.
-        find(itemElenco => item.codiceMezzo === itemElenco.codiceMezzo)?false:true
-      });
-
-    this.elencoMezzi = this.elencoMezzi.concat( posizioneDaElaborare.map( item => { 
-      var mezzo = new Mezzo( item.codiceMezzo, item.descrizionePosizione) ;
-      return mezzo;}));
-
+    this.elencoMezzi = this.elencoMezzi.concat( mezzi );
+    /*
     this.vociFiltroMezziSelezionati = [];
     this.vociFiltroMezziSelezionati = this.elencoMezzi.map( 
       item => {
-        var selezionato: boolean = this.mezziSelezionati.find( 
+        var selezionato: boolean = this.elencoMezzi.find( 
           itemSelezionato => item.codiceMezzo === itemSelezionato.codiceMezzo )?true:false;
 
         var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
           selezionato, "", "badge-info", "");
         return voceFiltro;              
       });
+    */
+    var nuoveVoci = mezzi.map( item => {
+      var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
+        false, "", "badge-info", "");
+      return voceFiltro;              
+    
+    });
 
+    this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(nuoveVoci);
+    
     // riordina l'array vociFiltroMezziSelezionati per Descrizione ascendente
     this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.sort( 
       function(a,b) 
@@ -108,7 +110,7 @@ export class PannelloOpzioniComponent  {
       });
     
     
-    //console.log("PannelloOpzioniComponent.aggiornaMezzi(), mezziSelezionati, vociFiltroMezziSelezionati (solo selezionati)", this.mezziSelezionati, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
+    //console.log("PannelloOpzioniComponent.aggiornaMezzi(), elencoPosizioni, vociFiltroMezziSelezionati (solo selezionati)", this.elencoPosizioni, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
 
   }
   //changeOptOnlyMap(e) {

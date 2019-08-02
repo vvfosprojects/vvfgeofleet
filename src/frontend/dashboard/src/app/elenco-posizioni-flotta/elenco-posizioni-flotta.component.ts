@@ -1,4 +1,6 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+
+import { Mezzo } from '../shared/model/mezzo.model';
 import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { VoceFiltro } from "../filtri/voce-filtro.model";
 
@@ -162,10 +164,14 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
   seguiMezzoDrop(evento) {
     var tipoevento: string = evento[1];
-    var pos : PosizioneMezzo ;
+    //var pos : PosizioneMezzo ;
+    var mezzo : Mezzo = new Mezzo(
+      this.draggedPosizioneMezzo.codiceMezzo,
+      this.draggedPosizioneMezzo.descrizionePosizione);
 
     if ( this.draggedPosizioneMezzo ) {
-      this.flottaDispatcherService.addMezziSelezionati(this.draggedPosizioneMezzo);
+      //this.flottaDispatcherService.addMezziSelezionati(this.draggedPosizioneMezzo);
+      this.flottaDispatcherService.addMezziSelezionati(mezzo);
     }
 
   }
@@ -203,7 +209,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
   rimuoviSeguiMezzoDrop(evento) {
     var tipoevento: string = evento[1];
-    var pos : PosizioneMezzo ;
+    //var pos : PosizioneMezzo ;
+    var mezzo : Mezzo = new Mezzo(
+      this.draggedPosizioneMezzo.codiceMezzo,
+      this.draggedPosizioneMezzo.descrizionePosizione);
+    
     
     if ( this.draggedPosizioneMezzo ) {
       /*
@@ -214,7 +224,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
         this.gestioneOpzioniService.setCenterOnMezzo(false);        
       }
       */
-     this.flottaDispatcherService.removeMezziSelezionati(this.draggedPosizioneMezzo);
+      //this.flottaDispatcherService.removeMezziSelezionati(this.draggedPosizioneMezzo);
+      this.flottaDispatcherService.removeMezziSelezionati(mezzo);
     }
     //console.log("rimuoviSeguiMezzo", evento);
   }
@@ -372,9 +383,13 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
     //console.log(moment().toDate(), 'ElencoPosizioniFlottaComponent.nuovaSelezioneMezzi()', elencoMezzi );
 
     this.flottaDispatcherService.resetMezziSelezionati();
+    /*
     elencoMezzi.forEach( item => this.flottaDispatcherService.
       addMezziSelezionati(
         this.elencoPosizioni.find( ii => ii.codiceMezzo === item)));
+    */
+    elencoMezzi.forEach( item => this.flottaDispatcherService.
+      addMezziSelezionati( item ));
   }
 
 }

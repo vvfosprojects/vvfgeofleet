@@ -177,8 +177,12 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   { 
     // mostra tutti i Mezzi selezionati e Mezzi filtrati dai criteri, se non è attiva
     // l'opzione 'mostra solo i selezionati'
-    var r = this.isSeguiMezzo ||
-    (!this.onlySelected && (this.gestioneFiltriService.posizioneMezzoSelezionata(this.posizioneMezzo)));
+
+    var r = false;
+    if (this.posizioneMezzo) {
+      r = this.isSeguiMezzo ||
+      (!this.onlySelected && (this.gestioneFiltriService.posizioneMezzoSelezionata(this.posizioneMezzo)));
+    }
     return r;
   }
 
