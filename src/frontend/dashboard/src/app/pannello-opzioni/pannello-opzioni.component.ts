@@ -32,7 +32,8 @@ export class PannelloOpzioniComponent  {
   //private elencoMezzi: PosizioneMezzo[] = [];
   private elencoMezzi: Mezzo[] = [];
 
-  private elencoPosizioni: PosizioneMezzo[] = [];
+  //private elencoPosizioni: PosizioneMezzo[] = [];
+  private elencoMezziSelezionati: Mezzo[] = [];
 
   public titoloFiltroMezziSelezionati: string = "Mezzi selezionati";
   public vociFiltroMezziSelezionati: VoceFiltro[] = [];
@@ -54,8 +55,9 @@ export class PannelloOpzioniComponent  {
 
       this.subscription.add(
         this.flottaDispatcherService.getMezziSelezionati()
-        .subscribe( elenco => { this.elencoPosizioni = 
+        .subscribe( elenco => { this.elencoMezziSelezionati = 
           JSON.parse(JSON.stringify(elenco));
+          this.aggiornaMezziSelezionati(elenco);
 
         //console.log(moment().toDate(), "PannelloOpzioniComponent.getMezziSelezionati() - this.elencoPosizioni",  this.elencoPosizioni);
         
@@ -65,21 +67,42 @@ export class PannelloOpzioniComponent  {
 
       this.subscription.add(
         this.flottaDispatcherService.getNuoviMezzi()
-        .subscribe( mezzi => {
+        .subscribe( elenco => {
             //(posizioni.length > 0)?console.log(moment().toDate(),"ElencoPosizioniFlottaComponent, getNuovePosizioniFlotta - posizioni:", posizioni):null;
-            this.aggiornaMezzi(mezzi);
+            this.aggiornaElencoMezzi(elenco);
           })
         );   
         
     }
 
-  nuovaSelezioneMezziSelezionati(event) {
-    //console.log('event: ', event);
-    this.selezioneMezzi.emit(event);
-  } 
+  aggiornaMezziSelezionati(mezzi: Mezzo[]) {
+    //console.log(moment().toDate(),'mezzi, this.vociFiltroMezziSelezionati',mezzi, this.vociFiltroMezziSelezionati);
+    var ele = this.vociFiltroMezziSelezionati.filter( item => item.selezionato === true);
+    ele.forEach( ii => { 
+        var k = this.vociFiltroMezziSelezionati.findIndex(item => item.codice === ii.codice);
+        this.vociFiltroMezziSelezionati[k].selezionato = false;
+        }
+      );
 
+    mezzi.forEach( item => {
+        var v = this.vociFiltroMezziSelezionati.findIndex( ii => 
+          ii.codice.toString() === item.codiceMezzo.toString());
+        if (v != -1) {
+          //console.log(moment().toDate(),'aggiornaMezziSelezionati() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
+          this.vociFiltroMezziSelezionati[v].selezionato = true;
+        }
+        else
+        {
+          //console.log(moment().toDate(),'aggiornaMezziSelezionati() - aggiunge: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
+          var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
+            true, "", "badge-info", "");
+          this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(voceFiltro);        
+        }
+      }
+    );
+  }
 
-  aggiornaMezzi(mezzi: Mezzo[]) {
+  aggiornaElencoMezzi(mezzi: Mezzo[]) {
 
     this.elencoMezzi = this.elencoMezzi.concat( mezzi );
     /*
@@ -101,6 +124,7 @@ export class PannelloOpzioniComponent  {
     
     });
 
+    //console.log(moment().toDate(),'aggiornaElencoMezzi() - mezzi, nuoveVoci',mezzi, nuoveVoci);
     this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(nuoveVoci);
     
     // riordina l'array vociFiltroMezziSelezionati per Descrizione ascendente
@@ -110,7 +134,7 @@ export class PannelloOpzioniComponent  {
       });
     
     
-    //console.log("PannelloOpzioniComponent.aggiornaMezzi(), elencoPosizioni, vociFiltroMezziSelezionati (solo selezionati)", this.elencoPosizioni, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
+    //console.log("PannelloOpzioniComponent.aggiornaElencoMezzi(), elencoPosizioni, vociFiltroMezziSelezionati (solo selezionati)", this.elencoPosizioni, this.vociFiltroMezziSelezionati.filter( item => item.selezionato));
 
   }
   //changeOptOnlyMap(e) {
@@ -143,7 +167,12 @@ export class PannelloOpzioniComponent  {
       this.gestioneOpzioniService.setCenterOnSelected(true)
     else 
       this.gestioneOpzioniService.setCenterOnSelected(false)    
-  }  
+  } 
+
+  nuovaSelezioneMezziSelezionati(event) {
+    //console.log('event: ', event);
+    this.selezioneMezzi.emit(event);
+  } 
 
   fineSelezioneGgMaxPos(e) {    
     //this.nuovaSelezioneGgMaxPos.emit(this.ggMaxPos);

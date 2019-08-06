@@ -1,5 +1,4 @@
 import { ErrorHandler, Component, ElementRef, OnInit, Input } from '@angular/core';
-import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
 import { GoogleMapsAPIWrapper, MarkerManager, LatLngLiteral } from '@agm/core';
 import { AgmMarker, MouseEvent } from '@agm/core';
 import { AgmCoreModule, MapsAPILoader } from '@agm/core';
@@ -10,6 +9,9 @@ import { Directive, Output, EventEmitter, AfterViewInit, ContentChildren, QueryL
 import * as moment from 'moment';
 import { Options } from 'selenium-webdriver/ie';
 import { Subject, Observable } from 'rxjs';
+
+import { PosizioneMezzo } from '../shared/model/posizione-mezzo.model';
+import { Mezzo } from '../shared/model/mezzo.model';
 
 import { ParametriGeoFleetWS } from '../shared/model/parametri-geofleet-ws.model';
 import { Opzioni } from '../shared/model/opzioni.model';
@@ -59,7 +61,8 @@ export class MappaPosizioniFlottaComponent implements OnInit {
 
   private elencoPosizioni : PosizioneMezzo[] = [];
 
-  private mezziSelezionati : PosizioneMezzo[] = [] ;
+  //private mezziSelezionati : PosizioneMezzo[] = [] ;
+  private mezziSelezionati : Mezzo[] = [] ;
 
 
   timeout : any;
@@ -410,7 +413,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
     } 
 
     return r;
-      
+
   }
 
   classiMezzoDepurata(p : PosizioneMezzo) {

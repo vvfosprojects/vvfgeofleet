@@ -410,7 +410,7 @@ export class FlottaDispatcherService {
 
       this.elencoMezzi = this.elencoMezzi.concat( elMez);
       
-      this.subjectNuoviMezzi$.next(elMez);  
+      (elMez.length>0)?this.subjectNuoviMezzi$.next(elMez):null;  
     }    
 
     resetMezziSelezionati() {
@@ -419,27 +419,44 @@ export class FlottaDispatcherService {
       this.subjectMezziSelezionati$.next(this.mezziSelezionati);    
     }
     
+
   
-    //addMezziSelezionati(item: PosizioneMezzo) {
-    addMezziSelezionati(item: Mezzo) {
-  
-      //var pos : PosizioneMezzo ;
-      var pos : Mezzo ;
-      var k: number;
-      pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
-      if (pos == null) {
-          this.mezziSelezionati = this.mezziSelezionati.concat(item);        
-          this.gestioneOpzioniService.setCenterOnSelected(true);
-      }    
-      
-      //console.log(moment().toDate(), "GestioneOpzioniService.addMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
+    //setMezziSelezionati(elenco: Mezzo[]) {
+    setMezziSelezionati(elenco: string[]) {
+      this.mezziSelezionati = [];
+      //this.mezziSelezionati = JSON.parse(JSON.stringify(elenco));
+      this.mezziSelezionati = this.elencoMezzi.filter( item => 
+        elenco.find( ii=> ii=== item.codiceMezzo ) );
+
+      //console.log(moment().toDate(), "FlottaDispatcherService.setMezziSelezionati() - elenco, this.mezziSelezionati", elenco, this.mezziSelezionati);
       this.subjectMezziSelezionati$.next(this.mezziSelezionati);
     }
+    
+    //addMezzoSelezionato(item: Mezzo) {
+    addMezzoSelezionato(codiceMezzo: string) {
+
+      //var pos : PosizioneMezzo ;
+      //var pos : Mezzo ;
+      //pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
+      //if (pos == null) {
+      //  this.mezziSelezionati = this.mezziSelezionati.concat(item);        
+      var k: number;
+      k = this.elencoMezzi.findIndex( i => i.codiceMezzo === codiceMezzo);
+      if (k != -1) {
+          this.mezziSelezionati = this.mezziSelezionati.concat(this.elencoMezzi[k]);        
+          this.gestioneOpzioniService.setCenterOnSelected(true);
+          this.subjectMezziSelezionati$.next(this.mezziSelezionati);
+      }    
+     
+    }
   
-    //removeMezziSelezionati(item: PosizioneMezzo) {
-    removeMezziSelezionati(item: Mezzo) {
-  
-      let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
+    //removeMezzoSelezionato(item: PosizioneMezzo) {
+    //removeMezzoSelezionato(item: Mezzo) {
+    removeMezzoSelezionato(codiceMezzo: string) {
+
+      //let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
+      
+      let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === codiceMezzo);
       if (i != -1 )
       {
         this.mezziSelezionati.splice(i,1);
@@ -451,7 +468,7 @@ export class FlottaDispatcherService {
     
         this.subjectMezziSelezionati$.next(this.mezziSelezionati);
       }
-      //console.log(moment().toDate(), "GestioneOpzioniService.removeMezziSelezionati() - item, this.mezziSelezionati", item, this.mezziSelezionati);
+      //console.log(moment().toDate(), "GestioneOpzioniService.removeMezzoSelezionato() - item, this.mezziSelezionati", item, this.mezziSelezionati);
       
     }
         

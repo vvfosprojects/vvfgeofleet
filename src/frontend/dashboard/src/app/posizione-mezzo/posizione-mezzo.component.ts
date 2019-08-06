@@ -209,10 +209,10 @@ export class PosizioneMezzoComponent implements OnInit, OnChanges {
   
   private seguiMezzo() { 
     if (this.isSeguiMezzo) {
-      this.mezzoDaSeguire.emit([this.posizioneMezzo, "rimuovi"] );
+      this.mezzoDaSeguire.emit([this.posizioneMezzo.codiceMezzo, "rimuovi"] );
     }
     else {
-      this.mezzoDaSeguire.emit([this.posizioneMezzo, "aggiungi"] );
+      this.mezzoDaSeguire.emit([this.posizioneMezzo.codiceMezzo, "aggiungi"] );
     }
   }
   

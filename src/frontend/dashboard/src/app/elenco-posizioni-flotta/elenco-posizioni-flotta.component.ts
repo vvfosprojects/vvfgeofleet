@@ -41,7 +41,8 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
   //public seguiMezziSelezionati : PosizioneMezzo[] = [] ;
   public mezzoSelezionato: PosizioneMezzo ;
   //
-  public mezziSelezionati : PosizioneMezzo[] = [] ;
+  public posizioneMezziSelezionati : PosizioneMezzo[] = [] ;
+  public mezziSelezionati : Mezzo[] = [] ;
 
   public aggiornaMezziSelezionati: boolean;
 
@@ -135,7 +136,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
       this.flottaDispatcherService.getMezziSelezionati()
       .subscribe( elenco => { this.mezziSelezionati = 
         JSON.parse(JSON.stringify(elenco));
-
+        this.aggiornaElencoPosizioneMezziSelezionati();
       //console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.getMezziSelezionati() - this.mezziSelezionati",  this.mezziSelezionati);
       
       })
@@ -165,17 +166,46 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
   seguiMezzoDrop(evento) {
     var tipoevento: string = evento[1];
     //var pos : PosizioneMezzo ;
+    /*
     var mezzo : Mezzo = new Mezzo(
       this.draggedPosizioneMezzo.codiceMezzo,
       this.draggedPosizioneMezzo.descrizionePosizione);
-
+    */
     if ( this.draggedPosizioneMezzo ) {
-      //this.flottaDispatcherService.addMezziSelezionati(this.draggedPosizioneMezzo);
-      this.flottaDispatcherService.addMezziSelezionati(mezzo);
+      ////this.flottaDispatcherService.addMezziSelezionati(this.draggedPosizioneMezzo);
+      //this.flottaDispatcherService.addMezzoSelezionato(mezzo);
+      this.flottaDispatcherService.addMezzoSelezionato(this.draggedPosizioneMezzo.codiceMezzo);
+      
     }
 
   }
 
+
+  rimuoviSeguiMezzoDrop(evento) {
+    var tipoevento: string = evento[1];
+    //var pos : PosizioneMezzo ;
+    /*
+    var mezzo : Mezzo = new Mezzo(
+      this.draggedPosizioneMezzo.codiceMezzo,
+      this.draggedPosizioneMezzo.descrizionePosizione);
+    */
+    
+    if ( this.draggedPosizioneMezzo ) {
+      /*
+      let i = this.seguiMezziSelezionati.indexOf( this.draggedPosizioneMezzo);
+      this.seguiMezziSelezionati.splice(i,1);
+
+      if (this.seguiMezziSelezionati.length == 0 ) {
+        this.gestioneOpzioniService.setCenterOnMezzo(false);        
+      }
+      */
+      ////this.flottaDispatcherService.removeMezzoSelezionato(this.draggedPosizioneMezzo);
+      //this.flottaDispatcherService.removeMezzoSelezionato(mezzo);
+      this.flottaDispatcherService.removeMezzoSelezionato(this.draggedPosizioneMezzo.codiceMezzo);
+    }
+    //console.log("rimuoviSeguiMezzo", evento);
+  }
+  
   isSeguiMezzo(p : PosizioneMezzo) : Boolean {
     return ( this.mezziSelezionati.findIndex( i => i.codiceMezzo === p.codiceMezzo) != -1 );
   }
@@ -186,14 +216,14 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
     if (tipoevento == "aggiungi") {
 
-      this.flottaDispatcherService.addMezziSelezionati(evento[0]);
+      this.flottaDispatcherService.addMezzoSelezionato(evento[0]);
 
       //console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.seguiMezzo(aggiungi) - this.seguiMezziSelezionati", this.seguiMezziSelezionati);
       
     }
 
     if (tipoevento == "rimuovi") {
-      this.flottaDispatcherService.removeMezziSelezionati(evento[0]);
+      this.flottaDispatcherService.removeMezzoSelezionato(evento[0]);
 
       //console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.seguiMezzo(rimuovi) - this.seguiMezziSelezionati", this.seguiMezziSelezionati);
 
@@ -207,29 +237,6 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
 
 
-  rimuoviSeguiMezzoDrop(evento) {
-    var tipoevento: string = evento[1];
-    //var pos : PosizioneMezzo ;
-    var mezzo : Mezzo = new Mezzo(
-      this.draggedPosizioneMezzo.codiceMezzo,
-      this.draggedPosizioneMezzo.descrizionePosizione);
-    
-    
-    if ( this.draggedPosizioneMezzo ) {
-      /*
-      let i = this.seguiMezziSelezionati.indexOf( this.draggedPosizioneMezzo);
-      this.seguiMezziSelezionati.splice(i,1);
-
-      if (this.seguiMezziSelezionati.length == 0 ) {
-        this.gestioneOpzioniService.setCenterOnMezzo(false);        
-      }
-      */
-      //this.flottaDispatcherService.removeMezziSelezionati(this.draggedPosizioneMezzo);
-      this.flottaDispatcherService.removeMezziSelezionati(mezzo);
-    }
-    //console.log("rimuoviSeguiMezzo", evento);
-  }
-
   riordinaElenco()
   {
 
@@ -242,7 +249,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
         });
       
       // riordina l'array seguiMezziSelezionati per istanteAcquisizione discendente
-      this.mezziSelezionati = this.mezziSelezionati.sort( 
+      this.posizioneMezziSelezionati = this.posizioneMezziSelezionati.sort( 
         function(a,b) 
         { var bb : Date = new Date(b.istanteAcquisizione);
           var aa : Date  = new Date(a.istanteAcquisizione);
@@ -278,6 +285,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
     }
 
+  }
+
+  aggiornaElencoPosizioneMezziSelezionati(  ) {
+
+    this.posizioneMezziSelezionati = this.elencoPosizioni.filter
+    ( item => this.mezziSelezionati.find( m => m.codiceMezzo === item.codiceMezzo));
+
+    console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - elenco, this.mezziSelezionati", this.posizioneMezziSelezionati);
+    
   }
 
   modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
@@ -333,10 +349,19 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
   
   controllaMezzoDaSeguire(p: PosizioneMezzo) {
     var v = this.mezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
+    // controlla se la posizione ricevuta è relativa ad uno dei Mezzi da seguire 
     if (v != -1) 
       { 
-        // modifica anche la posizione tra i Mezzi da seguire se è presente
-        this.mezziSelezionati[v] = JSON.parse(JSON.stringify(p)); 
+        // modifica la posizione se è già presente, altrimenti la aggiunge
+        var vvv = this.posizioneMezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
+        if (v != -1) 
+        {
+        this.posizioneMezziSelezionati[v] = JSON.parse(JSON.stringify(p)); 
+        }
+        else
+        {
+          this.posizioneMezziSelezionati = this.posizioneMezziSelezionati.concat(p);
+        }
         // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
         // ed è stato selezionato solo 1 Mezzo, allora si ricentra ed effettua lo zoom,
         // altrimenti lascia tutto invariato
@@ -348,6 +373,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
           this.gestioneOpzioniService.setStartZoom(12);
         }
       }
+    
   }
 
   controllaCentraSuUltimaPosizione() {
@@ -379,17 +405,18 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
     //console.log("evidenziaSuMappa", this.mezzoSelezionato);
   }
 
+  /*
   nuovaSelezioneMezzi(elencoMezzi) {
     //console.log(moment().toDate(), 'ElencoPosizioniFlottaComponent.nuovaSelezioneMezzi()', elencoMezzi );
 
     this.flottaDispatcherService.resetMezziSelezionati();
-    /*
-    elencoMezzi.forEach( item => this.flottaDispatcherService.
-      addMezziSelezionati(
-        this.elencoPosizioni.find( ii => ii.codiceMezzo === item)));
-    */
+
     elencoMezzi.forEach( item => this.flottaDispatcherService.
       addMezziSelezionati( item ));
   }
-
+  */
+  nuovaSelezioneMezzi(elencoMezzi) {
+    //console.log(moment().toDate(), 'ElencoPosizioniFlottaComponent.nuovaSelezioneMezzi()', elencoMezzi );
+    this.flottaDispatcherService.setMezziSelezionati(elencoMezzi);
+  } 
 }

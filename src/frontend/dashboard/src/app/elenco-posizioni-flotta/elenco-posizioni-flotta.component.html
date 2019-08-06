@@ -12,7 +12,7 @@
                     <div class="area-elenco card card-inverse drag-column drop-column m-0"
                     data-toggle="tooltip" 
                     title="Fai un click sul 'ticket' di un Mezzo quando vuoi terminare l'inseguimento.">
-                        <app-posizione-mezzo *ngFor="let r of mezziSelezionati" 
+                        <app-posizione-mezzo *ngFor="let r of posizioneMezziSelezionati" 
                             [istanteUltimoAggiornamento]="istanteUltimoAggiornamento"
                             [istanteModificaFiltri]="istanteModificaFiltri"
                             [posizioneMezzo]="r" 
