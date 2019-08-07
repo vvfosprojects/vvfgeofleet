@@ -134,14 +134,35 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
     this.subscription.add(
       this.flottaDispatcherService.getMezziSelezionati()
-      .subscribe( elenco => { this.mezziSelezionati = 
-        JSON.parse(JSON.stringify(elenco));
-        this.aggiornaElencoPosizioneMezziSelezionati();
+      .subscribe( elenco => { 
+        this.aggiornaElencoPosizioneMezziSelezionati(elenco);
       //console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.getMezziSelezionati() - this.mezziSelezionati",  this.mezziSelezionati);
       
       })
     );   
+
+    /*
+    this.subscription.add(
+      this.flottaDispatcherService.getNuovoMezzoSelezionato()
+      .subscribe( mezzo => { 
+        this.aggiornaSelezioneMezzo(mezzo, true); 
+
+      //console.log(moment().toDate(), "PannelloOpzioniComponent.getNuovoMezzoSelezionato() - mezzo",  mezzo);
       
+      })
+    );   
+
+    this.subscription.add(
+      this.flottaDispatcherService.getRimuoviMezzoSelezionato()
+      .subscribe( mezzo => { 
+        this.aggiornaSelezioneMezzo(mezzo, false); 
+
+      //console.log(moment().toDate(), "PannelloOpzioniComponent.getNuovoMezzoSelezionato() - mezzo",  mezzo);
+      
+      })
+    );   
+    */
+  
    }    
 
 
@@ -287,15 +308,55 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
   }
 
-  aggiornaElencoPosizioneMezziSelezionati(  ) {
+  aggiornaElencoPosizioneMezziSelezionati(elenco: Mezzo[] ) {
+    this.mezziSelezionati = JSON.parse(JSON.stringify(elenco));
+    this.posizioneMezziSelezionati = [];
 
-    this.posizioneMezziSelezionati = this.elencoPosizioni.filter
-    ( item => this.mezziSelezionati.find( m => m.codiceMezzo === item.codiceMezzo));
+    this.mezziSelezionati.forEach( item => 
+      { var pos = this.elencoPosizioni.find(ii => ii.codiceMezzo === item.codiceMezzo);
+        
+        console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - this.posizioneMezziSelezionati, item.codiceMezzo, pos", 
+          this.posizioneMezziSelezionati, item.codiceMezzo, pos);
+        
+        if (pos) {
+          var k = this.posizioneMezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
+          // se esiste già una posizione del Mezzo selezionato, la sostituisce
+          if (k != -1) {
+            this.posizioneMezziSelezionati[k]= JSON.parse(JSON.stringify(pos));
+          }
+          // altrimenti la aggiunge
+          else {
+            this.posizioneMezziSelezionati = this.posizioneMezziSelezionati.concat(JSON.parse(JSON.stringify(pos)));
+          }
 
-    console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - elenco, this.mezziSelezionati", this.posizioneMezziSelezionati);
+        }
+
+        console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - this.posizioneMezziSelezionati", 
+          this.posizioneMezziSelezionati);
+        
+      });
+
+    //console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - elenco, this.mezziSelezionati", this.posizioneMezziSelezionati, this.mezziSelezionati);
     
   }
 
+  aggiornaSelezioneMezzo(mezzo: Mezzo, selezione: boolean) {
+
+    console.log(moment().toDate(),'ElencoPosizioniFlottaComponent.aggiornaSelezioneMezzo(): mezzo,selezione',mezzo,selezione);
+    if (selezione) {
+      var pos = this.elencoPosizioni.find( ii => ii.codiceMezzo === mezzo.codiceMezzo);
+      if (pos) {
+        this.posizioneMezziSelezionati = this.posizioneMezziSelezionati.concat(JSON.parse(JSON.stringify(pos)));        
+      }
+    }
+    else {
+      var k = this.posizioneMezziSelezionati.findIndex( ii => ii.codiceMezzo === mezzo.codiceMezzo);
+      if (k != -1) {
+        this.posizioneMezziSelezionati.splice(k,1);
+      }
+    }
+  }
+  
   modificaPosizioniFlotta( posizioniMezzoModificate :PosizioneMezzo[]) {
     //this.testModalitaCambiata();
     var p : PosizioneMezzo[];

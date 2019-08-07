@@ -86,7 +86,7 @@ export class MappaPosizioniFlottaComponent implements OnInit {
   private areaChangedDebounceTime = new Subject();
 
 
-  private opzioni: Opzioni;
+  public opzioni: Opzioni;
   private opzioniPrecedenti: Opzioni;
 
 

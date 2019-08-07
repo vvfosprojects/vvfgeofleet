@@ -72,15 +72,16 @@ export class FlottaDispatcherService {
 
   // dataStore dell'elenco Mezzi
   private elencoMezzi: Mezzo[] = [];
+  private subjectNuoviMezzi$ = new Subject<Mezzo[]>();
 
   // dataStore dei Mezzi selezionati
   //private mezziSelezionati : PosizioneMezzo[] = [] ;
   //private subjectMezziSelezionati$ = new Subject<PosizioneMezzo[]>();
   private mezziSelezionati : Mezzo[] = [] ;
-
   private subjectMezziSelezionati$ = new Subject<Mezzo[]>();
-  private subjectNuoviMezzi$ = new Subject<Mezzo[]>();
-  
+  private subjectNuovoMezzoSelezionato$ = new Subject<Mezzo>();
+  private subjectRimuoviMezzoSelezionato$ = new Subject<Mezzo>();
+
 
   subscription = new Subscription();
 
@@ -133,6 +134,16 @@ export class FlottaDispatcherService {
   public getMezziSelezionati(): Observable<Mezzo[]> {
     //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
     return this.subjectMezziSelezionati$.asObservable();
+  }
+  
+  public getNuovoMezzoSelezionato(): Observable<Mezzo> {
+    //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
+    return this.subjectNuovoMezzoSelezionato$.asObservable();
+  }
+  
+  public getRimuoviMezzoSelezionato(): Observable<Mezzo> {
+    //console.log('GestioneOpzioniService - getMezziSelezionati()',this.opzioni);    
+    return this.subjectRimuoviMezzoSelezionato$.asObservable();
   }
   
   public getReset(): Observable<Boolean> {      
@@ -432,33 +443,26 @@ export class FlottaDispatcherService {
       this.subjectMezziSelezionati$.next(this.mezziSelezionati);
     }
     
-    //addMezzoSelezionato(item: Mezzo) {
     addMezzoSelezionato(codiceMezzo: string) {
 
-      //var pos : PosizioneMezzo ;
-      //var pos : Mezzo ;
-      //pos = this.mezziSelezionati.find( i => i.codiceMezzo === item.codiceMezzo);
-      //if (pos == null) {
-      //  this.mezziSelezionati = this.mezziSelezionati.concat(item);        
       var k: number;
       k = this.elencoMezzi.findIndex( i => i.codiceMezzo === codiceMezzo);
       if (k != -1) {
-          this.mezziSelezionati = this.mezziSelezionati.concat(this.elencoMezzi[k]);        
+          var mezzo = JSON.parse(JSON.stringify(this.elencoMezzi[k]));
+          this.mezziSelezionati = this.mezziSelezionati.concat(mezzo);
           this.gestioneOpzioniService.setCenterOnSelected(true);
           this.subjectMezziSelezionati$.next(this.mezziSelezionati);
-      }    
+          this.subjectNuovoMezzoSelezionato$.next(mezzo);
+        }    
      
     }
   
-    //removeMezzoSelezionato(item: PosizioneMezzo) {
-    //removeMezzoSelezionato(item: Mezzo) {
     removeMezzoSelezionato(codiceMezzo: string) {
 
-      //let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
-      
       let i = this.mezziSelezionati.findIndex( ii => ii.codiceMezzo === codiceMezzo);
       if (i != -1 )
       {
+        var mezzo = JSON.parse(JSON.stringify(this.mezziSelezionati[i]));
         this.mezziSelezionati.splice(i,1);
   
         if (this.mezziSelezionati.length > 0) 
@@ -467,8 +471,9 @@ export class FlottaDispatcherService {
           {this.gestioneOpzioniService.setCenterOnSelected(false);}    
     
         this.subjectMezziSelezionati$.next(this.mezziSelezionati);
+        this.subjectRimuoviMezzoSelezionato$.next(mezzo);        
       }
-      //console.log(moment().toDate(), "GestioneOpzioniService.removeMezzoSelezionato() - item, this.mezziSelezionati", item, this.mezziSelezionati);
+      //console.log(moment().toDate(), "FlottaDispatcherService.removeMezzoSelezionato() - item, this.mezziSelezionati", item, this.mezziSelezionati);
       
     }
         

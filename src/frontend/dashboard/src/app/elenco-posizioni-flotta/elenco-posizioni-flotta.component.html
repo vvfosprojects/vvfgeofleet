@@ -40,7 +40,7 @@
                                 [istanteModificaFiltri]="istanteModificaFiltri"
                                 [posizioneMezzo]="r" 
                                 [isSeguiMezzo]="isSeguiMezzo(r)"
-                                [onlySelected]="opzioni.onlySelected"
+                                [onlySelected]="opzioni.getOnlySelected()"
                                 (mezzoSelezionato)="centraSuMappa($event)"
                                 (mezzoSelezionato)="evidenziaSuMappa($event)"
                                 (mezzoDaSeguire)="seguiMezzo($event)"
@@ -69,7 +69,7 @@
     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 p-1">    
         <app-mappa-posizioni-flotta            
             [mezzoSelezionato]="mezzoSelezionato"
-            [onlySelected]="opzioni.onlySelected"            
+            [onlySelected]="opzioni.getOnlySelected()"            
         >
         </app-mappa-posizioni-flotta>        
         <!--

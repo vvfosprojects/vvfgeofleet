@@ -53,6 +53,7 @@ export class PannelloOpzioniComponent  {
         })
       );   
 
+      /*
       this.subscription.add(
         this.flottaDispatcherService.getMezziSelezionati()
         .subscribe( elenco => { this.elencoMezziSelezionati = 
@@ -63,7 +64,27 @@ export class PannelloOpzioniComponent  {
         
         })
       );   
+      */
 
+      this.subscription.add(
+        this.flottaDispatcherService.getNuovoMezzoSelezionato()
+        .subscribe( mezzo => { 
+          this.aggiornaSelezioneMezzo(mezzo, true); 
+  
+        //console.log(moment().toDate(), "PannelloOpzioniComponent.getNuovoMezzoSelezionato() - mezzo",  mezzo);
+        
+        })
+      );   
+
+      this.subscription.add(
+        this.flottaDispatcherService.getRimuoviMezzoSelezionato()
+        .subscribe( mezzo => { 
+          this.aggiornaSelezioneMezzo(mezzo, false); 
+
+        //console.log(moment().toDate(), "PannelloOpzioniComponent.getNuovoMezzoSelezionato() - mezzo",  mezzo);
+        
+        })
+      );   
 
       this.subscription.add(
         this.flottaDispatcherService.getNuoviMezzi()
@@ -75,11 +96,30 @@ export class PannelloOpzioniComponent  {
         
     }
 
+  aggiornaSelezioneMezzo(mezzo: Mezzo, selezione: boolean) {
+
+    var v = this.vociFiltroMezziSelezionati.findIndex( ii => 
+      ii.codice.toString() === mezzo.codiceMezzo);
+    //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaMezziSelezionati(): item, v', item, v);
+    if (v != -1) {
+      console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
+      this.vociFiltroMezziSelezionati[v].selezionato = selezione;
+    }
+    else
+    {
+      console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - aggiungi: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
+      var voceFiltro = new VoceFiltro( mezzo.codiceMezzo, mezzo.descrizione, 0, 
+        selezione, "", "badge-info", "");
+      this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(voceFiltro);        
+    }
+  }
+
+  /*
   aggiornaMezziSelezionati(mezzi: Mezzo[]) {
-    //console.log(moment().toDate(),'mezzi, this.vociFiltroMezziSelezionati',mezzi, this.vociFiltroMezziSelezionati);
+    //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaMezziSelezionati() - mezzi, this.vociFiltroMezziSelezionati',mezzi, this.vociFiltroMezziSelezionati);
     var ele = this.vociFiltroMezziSelezionati.filter( item => item.selezionato === true);
     ele.forEach( ii => { 
-        var k = this.vociFiltroMezziSelezionati.findIndex(item => item.codice === ii.codice);
+        var k = this.vociFiltroMezziSelezionati.findIndex(item => item.codice.toString() === ii.codice.toString());
         this.vociFiltroMezziSelezionati[k].selezionato = false;
         }
       );
@@ -87,20 +127,22 @@ export class PannelloOpzioniComponent  {
     mezzi.forEach( item => {
         var v = this.vociFiltroMezziSelezionati.findIndex( ii => 
           ii.codice.toString() === item.codiceMezzo.toString());
-        if (v != -1) {
-          //console.log(moment().toDate(),'aggiornaMezziSelezionati() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
-          this.vociFiltroMezziSelezionati[v].selezionato = true;
+          //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaMezziSelezionati(): item, v', item, v);
+          if (v != -1) {
+            //console.log(moment().toDate(),'aggiornaMezziSelezionati() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
+            this.vociFiltroMezziSelezionati[v].selezionato = true;
+          }
+          else
+          {
+            //console.log(moment().toDate(),'aggiornaMezziSelezionati() - aggiunge: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
+            var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
+              true, "", "badge-info", "");
+            this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(voceFiltro);        
+          }
         }
-        else
-        {
-          //console.log(moment().toDate(),'aggiornaMezziSelezionati() - aggiunge: item, v, this.vociFiltroMezziSelezionati[v]',item,v,this.vociFiltroMezziSelezionati[v]);
-          var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
-            true, "", "badge-info", "");
-          this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(voceFiltro);        
-        }
-      }
-    );
+      );
   }
+  */
 
   aggiornaElencoMezzi(mezzi: Mezzo[]) {
 
@@ -117,6 +159,7 @@ export class PannelloOpzioniComponent  {
         return voceFiltro;              
       });
     */
+
     var nuoveVoci = mezzi.map( item => {
       var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
         false, "", "badge-info", "");
