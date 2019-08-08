@@ -5,7 +5,7 @@
 <p-multiSelect [options]="vociFiltroDD" 
 [(ngModel)]="vociFiltroDDSelezionate"
 [panelStyle]="{minWidth:'20em'}" 
-(onPanelHide)="selezione($event,vociFiltroDDSelezionate)"
+(onChange)="selezione($event,vociFiltroDDSelezionate)"
 >
 
 </p-multiSelect>
