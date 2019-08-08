@@ -315,9 +315,11 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
     this.mezziSelezionati.forEach( item => 
       { var pos = this.elencoPosizioni.find(ii => ii.codiceMezzo === item.codiceMezzo);
         
+        /*
         console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - this.posizioneMezziSelezionati, item.codiceMezzo, pos", 
           this.posizioneMezziSelezionati, item.codiceMezzo, pos);
-        
+        */
+
         if (pos) {
           var k = this.posizioneMezziSelezionati.findIndex( ii => ii.codiceMezzo === item.codiceMezzo);
           // se esiste già una posizione del Mezzo selezionato, la sostituisce
@@ -331,8 +333,10 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
         }
 
+        /*
         console.log(moment().toDate(), "ElencoPosizioniFlottaComponent.aggiornaElencoPosizioneMezziSelezionati() - this.posizioneMezziSelezionati", 
           this.posizioneMezziSelezionati);
+        */
         
       });
 
@@ -342,7 +346,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
 
   aggiornaSelezioneMezzo(mezzo: Mezzo, selezione: boolean) {
 
-    console.log(moment().toDate(),'ElencoPosizioniFlottaComponent.aggiornaSelezioneMezzo(): mezzo,selezione',mezzo,selezione);
+    //console.log(moment().toDate(),'ElencoPosizioniFlottaComponent.aggiornaSelezioneMezzo(): mezzo,selezione',mezzo,selezione);
     if (selezione) {
       var pos = this.elencoPosizioni.find( ii => ii.codiceMezzo === mezzo.codiceMezzo);
       if (pos) {
@@ -414,19 +418,25 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
     if (v != -1) 
       { 
         // modifica la posizione se è già presente, altrimenti la aggiunge
-        var vvv = this.posizioneMezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
-        if (v != -1) 
+        var k = this.posizioneMezziSelezionati.findIndex(item => item.codiceMezzo == p.codiceMezzo);
+        if (k != -1) 
         {
-        this.posizioneMezziSelezionati[v] = JSON.parse(JSON.stringify(p)); 
+        this.posizioneMezziSelezionati[k] = JSON.parse(JSON.stringify(p)); 
         }
         else
         {
           this.posizioneMezziSelezionati = this.posizioneMezziSelezionati.concat(p);
         }
+
         // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
         // ed è stato selezionato solo 1 Mezzo, allora si ricentra ed effettua lo zoom,
         // altrimenti lascia tutto invariato
-        if (this.opzioni.getCenterOnSelected() && this.mezziSelezionati.length === 0) {
+        //if (this.opzioni.getCenterOnSelected() && this.mezziSelezionati.length === 1) {
+
+        // se è attivo il flag di Ricentra sull'ultima posizione ricevuta da un Mezzo
+        // si ricentra ed effettua lo zoom
+        if (this.opzioni.getCenterOnSelected()) {
+
           this.mezzoSelezionato = p;
           
           this.gestioneOpzioniService.setStartLat(Number(this.mezzoSelezionato.localizzazione.lat));
@@ -437,6 +447,7 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
     
   }
 
+  /*
   controllaCentraSuUltimaPosizione() {
     if (!this.opzioni.getCenterOnSelected() && 
       (this.mezzoSelezionato == null || this.opzioni.getCenterOnLast()) ) 
@@ -444,8 +455,15 @@ export class ElencoPosizioniFlottaComponent implements OnInit, OnChanges {
       this.mezzoSelezionato = this.elencoPosizioni[0];
     }
   }
+  */
 
-   
+  controllaCentraSuUltimaPosizione() {
+    if ( this.opzioni.getCenterOnLast() ) 
+    {
+      this.mezzoSelezionato = this.elencoPosizioni[0];
+    }
+  }
+
   centraSuMappa(evento) {
     var tipoevento: string = evento[1];
     if (tipoevento == "click") {

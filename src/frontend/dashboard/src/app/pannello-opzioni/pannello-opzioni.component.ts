@@ -53,19 +53,18 @@ export class PannelloOpzioniComponent  {
         })
       );   
 
-      /*
+      
       this.subscription.add(
         this.flottaDispatcherService.getMezziSelezionati()
-        .subscribe( elenco => { this.elencoMezziSelezionati = 
-          JSON.parse(JSON.stringify(elenco));
+        .subscribe( elenco => { 
           this.aggiornaMezziSelezionati(elenco);
 
         //console.log(moment().toDate(), "PannelloOpzioniComponent.getMezziSelezionati() - this.elencoPosizioni",  this.elencoPosizioni);
         
         })
       );   
-      */
-
+      
+      /*
       this.subscription.add(
         this.flottaDispatcherService.getNuovoMezzoSelezionato()
         .subscribe( mezzo => { 
@@ -85,6 +84,7 @@ export class PannelloOpzioniComponent  {
         
         })
       );   
+      */
 
       this.subscription.add(
         this.flottaDispatcherService.getNuoviMezzi()
@@ -96,26 +96,47 @@ export class PannelloOpzioniComponent  {
         
     }
 
+  /*
   aggiornaSelezioneMezzo(mezzo: Mezzo, selezione: boolean) {
 
     var v = this.vociFiltroMezziSelezionati.findIndex( ii => 
       ii.codice.toString() === mezzo.codiceMezzo);
     //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaMezziSelezionati(): item, v', item, v);
     if (v != -1) {
-      console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
+      //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - modifica: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
       this.vociFiltroMezziSelezionati[v].selezionato = selezione;
     }
     else
     {
-      console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - aggiungi: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
+      //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - aggiungi: item, v, this.vociFiltroMezziSelezionati[v]',mezzo,selezione,v,this.vociFiltroMezziSelezionati[v]);
       var voceFiltro = new VoceFiltro( mezzo.codiceMezzo, mezzo.descrizione, 0, 
         selezione, "", "badge-info", "");
       this.vociFiltroMezziSelezionati = this.vociFiltroMezziSelezionati.concat(voceFiltro);        
     }
+    
+    //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaSelezioneMezzo() - this.vociFiltroMezziSelezionati.selezionati ',
+    //  this.vociFiltroMezziSelezionati.filter( ii => ii.selezionato === true));
+    
   }
+  */
 
+    
+ aggiornaMezziSelezionati(mezzi: Mezzo[]) {
+    this.elencoMezziSelezionati = JSON.parse(JSON.stringify(mezzi));
+    this.vociFiltroMezziSelezionati = [];
+    this.vociFiltroMezziSelezionati = this.elencoMezzi.map( 
+      item => {
+        var selezionato: boolean = this.elencoMezziSelezionati.find( 
+          itemSelezionato => item.codiceMezzo === itemSelezionato.codiceMezzo )?true:false;
+
+        var voceFiltro = new VoceFiltro( item.codiceMezzo, item.descrizione, 0, 
+          selezionato, "", "badge-info", "");
+        return voceFiltro;              
+      });
+  }
   /*
   aggiornaMezziSelezionati(mezzi: Mezzo[]) {
+    this.elencoMezziSelezionati = JSON.parse(JSON.stringify(mezzi));
     //console.log(moment().toDate(),'PannelloOpzioniComponent.aggiornaMezziSelezionati() - mezzi, this.vociFiltroMezziSelezionati',mezzi, this.vociFiltroMezziSelezionati);
     var ele = this.vociFiltroMezziSelezionati.filter( item => item.selezionato === true);
     ele.forEach( ii => { 

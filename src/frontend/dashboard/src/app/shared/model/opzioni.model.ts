@@ -1,18 +1,16 @@
 export class Opzioni {
 
-    private centerOnLast: boolean ;
-    private centerOnSelected: boolean ;
-    //private centerOnMezzo: boolean ;
-    //private isSeguiMezzo: boolean ;
-    private onlySelected: boolean ;
-    private onlyMap: boolean ;
-    private ggMaxPos: number ;
-    private startLat: number ;
-    private startLon: number ;
-    private startZoom: number ;
-    private modalita: number ;
-    private userLat: number ;
-    private userLon: number ;
+    public centerOnLast: boolean ;
+    public centerOnSelected: boolean ;
+    public onlySelected: boolean ;
+    public onlyMap: boolean ;
+    public ggMaxPos: number ;
+    public startLat: number ;
+    public startLon: number ;
+    public startZoom: number ;
+    public modalita: number ;
+    public userLat: number ;
+    public userLon: number ;
 
     constructor()
     constructor(obj?: Opzioni)

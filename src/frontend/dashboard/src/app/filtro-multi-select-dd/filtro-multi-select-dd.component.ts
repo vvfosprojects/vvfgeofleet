@@ -4,6 +4,8 @@ import { VoceFiltro } from "../filtri/voce-filtro.model";
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectItem } from 'primeng/components/common/selectitem';
 
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-filtro-multi-select-dd',
@@ -28,6 +30,9 @@ export class FiltroMultiSelectDdComponent implements OnInit {
   }
 
   ngOnInit() {
+    //(this.titolo == "Mezzi selezionati")?console.log(moment().toDate(),'FiltroMultiSelectDdComponent.ngOnChanges() - this.vociFiltro.selezionati ',
+    //  this.vociFiltro.filter( ii => ii.selezionato === true)):null;
+
     this.vociFiltroDD = this.vociFiltro.map( 
       (item: VoceFiltro) => 
         { return Object.assign({}, {label: item.descrizione, value: item.codice.toString() }) 
@@ -42,6 +47,9 @@ export class FiltroMultiSelectDdComponent implements OnInit {
 
 
   ngOnChanges() {
+      //(this.titolo == "Mezzi selezionati")?console.log(moment().toDate(),'FiltroMultiSelectDdComponent.ngOnChanges() - this.vociFiltro.selezionati ',
+      //  this.vociFiltro.filter( ii => ii.selezionato === true)):null;
+
       this.vociFiltroDD = this.vociFiltro.map( 
         (item: VoceFiltro) => 
           { return Object.assign({}, {label: item.descrizione, value: item.codice.toString() }) 
