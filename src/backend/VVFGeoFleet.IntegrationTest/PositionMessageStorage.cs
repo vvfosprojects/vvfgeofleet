@@ -37,7 +37,7 @@ namespace VVFGeoFleet.IntegrationTest
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            dbContext = new DbContext("mongodb://localhost:27017/" + dbName);
+            dbContext = new DbContext("mongodb://localhost:27017/" + dbName, dbName);
         }
 
         [OneTimeTearDown]

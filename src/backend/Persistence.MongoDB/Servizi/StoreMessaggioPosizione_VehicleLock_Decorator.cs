@@ -36,6 +36,7 @@ namespace Persistence.MongoDB.Servizi
     internal class StoreMessaggioPosizione_VehicleLock_Decorator : IStoreMessaggioPosizione
     {
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly Random rnd = new Random();
 
         private readonly IStoreMessaggioPosizione decorated;
         private readonly IMongoCollection<VehicleLock> vehicleLocksCollection;
@@ -108,9 +109,24 @@ namespace Persistence.MongoDB.Servizi
                         throw;
                     }
 
-                    Thread.Sleep(this.RetriesInterval_msec);
+                    // compute some jitter in order to prevent thread synchronization
+                    int retryInterval = computeRetryIntervalWithJitter(this.RetriesInterval_msec);
+                    Thread.Sleep(retryInterval);
                 }
             }
+        }
+
+        /// <summary>
+        ///   Computes retry interval adding a random jitter in order to prevent thread synchronization.
+        /// </summary>
+        /// <param name="retriesInterval_msec">The deterministic interval</param>
+        /// <returns>The interval with added jitter</returns>
+        private int computeRetryIntervalWithJitter(int retriesInterval_msec)
+        {
+            int oneTenth = retriesInterval_msec / 10;
+            oneTenth = oneTenth > 0 ? oneTenth : 1;
+            var retryJitter = rnd.Next(2 * oneTenth);
+            return retriesInterval_msec - oneTenth + retryJitter;
         }
     }
 }

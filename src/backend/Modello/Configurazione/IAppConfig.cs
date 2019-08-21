@@ -23,6 +23,7 @@ namespace Modello.Configurazione
     public interface IAppConfig
     {
         string ConnectionString { get; }
+        string DatabaseName { get; }
         int OrizzonteTemporale_sec { get; }
 
         #region Interpolation data

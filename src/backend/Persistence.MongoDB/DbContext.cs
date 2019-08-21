@@ -39,7 +39,7 @@ namespace Persistence.MongoDB
         private static IMongoDatabase database;
         private static string[] nonLoggedCommandNames = new[] { "isMaster", "buildInfo" };
 
-        internal DbContext(string connectionString)
+        internal DbContext(string connectionString, string databaseName)
         {
             if (database == null)
             {
@@ -49,28 +49,8 @@ namespace Persistence.MongoDB
 
                 this.MapClasses();
 
-                var url = MongoUrl.Create(connectionString);
-                MongoCredential credential = null;
-                if (!string.IsNullOrWhiteSpace(url.Username))
-                    credential = MongoCredential.CreateCredential(url.DatabaseName, url.Username, url.Password);
-
-                var settings = new MongoClientSettings
-                {
-                    ClusterConfigurator = cb =>
-                    {
-                        cb.Subscribe<CommandStartedEvent>(e =>
-                        {
-                            if (!nonLoggedCommandNames.Contains(e.CommandName))
-                                log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
-                        });
-                    },
-                    Servers = url.Servers,
-                    Credential = credential,
-                    ReplicaSetName = url.ReplicaSetName
-                };
-
-                var client = new MongoClient(settings);
-                database = client.GetDatabase(url.DatabaseName);
+                var client = new MongoClient(connectionString);
+                database = client.GetDatabase(databaseName);
 
                 this.CreateIndexes();
             }
