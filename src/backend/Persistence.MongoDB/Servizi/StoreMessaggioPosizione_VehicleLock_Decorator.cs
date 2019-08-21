@@ -99,9 +99,12 @@ namespace Persistence.MongoDB.Servizi
                 {
                     attempts++;
 
+                    // compute some jitter in order to prevent thread synchronization
+                    int retryInterval = computeRetryIntervalWithJitter(this.RetriesInterval_msec);
+
                     if (attempts < this.NumberOfRetries)
                     {
-                        log.Warn($"Cannot acquire lock for vehicle { vehicleCode }. Attempt #{ attempts } of { this.NumberOfRetries }.");
+                        log.Info($"Cannot acquire lock for vehicle { vehicleCode }. Attempt #{ attempts } of { this.NumberOfRetries }. Waiting for { retryInterval } before retry.");
                     }
                     else
                     {
@@ -109,8 +112,6 @@ namespace Persistence.MongoDB.Servizi
                         throw;
                     }
 
-                    // compute some jitter in order to prevent thread synchronization
-                    int retryInterval = computeRetryIntervalWithJitter(this.RetriesInterval_msec);
                     Thread.Sleep(retryInterval);
                 }
             }
