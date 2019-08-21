@@ -36,7 +36,7 @@ namespace VVFGeoFleet.Test
         [Ignore("It's not a test fixture. It is intended to fill database with fake data.")]
         public void Popola_database_con_dati_fake()
         {
-            var dbContext = new DbContext("mongodb://localhost:27017/vvfgeofleet");
+            var dbContext = new DbContext("mongodb://localhost:27017/vvfgeofleet", "vvfgeofleet");
             var fakerFonte = new Faker<Fonte>()
                 .StrictMode(true)
                 .RuleFor(l => l.CodiceFonte, f => f.Random.Replace("?##"))
