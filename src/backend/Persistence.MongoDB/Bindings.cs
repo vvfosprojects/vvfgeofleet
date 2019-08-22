@@ -31,7 +31,9 @@ namespace Persistence.MongoDB
             container.Register<DbContext>(() =>
             {
                 return new DbContext(container.GetInstance<Modello.Configurazione.IAppConfig>().ConnectionString,
-                    container.GetInstance<Modello.Configurazione.IAppConfig>().DatabaseName);
+                    container.GetInstance<Modello.Configurazione.IAppConfig>().DatabaseName,
+                    container.GetInstance<Modello.Configurazione.IAppConfig>().DoCreateIndexes
+                    );
             }, Lifestyle.Singleton);
 
             container.Register<global::MongoDB.Driver.IMongoCollection<Modello.Classi.MessaggioPosizione>>(() =>

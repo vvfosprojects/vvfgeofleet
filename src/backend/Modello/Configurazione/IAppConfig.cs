@@ -24,6 +24,7 @@ namespace Modello.Configurazione
     {
         string ConnectionString { get; }
         string DatabaseName { get; }
+        bool DoCreateIndexes { get; }
         int OrizzonteTemporale_sec { get; }
 
         #region Interpolation data

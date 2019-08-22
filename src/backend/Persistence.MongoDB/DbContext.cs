@@ -39,7 +39,7 @@ namespace Persistence.MongoDB
         private static IMongoDatabase database;
         private static string[] nonLoggedCommandNames = new[] { "isMaster", "buildInfo" };
 
-        internal DbContext(string connectionString, string databaseName)
+        internal DbContext(string connectionString, string databaseName, bool doCreateIndexes)
         {
             if (database == null)
             {
@@ -63,7 +63,11 @@ namespace Persistence.MongoDB
                 var client = new MongoClient(settings);
                 database = client.GetDatabase(databaseName);
 
-                this.CreateIndexes();
+                if (doCreateIndexes)
+                {
+                    log.Info("Ensuring database indexes.");
+                    this.CreateIndexes();
+                }
             }
         }
 

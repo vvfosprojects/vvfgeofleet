@@ -29,6 +29,7 @@ namespace VVFGeoFleet.Configurazione
     {
         public readonly string connectionString = ConfigurationManager.ConnectionStrings["db"].ConnectionString;
         public readonly string databaseName = Convert.ToString(ConfigurationManager.AppSettings["dbname"]);
+        public readonly bool doCreateIndexes = Convert.ToBoolean(ConfigurationManager.AppSettings["doCreateIndexes"]);
         public readonly int orizzonteTemporale_sec = Convert.ToInt32(ConfigurationManager.AppSettings["orizzonteTemporale_sec"]);
         public readonly bool interpolationActive = Convert.ToBoolean(ConfigurationManager.AppSettings["interpolationActive"]);
         public readonly float interpolationThreshold_mt = Convert.ToSingle(ConfigurationManager.AppSettings["interpolationThreshold_mt"]);
@@ -41,6 +42,7 @@ namespace VVFGeoFleet.Configurazione
 
         public string ConnectionString { get => this.connectionString; }
         public string DatabaseName { get => this.databaseName; }
+        public bool DoCreateIndexes { get => this.doCreateIndexes; }
         public int OrizzonteTemporale_sec { get => this.orizzonteTemporale_sec; }
         public bool InterpolationActive { get => this.interpolationActive; }
         public float InterpolationThreshold_mt { get => this.interpolationThreshold_mt; }
