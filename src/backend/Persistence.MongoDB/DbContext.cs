@@ -49,7 +49,18 @@ namespace Persistence.MongoDB
 
                 this.MapClasses();
 
-                var client = new MongoClient(connectionString);
+                var url = new MongoUrl(connectionString);
+                var settings = MongoClientSettings.FromUrl(url);
+                settings.ClusterConfigurator = cb =>
+                {
+                    cb.Subscribe<CommandStartedEvent>(e =>
+                    {
+                        if (!nonLoggedCommandNames.Contains(e.CommandName))
+                            log.Debug($"{e.CommandName} - {e.Command.ToJson()}");
+                    });
+                };
+
+                var client = new MongoClient(settings);
                 database = client.GetDatabase(databaseName);
 
                 this.CreateIndexes();
