@@ -1,5 +1,6 @@
 ﻿using CQRS.Queries;
 using DomainModel.CQRS.Queries.GetMezziInRettangolo;
+using DomainModel.Services.Configurazione;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RockApi.Controllers
@@ -9,10 +10,12 @@ namespace RockApi.Controllers
     public class InRettangoloController : ControllerBase
     {
         private readonly IQueryHandler<GetMezziInRettangoloQuery, GetMezziInRettangoloQueryResult> handler;
+        private readonly IAppConfig config;
 
-        public InRettangoloController(IQueryHandler<GetMezziInRettangoloQuery, GetMezziInRettangoloQueryResult> handler)
+        public InRettangoloController(IQueryHandler<GetMezziInRettangoloQuery, GetMezziInRettangoloQueryResult> handler, IAppConfig config)
         {
             this.handler = handler;
+            this.config = config;
         }
 
         [HttpGet]

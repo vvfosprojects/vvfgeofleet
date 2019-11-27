@@ -18,6 +18,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using DomainModel.CQRS.Queries.GetDailyStats;
+using DomainModel.CQRS.Queries.GetDailyStatsAsync;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -31,15 +33,10 @@ namespace DomainModel.Services.Statistics
         /// <summary>
         ///   Gets statistics on the number of inserted records day per day
         /// </summary>
-        /// <param name="howManyDays">The number of past days to go behind</param>
+        /// <param name="query">The number of past days to go behind</param>
         /// <returns>Statistics</returns>
-        IEnumerable<object> Get(int howManyDays);
+        GetDailyStatsQueryResult Get(GetDailyStatsQuery query);
 
-        /// <summary>
-        ///   Gets statistics on the number of inserted records day per day
-        /// </summary>
-        /// <param name="howManyDays">The number of past days to go behind</param>
-        /// <returns>Statistics</returns>
-        Task<IEnumerable<object>> GetAsync(int howManyDays);
+
     }
 }

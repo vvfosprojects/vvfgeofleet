@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------
 
 using DomainModel.Classes;
+using DomainModel.CQRS.Queries.GetNumberOfMessagesStoredByTimeInterval;
 using System;
 using System.Threading.Tasks;
 
@@ -29,17 +30,9 @@ namespace DomainModel.Services.Statistics
         /// <summary>
         ///   Gets the number of messages stored.
         /// </summary>
-        /// <param name="fromTime">Start of time interval</param>
-        /// <param name="toTime">End of time interval</param>
+        /// <param name="query.fromTime">Start of time interval</param>
+        /// <param name="query.toTime">End of time interval</param>
         /// <returns>Information about number of messages</returns>
-        MsgNum Get(DateTime fromTime, DateTime toTime);
-
-        /// <summary>
-        ///   Gets the number of messages stored.
-        /// </summary>
-        /// <param name="fromTime">Start of time interval</param>
-        /// <param name="toTime">End of time interval</param>
-        /// <returns>Information about number of messages</returns>
-        Task<MsgNum> GetAsync(DateTime fromTime, DateTime toTime);
+        GetNumberOfMessagesStoredByTimeIntervalQueryResult Get(GetNumberOfMessagesStoredByTimeIntervalQuery query);
     }
 }

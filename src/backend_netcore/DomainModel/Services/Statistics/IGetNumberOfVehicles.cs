@@ -30,24 +30,5 @@ namespace DomainModel.Services.Statistics
         /// <returns>Number of vehicles</returns>
         long Get();
 
-        /// <summary>
-        ///   Gets the number of vehicles stored in the database
-        /// </summary>
-        /// <returns>Number of vehicles</returns>
-        Task<long> GetAsync();
-
-        /// <summary>
-        ///   Gets the number of vehicles stored in the database
-        /// </summary>
-        /// <param name="withInSeconds">Seconds to go back to consider active a vehicle</param>
-        /// <returns>Number of vehicles</returns>
-        long GetActive(int withInSeconds);
-
-        /// <summary>
-        ///   Gets the number of vehicles stored in the database
-        /// </summary>
-        /// <param name="withInSeconds">Seconds to go back to consider active a vehicle</param>
-        /// <returns>Number of vehicles</returns>
-        Task<long> GetActiveAsync(int withInSeconds);
     }
 }

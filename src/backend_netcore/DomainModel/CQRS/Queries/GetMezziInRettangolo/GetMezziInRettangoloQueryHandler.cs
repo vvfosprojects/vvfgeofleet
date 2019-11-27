@@ -1,8 +1,5 @@
 ﻿using CQRS.Queries;
 using DomainModel.Services.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DomainModel.CQRS.Queries.GetMezziInRettangolo
 {
